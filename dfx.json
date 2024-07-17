@@ -1,0 +1,26 @@
+{
+  "canisters": {
+    "merchstore_backend": {
+      "main": "src/merchstore_backend/main.mo",
+      "type": "motoko"
+    },
+    "merchstore_frontend": {
+      "dependencies": [
+        "merchstore_backend"
+      ],
+      "source": [
+        "src/merchstore_frontend/dist"
+      ],
+      "type": "assets",
+      "workspace": "merchstore_frontend"
+    }
+  },
+  "defaults": {
+    "build": {
+      "args": "",
+      "packtool": ""
+    }
+  },
+  "output_env_file": ".env",
+  "version": 1
+}
