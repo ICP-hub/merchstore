@@ -1,0 +1,39 @@
+/*intl-tel-input Overrides */
+.iti {
+  position: relative !important;
+  display: flex !important;
+  width: 100% !important;
+  height: inherit;
+  /* border-radius: 9999px !important; */
+}
+.iti__flag-container {
+  width: 100px !important;
+  position: relative !important;
+  /* border-radius: 9999px !important; */
+  /* border: 1px solid; */
+}
+
+/* .iti--show-selected-dial-code .iti__selected-flag {
+  background-color: #abb2b9 !important;
+} */
+
+.iti input.iti__tel-input,
+.iti input.iti__tel-input[type="text"],
+.iti input.iti__tel-input[type="tel"] {
+  /* border: 1px solid; */
+  border-top-right-radius: 9999px !important;
+  border-bottom-right-radius: 9999px !important;
+  width: 100% !important;
+}
+.iti--allow-dropdown input.iti__tel-input,
+.iti--allow-dropdown input.iti__tel-input[type="text"],
+.iti--allow-dropdown input.iti__tel-input[type="tel"],
+.iti--show-selected-dial-code input.iti__tel-input,
+.iti--show-selected-dial-code input.iti__tel-input[type="text"],
+.iti--show-selected-dial-code input.iti__tel-input[type="tel"] {
+  padding-left: 10px !important;
+}
+
+.iti--show-selected-dial-code .iti__selected-flag {
+  border-radius: 9999px !important;
+}

@@ -14,10 +14,12 @@ To learn more before you start working with merchstore, see the following docume
 If you want to start working on your project right away, you might want to try the following commands:
 
 ```bash
-cd merchstore/
-dfx help
-dfx canister --help
+dfx generate
+cp src/declarations/merchstore_backend/* .dfx/local/canisters/merchstore_backend/
+dfx deploy
 ```
+
+
 
 ## Running the project locally
 

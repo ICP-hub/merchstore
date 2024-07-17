@@ -1,0 +1,8 @@
+[dependencies]
+base = "0.11.0"
+"array" = "https://github.com/aviate-labs/array.mo#master@8e4282825d3b401407954917cd94d1548ee21256"
+"encoding" = "https://github.com/aviate-labs/encoding.mo#master@2711d18727e954b11afc0d37945608512b5fbce2"
+"io" = "https://github.com/aviate-labs/io.mo#master@6492419a1592b3346085c32cadb98c5a9ff71075"
+"uuid" = "https://github.com/aviate-labs/uuid.mo#master@b88101f0516847727ff45ea54688803c698935e5"
+cap-motoko-library = "https://github.com/stephenandrews/cap-motoko-library#master@f3332361111e20788c9ecabba714332b31fbd5fb"
+motoko-matchers = "https://github.com/kritzcreek/motoko-matchers#7f95f69ae9a399cedf161d90738db822f315c07e@7f95f69ae9a399cedf161d90738db822f315c07e"

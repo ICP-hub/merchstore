@@ -1,0 +1,429 @@
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700;800;900&display=swap");
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body {
+  font-family: "Inter", sans-serif;
+}
+
+::-webkit-scrollbar {
+  border-radius: 20px;
+  width: 5px;
+  background-color: rgba(245, 245, 245, 0.6);
+}
+
+::-webkit-scrollbar-thumb {
+  border-radius: 25px;
+  background-color: rgba(0, 0, 0, 0.6);
+}
+
+.nav-menu {
+  position: relative;
+  width: 400px;
+  height: 50px;
+  font-size: 0;
+}
+.nav-menu .nav-link {
+  line-height: 50px;
+  height: 100%;
+  font-size: 15px;
+  display: inline-block;
+  position: relative;
+  z-index: 1;
+  text-decoration: none;
+  text-transform: uppercase;
+  text-align: center;
+  cursor: pointer;
+}
+.nav-menu .animation {
+  position: absolute;
+  height: 100%;
+  top: 0;
+  z-index: 0;
+  transition: all 0.5s ease 0s;
+}
+.nav-link:nth-child(1) {
+  width: 100px;
+}
+.nav-link:nth-child(2) {
+  width: 100px;
+}
+.nav-link:nth-child(3) {
+  width: 100px;
+}
+.nav-link:nth-child(4) {
+  width: 100px;
+}
+
+.nav-menu .start-home,
+.nav-link:nth-child(1):hover ~ .animation {
+  width: 100px;
+  left: 0;
+  background-color: rgba(221, 221, 221, 0.5);
+}
+.nav-menu .start-shop,
+.nav-link:nth-child(2):hover ~ .animation {
+  width: 100px;
+  left: 100px;
+  background-color: rgba(221, 221, 221, 0.5);
+}
+.nav-menu .start-about,
+.nav-link:nth-child(3):hover ~ .animation {
+  width: 100px;
+  left: 200px;
+  background-color: rgba(221, 221, 221, 0.5);
+}
+.nav-menu .start-contact,
+.nav-link:nth-child(4):hover ~ .animation {
+  width: 100px;
+  left: 300px;
+  background-color: rgba(221, 221, 221, 0.5);
+}
+
+.nav-link-active {
+  width: 100px;
+  background-color: rgba(221, 221, 221, 0.5);
+}
+
+.hero {
+  height: 60vh;
+  min-height: 500px;
+  position: relative;
+  display: grid;
+  place-content: center;
+
+  /* 
+    Setting a named view timeline.
+    
+    This allows to start the animation on the 
+    h1 tag based on the hero container 
+    scroll position.
+  */
+  view-timeline-name: --woof;
+}
+
+.hero > img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transform-origin: center bottom;
+
+  /* Scroll animation */
+  animation: scale 3s linear both;
+  animation-timeline: view();
+  animation-range: exit;
+}
+
+.hero h1 {
+  isolation: isolate;
+  z-index: 1;
+  font-size: 3rem;
+  font-weight: 700;
+  color: white;
+  padding: 0 0.5rem;
+
+  /* Scroll animation */
+  animation: fade-out 3s linear both;
+  animation-timeline: --woof;
+  animation-range: exit exit 30vh;
+}
+
+.overlay {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: black;
+
+  /* Scroll animation */
+  animation: lighten 3s linear both;
+  animation-timeline: view();
+  animation-range: exit;
+}
+
+.shape {
+  height: 80px;
+  width: 80px;
+  background: linear-gradient(45deg, deeppink, fuchsia);
+  margin-left: auto;
+
+  /* Scroll animation */
+  animation: spin 3s ease-in-out both;
+  animation-timeline: view();
+}
+
+/* Keyframe definitions */
+@keyframes fade-out {
+  to {
+    opacity: 0;
+    transform: translateY(60px);
+  }
+}
+
+@keyframes lighten {
+  from {
+    opacity: 0.5;
+  }
+  to {
+    opacity: 0.8;
+  }
+}
+
+@keyframes scale {
+  to {
+    transform: scale(1.2);
+  }
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+    border-radius: 50px;
+  }
+  to {
+    transform: rotate(720deg);
+    border-radius: 6px;
+  }
+}
+
+/* order confirmation page*/
+/**
+ * Extracted from: Sweettoast
+ * Modified by: Istiak Tridip
+ */
+.success-checkmark {
+  width: 80px;
+  height: 115px;
+  margin: 0 auto;
+
+  .check-icon {
+    width: 80px;
+    height: 80px;
+    position: relative;
+    border-radius: 50%;
+    box-sizing: content-box;
+    border: 4px solid #c8cdc8;
+
+    &::before {
+      top: 3px;
+      left: -2px;
+      width: 30px;
+      transform-origin: 100% 50%;
+      border-radius: 100px 0 0 100px;
+    }
+
+    &::after {
+      top: 0;
+      left: 30px;
+      width: 60px;
+      transform-origin: 0 50%;
+      border-radius: 0 100px 100px 0;
+      animation: rotate-circle 4.25s ease-in;
+    }
+
+    &::before,
+    &::after {
+      content: "";
+      height: 100px;
+      position: absolute;
+      background: white/2;
+      transform: rotate(-45deg);
+    }
+
+    .icon-line {
+      height: 5px;
+      background-color: #4caf50;
+      display: block;
+      border-radius: 2px;
+      position: absolute;
+      z-index: 10;
+
+      &.line-tip {
+        top: 46px;
+        left: 14px;
+        width: 25px;
+        transform: rotate(45deg);
+        animation: icon-line-tip 0.75s;
+      }
+
+      &.line-long {
+        top: 38px;
+        right: 8px;
+        width: 47px;
+        transform: rotate(-45deg);
+        animation: icon-line-long 0.75s;
+      }
+    }
+
+    .icon-circle {
+      top: -4px;
+      left: -4px;
+      z-index: 10;
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      position: absolute;
+      box-sizing: content-box;
+      border: 4px solid #4caf50;
+    }
+
+    .icon-fix {
+      top: 8px;
+      width: 5px;
+      left: 26px;
+      z-index: 1;
+      height: 85px;
+      position: absolute;
+      transform: rotate(-45deg);
+      background-color: white/2;
+    }
+  }
+}
+
+@keyframes rotate-circle {
+  0% {
+    transform: rotate(-45deg);
+  }
+  5% {
+    transform: rotate(-45deg);
+  }
+  12% {
+    transform: rotate(-405deg);
+  }
+  100% {
+    transform: rotate(-405deg);
+  }
+}
+
+@keyframes icon-line-tip {
+  0% {
+    width: 0;
+    left: 1px;
+    top: 19px;
+  }
+  54% {
+    width: 0;
+    left: 1px;
+    top: 19px;
+  }
+  70% {
+    width: 50px;
+    left: -8px;
+    top: 37px;
+  }
+  84% {
+    width: 17px;
+    left: 21px;
+    top: 48px;
+  }
+  100% {
+    width: 25px;
+    left: 14px;
+    top: 45px;
+  }
+}
+
+@keyframes icon-line-long {
+  0% {
+    width: 0;
+    right: 46px;
+    top: 54px;
+  }
+  65% {
+    width: 0;
+    right: 46px;
+    top: 54px;
+  }
+  84% {
+    width: 55px;
+    right: 0px;
+    top: 35px;
+  }
+  100% {
+    width: 47px;
+    right: 8px;
+    top: 38px;
+  }
+}
+
+/* CSS */
+.scroll-container::-webkit-scrollbar {
+  display: none; /* Hide scrollbar for Chrome, Safari, and Opera */
+}
+
+.scroll-container {
+  scrollbar-width: none; /* Hide scrollbar for Firefox */
+}
+
+/* [1] The container */
+.img-hover-zoom {
+  overflow: hidden; /* [1.2] Hide the overflowing of child elements */
+}
+
+/* [2] Transition property for smooth transformation of images */
+.img-hover-zoom img {
+  transition: transform 0.5s ease;
+}
+
+/* [3] Finally, transforming the image when container gets hovered */
+.img-hover-zoom:hover img {
+  transform: scale(1.1);
+}
+
+.grid-category {
+  columns: 24rem;
+  gap: 1rem;
+  counter-reset: grid;
+}
+
+.item-category + .item-category {
+  margin-top: 1rem;
+}
+
+.item-category {
+  break-inside: avoid;
+  aspect-ratio: 4 / 3;
+}
+
+/* .item-category::before {
+  counter-increment: grid;
+  content: counter(grid);
+} */
+
+.item-category:nth-child(2n),
+.item-category:nth-child(3n),
+.item-category:nth-child(6n) {
+  aspect-ratio: 1;
+}
+
+.item-category:nth-child(4n),
+.item-category:nth-child(5n) {
+  aspect-ratio: 4/3;
+}
+.alice-carousel__dots {
+  display: none;
+}
+
+/* Hide arrows */
+.alice-carousel__prev-btn,
+.alice-carousel__next-btn {
+  display: none !important;
+}
+
+.slick-next {
+  right: -20px !important;
+}
+
+.slick-prev {
+  left: -20px !important;
+}
+.remove-arrow::-webkit-inner-spin-button,
+.remove-arrow::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+.remove-arrow {
+  -moz-appearance: textfield;
+}
