@@ -1,7 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
 
- 
-
 import { Navigate, useNavigate } from "react-router-dom";
 import WELCOME from "../assets/welcome.svg";
 import WAVES from "vanta/dist/vanta.waves.min";
@@ -56,7 +54,7 @@ export default function LoginPage() {
 
   const loginHandler = () => {
     // open();
-    login();
+    login("ii");
   };
 
   const logoutHandler = () => {
