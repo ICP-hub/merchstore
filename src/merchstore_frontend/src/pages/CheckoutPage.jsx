@@ -89,6 +89,8 @@ const Checkout = () => {
   const [totalPriceNQty, setTotalPriceNQty] = useState(null);
   const [updatedPriceNQty, setUpdatedPriceNQty] = useState(null);
   const [successDelete, setSuccessDelete] = useState(true);
+  const [exchange, setExchange] = useState(1);
+  const [currencyLoad, setCurrencyLoad] = useState(true);
   // const { backend } = useBackend();
   const { backend } = useAuth();
   const { CheckoutPageLoader } = LoadingScreen();
@@ -142,6 +144,31 @@ const Checkout = () => {
     }));
   };
 
+  const getExchangeRate = async () => {
+    const paymentOpt = { Cryptocurrency: null };
+    // const paymentOpt1 = { Cryptocurrency: null };
+    try {
+      setCurrencyLoad(true);
+      const res = await backend.get_exchange_rates(
+        { class: paymentOpt, symbol: "icp" },
+        { class: paymentOpt, symbol: paymentMethod.currency }
+      );
+      // console.log("Exchange rate first Response ", res);
+      const exchangeRate =
+        parseInt(res?.Ok?.rate) / Math.pow(10, res?.Ok?.metadata?.decimals);
+      // console.log("Exchange rate ", exchangeRate);
+      setExchange(exchangeRate);
+    } catch (error) {
+      console.log(error);
+    } finally {
+      // Loading
+      setCurrencyLoad(false);
+    }
+  };
+
+  // console.log("exchange state ", exchange);
+  // console.log("total Price will be ", priceWithShippingAmount / exchange);
+
   // Proceed order placement
   const proceed = () => {
     if (isChecked !== false) {
@@ -151,9 +178,9 @@ const Checkout = () => {
     const { totalPrice } = totalPriceNQty;
     const products = updateProductsForPlacement(finalCart);
     const shippingAddress = userAddress;
-    const totalAmount = totalPrice + shippingAmount;
-    const shippingCost = shippingAmount;
-    const subTotal = totalPrice;
+    const totalAmount = (totalPrice + shippingAmount) / exchange;
+    const shippingCost = shippingAmount / exchange;
+    const subTotal = totalPrice / exchange;
     const payment = paymentMethod.value;
     orderPlacement(
       products,
@@ -164,6 +191,11 @@ const Checkout = () => {
       shippingCost
     );
   };
+
+  // Effect on get exchange
+  useEffect(() => {
+    getExchangeRate();
+  }, [paymentMethod]);
 
   // Effect on initial Load : productlist , cart items
   useEffect(() => {
@@ -254,6 +286,8 @@ const Checkout = () => {
                   proceed={proceed}
                   shippingAmount={shippingAmount}
                   paymentMethod={paymentMethod}
+                  exchange={exchange}
+                  currencyLoad={currencyLoad}
                 />
               </div>
             </div>
@@ -532,42 +566,44 @@ const BillSection = ({
   proceed,
   shippingAmount,
   paymentMethod,
+  exchange,
+  currencyLoad,
 }) => {
   const { orderPlacementLoad } = CartApiHandler();
   // const { backend } = useBackend();
-  const { backend } = useAuth();
-  const [exchange, setExchange] = useState(1);
-  const [currencyLoad, setCurrencyLoad] = useState(true);
+  // const { backend } = useAuth();
+  // const [exchange, setExchange] = useState(1);
+  // const [currencyLoad, setCurrencyLoad] = useState(true);
   const priceWithShippingAmount = updatedPriceNQty.totalPrice + shippingAmount;
 
-  const getExchangeRate = async () => {
-    const paymentOpt = { Cryptocurrency: null };
-    // const paymentOpt1 = { Cryptocurrency: null };
-    try {
-      setCurrencyLoad(true);
-      const res = await backend.get_exchange_rates(
-        { class: paymentOpt, symbol: "icp" },
-        { class: paymentOpt, symbol: paymentMethod.currency }
-      );
-      console.log("Exchange rate first Response ", res);
-      const exchangeRate =
-        parseInt(res?.Ok?.rate) / Math.pow(10, res?.Ok?.metadata?.decimals);
-      console.log("Exchange rate ", exchangeRate);
-      setExchange(exchangeRate);
-    } catch (error) {
-      console.log(error);
-    } finally {
-      // Loading
-      setCurrencyLoad(false);
-    }
-  };
+  // const getExchangeRate = async () => {
+  //   const paymentOpt = { Cryptocurrency: null };
+  //   // const paymentOpt1 = { Cryptocurrency: null };
+  //   try {
+  //     setCurrencyLoad(true);
+  //     const res = await backend.get_exchange_rates(
+  //       { class: paymentOpt, symbol: "icp" },
+  //       { class: paymentOpt, symbol: paymentMethod.currency }
+  //     );
+  //     // console.log("Exchange rate first Response ", res);
+  //     const exchangeRate =
+  //       parseInt(res?.Ok?.rate) / Math.pow(10, res?.Ok?.metadata?.decimals);
+  //     // console.log("Exchange rate ", exchangeRate);
+  //     setExchange(exchangeRate);
+  //   } catch (error) {
+  //     console.log(error);
+  //   } finally {
+  //     // Loading
+  //     setCurrencyLoad(false);
+  //   }
+  // };
 
-  // console.log("exchange state ", exchange);
-  console.log("total Price will be ", priceWithShippingAmount / exchange);
+  // // console.log("exchange state ", exchange);
+  // // console.log("total Price will be ", priceWithShippingAmount / exchange);
 
-  useEffect(() => {
-    getExchangeRate();
-  }, [paymentMethod]);
+  // useEffect(() => {
+  //   getExchangeRate();
+  // }, [paymentMethod]);
 
   return (
     <div className="flex flex-col">
@@ -586,9 +622,15 @@ const BillSection = ({
             </span>
           </p>
           <span className="font-bold flex items-center gap-1">
-            <IcpLogo />
-            {updatedPriceNQty.totalPrice?.toFixed(2)}
-            {/* (2.500 USD) */}
+            {/* <IcpLogo /> */}
+            <span>{paymentMethod.name}</span>
+            {currencyLoad ? (
+              <span className="animate-pulse bg-gray-300 text-gray-300 rounded-md">
+                00.0000
+              </span>
+            ) : (
+              (updatedPriceNQty.totalPrice / exchange).toFixed(4)
+            )}
           </span>
         </div>
         <div className="flex justify-between px-6 gap-2 font-medium">
@@ -599,9 +641,15 @@ const BillSection = ({
                 "Free"
               ) : (
                 <span className="flex items-center gap-1">
-                  <IcpLogo />
-                  {shippingAmount?.toFixed(2)}
-                  {/* (2.500 USD) */}
+                  {/* <IcpLogo /> */}
+                  <span>{paymentMethod.name}</span>
+                  {currencyLoad ? (
+                    <span className="animate-pulse bg-gray-300 text-gray-300 rounded-md">
+                      00.0000
+                    </span>
+                  ) : (
+                    (shippingAmount / exchange)?.toFixed(4)
+                  )}
                 </span>
               )}
             </p>
@@ -612,9 +660,15 @@ const BillSection = ({
         <div className="flex justify-between px-6 gap-2 font-bold">
           <p className="capitalize">Total Payable</p>
           <span className="flex items-center gap-1">
-            <IcpLogo />
-            {priceWithShippingAmount?.toFixed(2)}
-            {/* (2.500 USD) */}
+            {/* <IcpLogo /> */}
+            <span>{paymentMethod.name}</span>
+            {currencyLoad ? (
+              <span className="animate-pulse bg-gray-300 text-gray-300 rounded-md">
+                00.0000
+              </span>
+            ) : (
+              (priceWithShippingAmount / exchange)?.toFixed(2)
+            )}
           </span>
         </div>
       </div>
