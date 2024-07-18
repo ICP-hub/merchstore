@@ -88,6 +88,7 @@ const Cart = () => {
   const getCartlist = async () => {
     try {
       const item = await backend.getCallerCartItems(10, 0);
+      
       console.log(item.data);
       const formatColor = item.data.map((item) => ({
         color: item.color,

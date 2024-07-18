@@ -80,6 +80,8 @@ const ProductCard = ({ product }) => {
         product.variantColor[0].color,
         quantity
       );
+      console.log(res, "add to cart response");
+      console.log(res?.ok[0]?.userprincipal?.toText(), "principal");
 
       if ("ok" in res) {
         toast.success("Item added to cart");
