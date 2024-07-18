@@ -263,42 +263,42 @@ const CartApiHandler = () => {
 
       console.log("sendable amount console ", sendableAmount);
       console.log("current balance console ", currentBalance);
-      if (currentBalance > sendableAmount) {
-        let transaction = {
-          from_subaccount: [],
-          spender: {
-            owner: Principal.fromText(ids.backendCan),
-            subaccount: [],
-          },
-          amount: Number(sendableAmount) + Number(currentMetaData["icrc1:fee"]),
-          expected_allowance: [],
-          expires_at: [],
-          fee: [currentMetaData["icrc1:fee"]],
-          memo: [],
-          created_at_time: [],
-        };
-        console.log("transaction ", transaction);
-        // console.log("Token Actor ICRC2 APPROVE", tokenActor.icrc2_approve);
-        const approveRes = await tokenActor.icrc2_approve(transaction);
-        console.log("Payment Approve Response ", approveRes);
-        if (approveRes.Err) {
-          const errorMessage = `Insufficient funds. Balance: ${approveRes.Err.InsufficientFunds.balance}`;
-          toast.error(errorMessage);
-          return;
-        } else {
-          // afterPaymentApprove(
-          //   parseInt(approveRes?.Ok).toString(),
-          //   sendableAmount,
-          //   currentBalance
-          // );
-          afterPaymentApprove();
-        }
-      } else {
-        console.log("Insufficient Balance to purchase");
-        toast.error(
-          `Insufficient balance. Balance : ${currentBalance / 10 ** 8}`
-        );
-      }
+      // if (currentBalance > sendableAmount) {
+      let transaction = {
+        from_subaccount: [],
+        spender: {
+          owner: Principal.fromText(ids.backendCan),
+          subaccount: [],
+        },
+        amount: Number(sendableAmount) + Number(currentMetaData["icrc1:fee"]),
+        expected_allowance: [],
+        expires_at: [],
+        fee: [currentMetaData["icrc1:fee"]],
+        memo: [],
+        created_at_time: [],
+      };
+      console.log("transaction ", transaction);
+      // console.log("Token Actor ICRC2 APPROVE", tokenActor.icrc2_approve);
+      const approveRes = await tokenActor.icrc2_approve(transaction);
+      console.log("Payment Approve Response ", approveRes);
+      // if (approveRes.Err) {
+      //   const errorMessage = `Insufficient funds. Balance: ${approveRes.Err.InsufficientFunds.balance}`;
+      //   toast.error(errorMessage);
+      //   return;
+      // } else {
+      // afterPaymentApprove(
+      //   parseInt(approveRes?.Ok).toString(),
+      //   sendableAmount,
+      //   currentBalance
+      // );
+      // afterPaymentApprove();
+      // }
+      // } else {
+      //   console.log("Insufficient Balance to purchase");
+      //   toast.error(
+      //     `Insufficient balance. Balance : ${currentBalance / 10 ** 8}`
+      //   );
+      // }
     } catch (err) {
       console.error("Error in transfer approve", err);
     } finally {

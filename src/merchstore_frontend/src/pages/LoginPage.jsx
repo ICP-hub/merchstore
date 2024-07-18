@@ -19,7 +19,7 @@ export default function LoginPage() {
   const myRef = useRef(null);
   const navigate = useNavigate();
 
-  useEffect(() => {
+/*   useEffect(() => {
     let intervalId;
 
     if (!vantaEffect) {
@@ -51,7 +51,7 @@ export default function LoginPage() {
       clearInterval(intervalId);
     };
   }, [vantaEffect]);
-
+ */
   const loginHandler = () => {
     // open();
     login("ii");
@@ -70,8 +70,8 @@ export default function LoginPage() {
       ) : null}
       <AnimationView>
         <div
-          ref={myRef}
-          className="w-full h-screen flex justify-center items-center px-6"
+          //ref={myRef}
+          className="w-full h-screen flex justify-center items-center px-6 bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500"
         >
           <div className="w-full md:w-1/2 bg-white/50 backdrop-blur-sm p-2 rounded-2xl border-[1px] shadow-lg">
             <div className="grid grid-cols-1 md:grid-cols-2">
