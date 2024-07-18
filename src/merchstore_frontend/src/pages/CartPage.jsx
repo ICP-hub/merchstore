@@ -28,6 +28,8 @@ import { LuTrash } from "react-icons/lu";
 import TabChanges from "../components/Tabchanges.jsx";
 import IcpLogo from "../assets/IcpLogo.jsx";
 import placeholderImg from "../assets/placeholderImg-Small.jpeg";
+import { Navigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 /* ----------------------------------------------------------------------------------------------------- */
 /*  @ main cartpage Container
@@ -62,6 +64,7 @@ const Cart = () => {
   const [color, setColor] = useState("");
   const [loading, setLoading] = useState(true);
 
+  const navigate = useNavigate();
   const [size, setSize] = useState("");
   const [selectedItemIndex, setSelectedItemIndex] = useState(null);
   const [errorImage, setErrorImage] = useState(false);
@@ -88,7 +91,7 @@ const Cart = () => {
   const getCartlist = async () => {
     try {
       const item = await backend.getCallerCartItems(10, 0);
-      
+
       console.log(item.data);
       const formatColor = item.data.map((item) => ({
         color: item.color,
@@ -140,6 +143,7 @@ const Cart = () => {
     } catch (error) {
       console.error("Error while getting wishlist ", error);
     } finally {
+      setLoading(false);
     }
   };
   useEffect(() => {
@@ -194,9 +198,6 @@ const Cart = () => {
   useEffect(() => {
     if (cartItems !== undefined) {
       getProductCartlist();
-      setTimeout(() => {
-        setLoading(false);
-      }, 7000);
     }
   }, [backend, cartItems]);
 
@@ -223,6 +224,7 @@ const Cart = () => {
 
   const clearAll = async () => {
     try {
+      setLoading(true);
       setClearCartLoad(true);
       const res = await backend.clearallcartitmesbyprincipal();
 
@@ -230,8 +232,8 @@ const Cart = () => {
         console.log(res);
 
         getCartlist();
-        setLoading(true);
         toast.success("All items are removed");
+        navigate("/");
       } else {
         console.log("error while deleting all the items", res);
       }
@@ -330,187 +332,179 @@ const Cart = () => {
           </div>
         </div>
       ) : (
-        <>
-          {!loading && product.length > 0 ? (
-            <div className="container mx-auto mt-4 px-6 flex items-center md:items-start justify-between md:flex-row flex-col">
-              <div className="md:w-[70%] w-[100%] ">
-                <div className="flex items-end justify-end border-2 border-gray-300 mt-2   rounded-xl   p-5 w-[100%]">
-                  <Button
-                    className="bg-black rounded-full text-sm text-white px-3 py-2"
-                    onClick={openModal}
-                  >
-                    Clear All
-                  </Button>
-                  {isModalOpen && (
-                    <Modal1
-                      closeModal={closeModal}
-                      title={"Are you sure you want to clear cart ?"}
-                      icon={<LuTrash size={40} color="red" />}
-                      btnClr="red"
-                      actName="Yes,Clear!"
-                      action={clearAll}
-                      isLoading={clearCartLoad}
-                      addOn={successClearAll}
-                    />
-                  )}
-                </div>
+        <div className="container mx-auto mt-4 px-6 flex items-center md:items-start justify-between md:flex-row flex-col">
+          <div className="md:w-[70%] w-[100%] ">
+            <div className="flex items-end justify-end border-2 border-gray-300 mt-2   rounded-xl   p-5 w-[100%]">
+              <Button
+                className="bg-black rounded-full text-sm text-white px-3 py-2"
+                onClick={openModal}
+              >
+                Clear All
+              </Button>
+              {isModalOpen && (
+                <Modal1
+                  closeModal={closeModal}
+                  title={"Are you sure you want to clear cart ?"}
+                  icon={<LuTrash size={40} color="red" />}
+                  btnClr="red"
+                  actName="Yes,Clear!"
+                  action={clearAll}
+                  isLoading={clearCartLoad}
+                  addOn={successClearAll}
+                />
+              )}
+            </div>
 
-                <div>
-                  {product.map((item, index) => (
-                    <>
-                      <div className=" md:flex flex-wrap items-center m-0  xl: justify-between border-2 border-gray-300 mt-4  rounded-xl  p-2 py-2 w-[100%]">
-                        <div className="">
-                          <div className="flex m-2">
-                            <img
-                              src={
-                                errorImage
-                                  ? placeholderImg
-                                  : item.variantColor[0].img1
-                              }
-                              alt=""
-                              className="w-24  h-24 border-2 border-gray-300 bg-gray-400 rounded-lg ml-2"
-                              onError={handleError}
-                            />
-                            <div className="md:mt-6 md:ml-2 ml-4">
-                              <p className="border-2 border-gray-300 px-2 py-1 text-xs uppercase font-medium rounded-full max-w-max">
-                                {item.category}
-                              </p>
-                              <p>{item.title}</p>
-                              <span className="text-xs xl:text:sm">
-                                <span className="text-gray-400 ">size:</span>
-                                {size[index]?.size}
-                              </span>
-                              <span className="text-xs xl:text:sm">
-                                {" "}
-                                <span className="text-gray-400  ">
-                                  color:
-                                </span>{" "}
-                                {color[index]?.color}
-                              </span>
-                            </div>
-                          </div>
+            <div>
+              {product.map((item, index) => (
+                <>
+                  <div className=" md:flex flex-wrap items-center m-0  xl: justify-between border-2 border-gray-300 mt-4  rounded-xl  p-2 py-2 w-[100%]">
+                    <div className="">
+                      <div className="flex m-2">
+                        <img
+                          src={
+                            errorImage
+                              ? placeholderImg
+                              : item.variantColor[0].img1
+                          }
+                          alt=""
+                          className="w-24  h-24 border-2 border-gray-300 bg-gray-400 rounded-lg ml-2"
+                          onError={handleError}
+                        />
+                        <div className="md:mt-6 md:ml-2 ml-4">
+                          <p className="border-2 border-gray-300 px-2 py-1 text-xs uppercase font-medium rounded-full max-w-max">
+                            {item.category}
+                          </p>
+                          <p>{item.title}</p>
+                          <span className="text-xs xl:text:sm">
+                            <span className="text-gray-400 ">size:</span>
+                            {size[index]?.size}
+                          </span>
+                          <span className="text-xs xl:text:sm">
+                            {" "}
+                            <span className="text-gray-400  ">color:</span>{" "}
+                            {color[index]?.color}
+                          </span>
                         </div>
-                        <div className="xl:mt-4 mt-2">
-                          <div className="flex flex-col items-end  ">
-                            <s className="text-gray-400 text-xs">
-                              {(() => {
-                                const selectedVariant = item.variantColor.find(
-                                  (variant) =>
-                                    variant.color === color[index]?.color
-                                );
-                                return selectedVariant
-                                  ? (
-                                      selectedVariant.variant_price *
-                                      quantity[index]?.quantity
-                                    ).toFixed(2)
-                                  : null;
-                              })()}
-                            </s>
+                      </div>
+                    </div>
+                    <div className="xl:mt-4 mt-2">
+                      <div className="flex flex-col items-end  ">
+                        <s className="text-gray-400 text-xs">
+                          {(() => {
+                            const selectedVariant = item.variantColor.find(
+                              (variant) => variant.color === color[index]?.color
+                            );
+                            return selectedVariant
+                              ? (
+                                  selectedVariant.variant_price *
+                                  quantity[index]?.quantity
+                                ).toFixed(2)
+                              : null;
+                          })()}
+                        </s>
 
-                            <p className="text-left flex items-center gap-1">
-                              <IcpLogo size={20} />
-                              {(() => {
-                                const selectedVariant = item.variantColor.find(
-                                  (variant) =>
-                                    variant.color === color[index]?.color
-                                );
-                                return selectedVariant
-                                  ? (
-                                      selectedVariant.variant_sale_price *
-                                      quantity[index]?.quantity
-                                    ).toFixed(2)
-                                  : null;
-                              })()}
-                            </p>
-                          </div>
-                          <div className="xl:flex">
-                            <div className="flex items-center justify-end">
-                              <Button
-                                className=""
-                                onClick={() =>
-                                  deleteCart(
-                                    cartItems[index].slug,
-                                    color[index]?.color,
-                                    size[index]?.size
-                                  )
-                                }
-                              >
-                                <HiOutlineTrash className="w-5 h-5 text-gray-400 m-1 xl:m-4" />
-                              </Button>
-                            </div>
+                        <p className="text-left flex items-center gap-1">
+                          <IcpLogo size={20} />
+                          {(() => {
+                            const selectedVariant = item.variantColor.find(
+                              (variant) => variant.color === color[index]?.color
+                            );
+                            return selectedVariant
+                              ? (
+                                  selectedVariant.variant_sale_price *
+                                  quantity[index]?.quantity
+                                ).toFixed(2)
+                              : null;
+                          })()}
+                        </p>
+                      </div>
+                      <div className="xl:flex">
+                        <div className="flex items-center justify-end">
+                          <Button
+                            className=""
+                            onClick={() =>
+                              deleteCart(
+                                cartItems[index].slug,
+                                color[index]?.color,
+                                size[index]?.size
+                              )
+                            }
+                          >
+                            <HiOutlineTrash className="w-5 h-5 text-gray-400 m-1 xl:m-4" />
+                          </Button>
+                        </div>
 
-                            <div className="flex items-center justify-end">
-                              <button
-                                className="bg-gray-100 py-2 px-4 border-t border-l border-b border-gray-300 rounded-l-md hover:bg-gray-200"
-                                onClick={() => decrement(index)}
-                              >
-                                <HiOutlineMinus />
-                              </button>
-                              <p className="w-16 text-center py-1 px-2 border-t border-b border-gray-300 bg-gray-100">
-                                {quantity[index]?.quantity}
-                              </p>
-                              <button
-                                className="bg-gray-100 py-2 px-4 border-t border-r border-b border-gray-300 rounded-r-md hover:bg-gray-200"
-                                onClick={() => increment(index)}
-                              >
-                                <HiOutlinePlus />
-                              </button>
+                        <div className="flex items-center justify-end">
+                          <button
+                            className="bg-gray-100 py-2 px-4 border-t border-l border-b border-gray-300 rounded-l-md hover:bg-gray-200"
+                            onClick={() => decrement(index)}
+                          >
+                            <HiOutlineMinus />
+                          </button>
+                          <p className="w-16 text-center py-1 px-2 border-t border-b border-gray-300 bg-gray-100">
+                            {quantity[index]?.quantity}
+                          </p>
+                          <button
+                            className="bg-gray-100 py-2 px-4 border-t border-r border-b border-gray-300 rounded-r-md hover:bg-gray-200"
+                            onClick={() => increment(index)}
+                          >
+                            <HiOutlinePlus />
+                          </button>
 
-                              {isQuantityChanged &&
-                                selectedItemIndex === index && (
-                                  <button
-                                    className="ml-2 bg-black text-white rounded-md py-2 px-4"
-                                    onClick={() =>
-                                      updateQuantity(
-                                        id[index].id,
-                                        quantity[index]?.quantity,
-                                        size[index]?.size,
-                                        color[index]?.color
-                                      )
-                                    }
-                                    disabled={isLoading}
-                                  >
-                                    {isLoading &&
-                                    loadingItemId === id[index].id ? (
-                                      // Loading spinner
-                                      <TailSpin
-                                        height="20"
-                                        width="20"
-                                        color="white"
-                                        ariaLabel="tail-spin-loading"
-                                        radius="1"
-                                        visible={true}
-                                      />
-                                    ) : (
-                                      // Default icon
-                                      <div className="flex">
-                                        {/* <HiCheckBadge
+                          {isQuantityChanged && selectedItemIndex === index && (
+                            <button
+                              className="ml-2 bg-black text-white rounded-md py-2 px-4"
+                              onClick={() =>
+                                updateQuantity(
+                                  id[index].id,
+                                  quantity[index]?.quantity,
+                                  size[index]?.size,
+                                  color[index]?.color
+                                )
+                              }
+                              disabled={isLoading}
+                            >
+                              {isLoading && loadingItemId === id[index].id ? (
+                                // Loading spinner
+                                <TailSpin
+                                  height="20"
+                                  width="20"
+                                  color="white"
+                                  ariaLabel="tail-spin-loading"
+                                  radius="1"
+                                  visible={true}
+                                />
+                              ) : (
+                                // Default icon
+                                <div className="flex">
+                                  {/* <HiCheckBadge
                                         color="green"
                                         size={24}
                                         className="cursor-pointer"
                                       />  */}
-                                        Update Cart
-                                      </div>
-                                    )}
-                                  </button>
-                                )}
-                            </div>
-                          </div>
+                                  Update Cart
+                                </div>
+                              )}
+                            </button>
+                          )}
                         </div>
                       </div>
-                    </>
-                  ))}
-                </div>
-              </div>
+                    </div>
+                  </div>
+                </>
+              ))}
+            </div>
+          </div>
 
-              <Total totalPrice={totalPrice} flag={flag} />
-            </div>
-          ) : (
-            <div className="px-6 mt-4 m-auto container">
-              <EmptyCart></EmptyCart>
-            </div>
-          )}
-        </>
+          <Total totalPrice={totalPrice} flag={flag} />
+        </div>
+        //   ) : (
+        //     <div className="px-6 mt-4 m-auto container">
+        //       <EmptyCart></EmptyCart>
+        //     </div>
+        //   )}
+        // </>
       )}
     </>
   );
