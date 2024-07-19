@@ -47,7 +47,7 @@ const UserDetails = () => {
 
   const listusers = async () => {
     try {
-      const userData = await backend.listUsers(1, page);
+      const userData = await backend.listUsers(8, page);
       setUser(userData.data);
     } catch (error) {
       console.error("Error listing all Users:", error);
