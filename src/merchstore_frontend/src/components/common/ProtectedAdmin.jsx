@@ -36,8 +36,8 @@ function ProtectedAdmin({ children }) {
     const checkIsAdmin = async () => {
       try {
         if (isConnected) {
-          console.log(principal);
-          const res = await backend.isAdmin(Principal.fromText(principal));
+          console.log(principal.toText(), "principal");
+          const res = await backend.isAdmin(principal);
           setIsAdmin(res);
           setIsAdminChecked(true);
         }
