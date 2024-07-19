@@ -14,12 +14,14 @@ import ProductApiHandler from "../../apiHandlers/ProductApiHandler";
 import LoadingScreen from "../common/LoadingScreen";
 import NoDataFound from "../common/NoDataFound";
 import TrendingProductCardLoader from "../common/TrendingProductCardLoader";
+import { useAuth } from "../../auth/useClient";
 
 /* ----------------------------------------------------------------------------------------------------- */
 /*  @ Main : HomePageContainerMain.
 /* ----------------------------------------------------------------------------------------------------- */
 
 const HomePageContainerMain = () => {
+  const { backend } = useAuth();
   const {
     productList,
     getProductList,
@@ -27,11 +29,11 @@ const HomePageContainerMain = () => {
     isLoading,
     searchProductByName,
     initialProductList,
-  } = ProductApiHandler(1);
+  } = ProductApiHandler(0);
 
   useEffect(() => {
     getProductList();
-  }, []);
+  }, [backend]);
 
   return (
     <div>

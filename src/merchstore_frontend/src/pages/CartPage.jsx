@@ -193,6 +193,7 @@ const Cart = () => {
       const remove = await backend.deleteCartItems(id, size, color);
       if (remove) {
         getCartlist();
+        getProductCartlist();
 
         toast.success("item removed successfully");
       }

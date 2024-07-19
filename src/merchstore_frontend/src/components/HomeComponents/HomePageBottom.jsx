@@ -12,6 +12,7 @@ import LoadingScreen from "../common/LoadingScreen";
 import placeholderImg from "../../assets/placeholderImg-Small.jpeg";
 import NewIcon from "../../assets/new-icon.svg";
 import IcpLogo from "../../assets/IcpLogo";
+import { useAuth } from "../../auth/useClient";
 
 const defaultOptions = {
   reverse: false, // reverse the tilt direction
@@ -35,7 +36,8 @@ const HomePageBottom = ({ productList, isLoading }) => {
       return productList;
     }
   });
-  console.log(newArrivalList, "newArriwallist");
+
+  console.log(productList, "productlist");
   // Get the lastest product based on time updated
   const newArrivalProd = newArrivalList[0];
 
@@ -180,11 +182,12 @@ const NewArrival = ({ newArrivalProd, isLoading }) => {
 
 //category new
 const ExpCategories = () => {
+  const { backend } = useAuth();
   const { categoryList, getCategoryList } = ProductApiHandler(0);
   // Call CategoryList
   useEffect(() => {
     getCategoryList();
-  }, []);
+  }, [backend]);
 
   // Filter featured categories : Display only featured categories
   const featuredCategories = categoryList?.filter(({ featured }) => featured);

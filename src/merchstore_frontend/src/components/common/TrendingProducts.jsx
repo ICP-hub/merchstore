@@ -1,6 +1,6 @@
 import { useScroll, motion, useTransform } from "framer-motion";
 import React, { useEffect, useState } from "react";
- 
+
 import TrendingProductCard from "./TrendingProductCard";
 import Slider from "react-slick";
 import "slick-carousel/slick/slick.css";
@@ -8,11 +8,13 @@ import "slick-carousel/slick/slick-theme.css";
 import NoDataFound from "./NoDataFound";
 import TrendingProductCardLoader from "./TrendingProductCardLoader";
 import ProductApiHandler from "../../apiHandlers/ProductApiHandler";
+import { useAuth } from "../../auth/useClient";
 
 const TrendingProducts = () => {
+  const { backend } = useAuth();
   const { scrollYProgress } = useScroll();
   const x = useTransform(scrollYProgress, [0, 1], [0, 800]); // Adjust the range as needed
-  const { isLoading, productList, getProductList } = ProductApiHandler(1);
+  const { isLoading, productList, getProductList } = ProductApiHandler(0);
 
   // Filter trending products from productList
   const trendingProducts = productList?.filter((item) => {
@@ -23,7 +25,7 @@ const TrendingProducts = () => {
 
   useEffect(() => {
     getProductList();
-  }, []);
+  }, [backend]);
 
   const maxInitialDisplay = 6;
 
@@ -83,7 +85,7 @@ const TrendingProducts = () => {
               <Slider {...settings}>
                 {trendingProducts
                   .slice(0, maxInitialDisplay)
-                  .map(( prodDetails, index) => (
+                  .map((prodDetails, index) => (
                     <TrendingProductCard key={index} product={prodDetails} />
                   ))}
               </Slider>

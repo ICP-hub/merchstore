@@ -99,7 +99,7 @@ const CartItemsSmall = () => {
       setLoading3(true);
       setLoadingItemId(id);
 
-      const remove = await backend.deleteCartItems(id);
+      const remove = await backend.deleteCartItems();
       getProductCartlist();
       getCartlist();
       if (remove) {

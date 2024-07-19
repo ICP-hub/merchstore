@@ -144,18 +144,17 @@ const MyWishList = () => {
       }
     } catch (error) {
       console.error("Error while getting wishlist ", error);
+    } finally {
+      setLoading(false);
     }
   };
 
   useEffect(() => {
     // Call getProductWishlist only when wishlists have been updated
     if (wishlists !== "") {
-      const timeoutId = setTimeout(() => {
-        getProductWishlist();
-        setLoading(false);
-      }, 5000);
+      getProductWishlist();
 
-      return () => clearTimeout(timeoutId); // Cleanup the timeout on component unmount
+      // Cleanup the timeout on component unmount
     }
   }, [backend, wishlists]);
 

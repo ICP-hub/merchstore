@@ -8,12 +8,14 @@ import NoDataFound from "../common/NoDataFound";
 import { CategoriesVertical } from "./Categories";
 import { useLocation, useNavigate } from "react-router-dom";
 import TrendingProductCardLoader from "../common/TrendingProductCardLoader";
+import { useAuth } from "../../auth/useClient";
 /* ----------------------------------------------------------------------------------------------------- */
 /*  @ ProductPageContainerMain 
 /* ----------------------------------------------------------------------------------------------------- */
 const ProductPageContainerMain = () => {
   const [initialLoad, setInitialLoad] = useState(true);
   const [currentPage, setCurrentPage] = useState(0);
+  const { backend } = useAuth();
   // Retrieve data and methods from the ProductApiHandler
   const {
     productList,
@@ -44,7 +46,7 @@ const ProductPageContainerMain = () => {
       }
       setInitialLoad(false);
     }
-  }, [getProductList, initialLoad, currentPage]);
+  }, [getProductList, initialLoad, currentPage, backend]);
   console.log(currentPage);
 
   return (
@@ -101,7 +103,7 @@ const ContainerMid = ({
   currentPage,
   productsPerPage,
   setCurrentPage,
-  setInitialLoad
+  setInitialLoad,
 }) => {
   // Number of products to display per page
   // Calculate the start and end index for the current page
