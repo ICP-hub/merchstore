@@ -176,7 +176,6 @@ export const useAuthClient = () => {
     const initAuthClient = async () => {
       const client = await AuthClient.create(createOptions);
       setAuthClient(client);
-
       const isConnected = await client.isAuthenticated();
       const identity = client.getIdentity();
       const principal = identity.getPrincipal();
@@ -185,14 +184,13 @@ export const useAuthClient = () => {
       //   await logout();
       //   return;
       // }
-
       setIsConnected(isConnected);
       setIdentity(identity);
       setPrincipal(principal);
 
       if (createActor) {
         const backendActor = createActor(canisterID, {
-          agentOptions: { identity, verifyQuerySignatures: false },
+          agentOptions: { identity },
         });
         setBackend(backendActor);
       }
@@ -220,7 +218,8 @@ export const useAuthClient = () => {
       console.log("User Object:", userObject);
       const identity = await userObject.agent._identity;
       const principal = Principal.fromText(userObject.principal);
-      // const actor = createActor(canisterID, { agentOptions: { identity } });
+      const actor = createActor(canisterID, { agentOptions: { identity } });
+      setBackend(actor);
       setIsConnected(true);
       setPrincipal(principal);
       setIdentity(identity);
@@ -258,6 +257,7 @@ export const useAuthClient = () => {
 export const AuthProvider = ({ children }) => {
   const auth = useAuthClient();
   // console.log("auth is ", auth);
+  // console.log(auth?.principal?.toText());
   return <AuthContext.Provider value={auth}>{children}</AuthContext.Provider>;
 };
 
