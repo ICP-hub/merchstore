@@ -99,7 +99,7 @@ const Cart = () => {
   const [clearCartLoad, setClearCartLoad] = useState(false);
   const [flag, setFlag] = useState(false);
   const [empty, setEmpty] = useState(false);
-  const navigate=useNavigate();
+  const navigate = useNavigate();
   const openModal = () => {
     setIsModalOpen(true);
   };
@@ -651,6 +651,7 @@ const BillSection = ({
   currencyLoad,
 }) => {
   const { orderPlacementLoad } = CartApiHandler();
+  const navigate = useNavigate();
   // const { backend } = useBackend();
   // const { backend } = useAuth();
   // const [exchange, setExchange] = useState(1);
@@ -756,7 +757,7 @@ const BillSection = ({
       <div className="p-6 flex w-full">
         <Button
           className="p-2 min-w-full min-h-10 text-white border bg-black rounded-full font-medium text-sm relative"
-          onClick={() => proceed()}
+          onClick={() => navigate("/shipping-address")}
           disabled={orderPlacementLoad}
         >
           {orderPlacementLoad ? (
@@ -773,7 +774,7 @@ const BillSection = ({
               />
             </div>
           ) : (
-            "Place order"
+            "Proceed"
           )}
         </Button>
       </div>

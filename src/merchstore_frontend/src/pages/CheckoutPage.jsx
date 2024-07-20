@@ -330,7 +330,7 @@ const CheckoutCard = ({
   };
 
   const deleteCartItem = () => {
-    deleteCartItemById(cartItem.orderId, setDeleteLoad, setSuccessDelete);
+    deleteCartItemById(cartItem.product.slug,cartItem.size,cartItem.color, setDeleteLoad, setSuccessDelete);
   };
 
   const toggleUpdate = () => {
