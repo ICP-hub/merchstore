@@ -10,6 +10,7 @@ import AnimationView from "../components/common/AnimationView";
 import { TiChevronLeftOutline } from "react-icons/ti";
 import { PiWalletBold } from "react-icons/pi";
 import { useAuth } from "../auth/useClient";
+import WalletModal from "../components/common/WalletModal";
 
 export default function LoginPage() {
   // const { open } = useDialog();
@@ -18,8 +19,11 @@ export default function LoginPage() {
   const [vantaEffect, setVantaEffect] = useState(null);
   const myRef = useRef(null);
   const navigate = useNavigate();
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const handleWalletModalOpen = () => setIsLoggedIn(true);
+  const handleWalletModalClose = () => setIsLoggedIn(false);
 
-/*   useEffect(() => {
+  /*   useEffect(() => {
     let intervalId;
 
     if (!vantaEffect) {
@@ -52,10 +56,10 @@ export default function LoginPage() {
     };
   }, [vantaEffect]);
  */
-  const loginHandler = () => {
-    // open();
-    login("ii");
-  };
+  // const loginHandler = () => {
+  //   // open();
+  //   login("ii");
+  // };
 
   const logoutHandler = () => {
     disconnect();
@@ -65,6 +69,7 @@ export default function LoginPage() {
 
   return (
     <>
+      {isLoggedIn && <WalletModal onModalClose={handleWalletModalClose} />}
       {isConnected ? (
         <Navigate to="/my-profile" replace={true}></Navigate>
       ) : null}
@@ -85,7 +90,7 @@ export default function LoginPage() {
                 </p>
                 {!isConnected && (
                   <Button
-                    onClick={loginHandler}
+                    onClick={handleWalletModalOpen}
                     className="w-full rounded-full text-white font-semibold bg-black border border-black px-4 py-2 mb-3 flex justify-center items-center gap-1.5"
                   >
                     <PiWalletBold className="w-5 h-5" /> Connect Your Wallet

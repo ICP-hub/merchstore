@@ -154,7 +154,7 @@ import { AuthClient } from "@dfinity/auth-client";
 const AuthContext = createContext();
 
 const canisterID = process.env.CANISTER_ID_MERCHSTORE_BACKEND;
-// const whitelist = [process.env.CANISTER_ID_MERCHSTORE_BACKEND];
+const whitelist = [process.env.CANISTER_ID_MERCHSTORE_BACKEND];
 
 export const useAuthClient = () => {
   const [isConnected, setIsConnected] = useState(false);
@@ -198,23 +198,23 @@ export const useAuthClient = () => {
     initAuthClient();
   }, []);
 
-  const login = async () => {
+  const login = async (provider) => {
     if (authClient) {
       let userObject = {
         principal: "Not Connected.",
         agent: undefined,
         provider: "N/A",
       };
-      /* if (provider === "Plug") {
+      if (provider === "Plug") {
         userObject = await PlugLogin(whitelist);
       } else if (provider === "Stoic") {
         userObject = await StoicLogin();
       } else if (provider === "NFID") {
         userObject = await NFIDLogin();
-      } else if (provider === "Identity") { */
-      //userObject = await IdentityLogin();
-      //}
-      userObject = await IdentityLogin();
+      } else if (provider === "Identity") {
+        userObject = await IdentityLogin();
+      }
+      // userObject = await IdentityLogin();
       console.log("User Object:", userObject);
       const identity = await userObject.agent._identity;
       const principal = Principal.fromText(userObject.principal);
