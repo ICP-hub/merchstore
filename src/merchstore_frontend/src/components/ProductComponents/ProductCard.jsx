@@ -52,48 +52,52 @@ const ProductCard = ({ product }) => {
   }, [backend, product]);
 
   const AddToCart = async () => {
-    try {
-      listCarts();
-      setLoading(true);
-      setAddedToCart(true);
+    if (isConnected) {
+      try {
+        listCarts();
+        setLoading(true);
+        setAddedToCart(true);
 
-      let cartId;
-      let isProductInCart;
-      let quantity1;
+        let cartId;
+        let isProductInCart;
+        let quantity1;
 
-      carts?.some((item) => {
-        if (item?.product_slug === product?.slug) {
-          isProductInCart = true;
+        carts?.some((item) => {
+          if (item?.product_slug === product?.slug) {
+            isProductInCart = true;
 
-          quantity1 = item?.quantity;
-          console.log(quantity1, "befewb");
-          return true; // Stop iterating once the item is found
+            quantity1 = item?.quantity;
+            console.log(quantity1, "befewb");
+            return true; // Stop iterating once the item is found
+          }
+          return false;
+        });
+        quantity1 = quantity1 + 1;
+        console.log(quantity1, "befssfsfwb");
+
+        const res = await backend.addtoCartItems(
+          product.slug,
+          product.variantSize[0].size,
+          product.variantColor[0].color,
+          quantity
+        );
+        console.log(res, "add to cart response");
+        console.log(res?.ok[0]?.userprincipal?.toText(), "principal");
+
+        if ("ok" in res) {
+          toast.success("Item added to cart");
+        } else {
+          // Log an error if the response does not have "ok" property
+          console.error("Unexpected response from backend:", res);
         }
-        return false;
-      });
-      quantity1 = quantity1 + 1;
-      console.log(quantity1, "befssfsfwb");
-
-      const res = await backend.addtoCartItems(
-        product.slug,
-        product.variantSize[0].size,
-        product.variantColor[0].color,
-        quantity
-      );
-      console.log(res, "add to cart response");
-      console.log(res?.ok[0]?.userprincipal?.toText(), "principal");
-
-      if ("ok" in res) {
-        toast.success("Item added to cart");
-      } else {
-        // Log an error if the response does not have "ok" property
-        console.error("Unexpected response from backend:", res);
+      } catch (error) {
+        // Log the error for debugging
+        console.error("An error occurred adding items to cart:", error);
+      } finally {
+        setLoading(false);
       }
-    } catch (error) {
-      // Log the error for debugging
-      console.error("An error occurred adding items to cart:", error);
-    } finally {
-      setLoading(false);
+    } else {
+      toast.error("Please login first");
     }
   };
   const buyNowHandler = async () => {
@@ -190,6 +194,7 @@ const ProductCard = ({ product }) => {
       console.log(res);
       if ("ok" in res) {
         toast.success("The product has been removed to your wishlist.");
+        setProductInLocalWishlist(false);
         listWishlists();
         //window.location.reload()
       }

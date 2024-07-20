@@ -1,244 +1,151 @@
-import React from "react";
-import { useState, useEffect } from "react";
+import React, { useEffect } from "react";
+import { useState } from "react";
 import Header from "../components/common/Header.jsx";
 import ScrollToTop from "../components/common/ScrollToTop.jsx";
 import AnimationView from "../components/common/AnimationView.jsx";
 import Footer from "../components/common/Footer.jsx";
-
-import { HiOutlinePlus } from "react-icons/hi2";
-import { HiOutlineMinus } from "react-icons/hi2";
-import Button from "../components/common/Button.jsx";
-import toast from "react-hot-toast";
-import { GoCheckCircle } from "react-icons/go";
+import { RadioGroup } from "@headlessui/react";
+import { FaArrowLeft } from "react-icons/fa";
+import placeHolderImage from "../assets/placeholderImg-Small.jpeg";
 import {
   HiCheckBadge,
   HiCheckCircle,
   HiOutlineTrash,
   HiTrash,
 } from "react-icons/hi2";
-import { FcOk } from "react-icons/fc";
+import { HiOutlinePlus } from "react-icons/hi2";
+import { HiOutlineMinus } from "react-icons/hi2";
+import Button from "../components/common/Button.jsx";
+import { Link, useNavigate } from "react-router-dom";
+import CartApiHandler from "../apiHandlers/CartApiHandler.jsx";
+import ProductApiHandler from "../apiHandlers/ProductApiHandler.jsx";
+import { getCartItemDetails } from "../apiHandlers/cartUtils.js";
+import UserAddressApiHandler from "../apiHandlers/UserAddressApiHandler.jsx";
+import NoImage from "../assets/placeholderImg-Small.jpeg";
 import { TailSpin } from "react-loader-spinner";
 import EmptyCart from "../components/ProductComponents/EmptyCart.jsx";
-
-import NoImage from "../assets/product/p1-front.jpg";
+import toast from "react-hot-toast";
 import { useAuth, useBackend } from "../auth/useClient.jsx";
-import Total from "../components/common/Total.jsx";
 import Modal1 from "../components/common/Styles/Modal1.jsx";
-import { LuTrash } from "react-icons/lu";
 import TabChanges from "../components/Tabchanges.jsx";
 import IcpLogo from "../assets/IcpLogo.jsx";
-import placeholderImg from "../assets/placeholderImg-Small.jpeg";
-import { Navigate } from "react-router-dom";
-import { useNavigate } from "react-router-dom";
-
+import LoadingScreen from "../components/common/LoadingScreen.jsx";
+import { LuTrash } from "react-icons/lu";
 /* ----------------------------------------------------------------------------------------------------- */
-/*  @ main cartpage Container
+/*  @ Main checkout Container
 /* ----------------------------------------------------------------------------------------------------- */
-
 const CartPage = () => {
   return (
-    <AnimationView>
-      <ScrollToTop />
-      <Header title={"CART"} />
-      <Cart></Cart>
-
-      <Footer></Footer>
-    </AnimationView>
+    <>
+      <AnimationView>
+        <ScrollToTop />
+        <Header title={"Cart"} />
+        <Cart />
+        <Footer></Footer>
+      </AnimationView>
+    </>
   );
 };
-/* ----------------------------------------------------------------------------------------------------- */
-/*  @ cart  Container
-/* ----------------------------------------------------------------------------------------------------- */
 
+// Payment methods
+const pMethod = [
+  {
+    name: "ICP",
+    value: "icp",
+    currency: "icp",
+  },
+  {
+    name: "CKBTC",
+    value: "ckbtc",
+    currency: "btc",
+  },
+  /* {
+    name: "Fiat Payment",
+    value: "fiat-payment",
+  }, */
+  // {
+  //   name: "Pay with paypal",
+  //   value: "paypal-payment",
+  // },
+];
+
+/* ----------------------------------------------------------------------------------------------------- */
+/*  @ checkout Container
+/* ----------------------------------------------------------------------------------------------------- */
 const Cart = () => {
-  const [loading, setLoading] = useState(true);
-  const [cartItems, setCartItems] = useState([]);
-  const { principal, isConnected, backend } = useAuth();
-  const [product, getProduct] = useState([]);
-  const [id, setIds] = useState("");
-  const [quantity, setQuantity] = useState();
-  const [carts, setCarts] = useState([]);
-  const [isQuantityChanged, setIsQuantityChanged] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
-  const [updateSuccess, setUpdateSuccess] = useState(false);
-  const [loadingItemId, setLoadingItemId] = useState(null);
-  const [color, setColor] = useState("");
-
-  const navigate = useNavigate();
-  const [size, setSize] = useState("");
-  const [selectedItemIndex, setSelectedItemIndex] = useState(null);
-  const [errorImage, setErrorImage] = useState(false);
-  const handleError = () => {
-    setErrorImage(true);
-  };
-
+  const {
+    getCallerCartItems,
+    orderPlacement,
+    cartItems,
+    shippingAmount,
+    getShippingAmount,
+  } = CartApiHandler();
+  const { productList, getProductList } = ProductApiHandler(0);
+  const [paymentMethod, setPaymentMethod] = useState(pMethod[0]);
+  const [finalCart, setFinalCart] = useState(null);
+  const [userAddress, setUserAddress] = useState(null);
+  const [isChecked, setIsChecked] = useState(false);
+  const [isFinalCartLoading, setIsFinalCartLoading] = useState(true);
+  const [totalPriceNQty, setTotalPriceNQty] = useState(null);
+  const [updatedPriceNQty, setUpdatedPriceNQty] = useState(null);
+  const [successDelete, setSuccessDelete] = useState(true);
+  const [exchange, setExchange] = useState(1);
+  const [currencyLoad, setCurrencyLoad] = useState(true);
   // const { backend } = useBackend();
-  // States for modal : ClearAll
+  const { backend } = useAuth();
+  const { CheckoutPageLoader } = LoadingScreen();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [successClearAll, setSuccessClearAll] = useState(true);
   const [clearCartLoad, setClearCartLoad] = useState(false);
   const [flag, setFlag] = useState(false);
   const [empty, setEmpty] = useState(false);
+  const navigate=useNavigate();
   const openModal = () => {
     setIsModalOpen(true);
   };
   const closeModal = () => {
     setIsModalOpen(false);
   };
-  /************ Modal End */
 
+  const cartItemDetails = getCartItemDetails(cartItems, productList);
+  // console.log("cartItemDetails", cartItemDetails);
+  // console.log("finalCart", finalCart);
   const pathsForTabChanges = ["Home", "cart"];
 
-  const getCartlist = async () => {
-    try {
-      setLoading(true);
-      const item = await backend.getCallerCartItems(10, 0);
-
-      console.log(item.data);
-      const formatColor = item.data.map((item) => ({
-        color: item.color,
-      }));
-      setColor(formatColor);
-      const formatSize = item.data.map((item) => ({
-        size: item.size,
-      }));
-
-      setSize(formatSize);
-
-      const formatQuantity = item.data.map((item) => ({
-        quantity: item.quantity,
-      }));
-      setQuantity(formatQuantity);
-
-      const formattedItems = item.data.map((item) => ({
-        slug: item.product_slug,
-      }));
-
-      // Update state with the formatted items array
-      setCartItems(formattedItems);
-      console.log(formattedItems);
-
-      if (item) {
-        setCarts(item.data);
-        console.log(item.data);
-      }
-    } catch (error) {
-      setEmpty(true);
-      console.error("Error listing cart:", error);
-    } finally {
+  // Increase quantity and price
+  const handleIncrease = (index) => {
+    const updatedCart = [...finalCart];
+    updatedCart[index].quantity += 1;
+    updatedCart[index].variantPriceBasedOnQty =
+      updatedCart[index].variantPrice * updatedCart[index].quantity;
+    updatedCart[index].variantSellPriceBasedOnQty =
+      updatedCart[index].variantSellPrice * updatedCart[index].quantity;
+    setFinalCart(updatedCart);
+    setIsChecked(index);
+  };
+  // Decrease quantity and price
+  const handleDecrease = (index) => {
+    if (finalCart[index].quantity > 1) {
+      const updatedCart = [...finalCart];
+      updatedCart[index].quantity -= 1;
+      updatedCart[index].variantPriceBasedOnQty =
+        updatedCart[index].variantPrice * updatedCart[index].quantity;
+      updatedCart[index].variantSellPriceBasedOnQty =
+        updatedCart[index].variantSellPrice * updatedCart[index].quantity;
+      setFinalCart(updatedCart);
+      setIsChecked(index);
     }
   };
-
-  const getProductCartlist = async () => {
-    try {
-      setLoading(true);
-      const productPromises = cartItems.map(async (productId) => {
-        const productResponse = await backend.getProduct(productId.slug);
-        return productResponse.ok; // Assuming `ok` property contains the product details
-      });
-
-      // Wait for all promises to resolve
-      const products = await Promise.all(productPromises);
-
-      getProduct(products);
-
-      console.log(products);
-
-      // Access and log the title property for each product
-    } catch (error) {
-      setEmpty(true);
-      console.error("Error while getting cart ", error);
-    } finally {
-      setLoading(false);
-    }
-  };
-  useEffect(() => {
-    getCartlist();
-  }, [backend, successClearAll]);
-
-  const increment = (index) => {
-    setFlag(true);
-    setQuantity((prevQuantities) => {
-      const updatedQuantities = [...prevQuantities];
-      updatedQuantities[index] = {
-        ...updatedQuantities[index],
-        quantity: updatedQuantities[index].quantity + 1,
-      };
-      setIsQuantityChanged(true);
-      setSelectedItemIndex(index);
-      return updatedQuantities;
-    });
-  };
-
-  const decrement = (index) => {
-    setFlag(true);
-    setQuantity((prevQuantities) => {
-      if (prevQuantities[index].quantity > 1) {
-        const updatedQuantities = [...prevQuantities];
-        updatedQuantities[index] = {
-          ...updatedQuantities[index],
-          quantity: updatedQuantities[index].quantity - 1,
-        };
-        setIsQuantityChanged(true);
-        setSelectedItemIndex(index);
-        return updatedQuantities;
-      }
-      return prevQuantities;
-    });
-  };
-
-  const deleteCart = async (id, color, size) => {
-    try {
-      console.log(id, size, color);
-      const remove = await backend.deleteCartItems(id, size, color);
-      if (remove) {
-        getCartlist();
-        getProductCartlist();
-
-        toast.success("item removed successfully");
-      }
-      console.log(remove);
-    } catch (error) {
-      console.error("deletion cannot be performed", error);
-    }
-  };
-  useEffect(() => {
-    if (cartItems !== undefined) {
-      getProductCartlist();
-    }
-  }, [backend, cartItems]);
-
-  const updateQuantity = async (id, quantity, color, size) => {
-    try {
-      setLoadingItemId(id);
-      setIsLoading(true);
-      // Your update logic here
-      const res = await backend.updateCartItems(id, quantity, color, size);
-      setUpdateSuccess(true);
-
-      toast.success("Quantity changed");
-      setUpdateSuccess(true);
-    } catch (error) {
-      console.error("Error updating quantity:", error);
-      setUpdateSuccess(false);
-    } finally {
-      setIsLoading(false);
-      setIsQuantityChanged(false);
-      setUpdateSuccess(false);
-      setFlag(false);
-    }
-  };
-
+  console.log(finalCart, "final cart");
   const clearAll = async () => {
     try {
-      setLoading(true);
+      setIsFinalCartLoading(true);
       setClearCartLoad(true);
       const res = await backend.clearallcartitmesbyprincipal();
 
       if ("ok" in res) {
         console.log(res);
 
-        getCartlist();
         toast.success("All items are removed");
         navigate("/");
       } else {
@@ -249,62 +156,254 @@ const Cart = () => {
     } finally {
       setClearCartLoad(false);
       setSuccessClearAll(false);
-      getCartlist();
-      setLoading(false);
+
+      setIsFinalCartLoading(false);
     }
   };
 
-  const [totalPrice, setTotalPrice] = useState(0);
-  useEffect(() => {
-    // Calculate the total price based on the prices of items in the cart
-    const newTotalPrice = product.reduce(
-      (acc, item, index) =>
-        acc +
-        (item.variantColor.find(
-          (variant) => variant.color === color[index]?.color
-        )?.variant_sale_price || 0) *
-          quantity[index]?.quantity,
-      0
-    );
+  // Update total price and qty
+  // Update Cart price and quantity on clicking check
+  const updateTotal = () => {
+    setUpdatedPriceNQty(totalPriceNQty);
+  };
 
-    setTotalPrice(newTotalPrice.toFixed(2));
-  }, [product, updateSuccess]);
+  // Required fields to pass for orderplacement
+  const updateProductsForPlacement = (products) => {
+    return products.map((product) => ({
+      id: product.orderId,
+      img: product.img1,
+      size: product.size,
+      title: product.product.title,
+      color: product.color,
+      sale_price: Number(product.variantSellPrice.toFixed(2)),
+      quantity: product.quantity,
+    }));
+  };
+
+  const getExchangeRate = async () => {
+    const paymentOpt = { Cryptocurrency: null };
+    // const paymentOpt1 = { Cryptocurrency: null };
+    try {
+      setCurrencyLoad(true);
+      const res = await backend.get_exchange_rates(
+        { class: paymentOpt, symbol: "icp" },
+        { class: paymentOpt, symbol: paymentMethod.currency }
+      );
+      // console.log("Exchange rate first Response ", res);
+      const exchangeRate =
+        parseInt(res?.Ok?.rate) / Math.pow(10, res?.Ok?.metadata?.decimals);
+      // console.log("Exchange rate ", exchangeRate);
+      setExchange(exchangeRate);
+    } catch (error) {
+      console.log(error);
+    } finally {
+      // Loading
+      setCurrencyLoad(false);
+    }
+  };
+
+  // console.log("exchange state ", exchange);
+  // console.log("total Price will be ", priceWithShippingAmount / exchange);
+
+  // Proceed order placement
+  const proceed = () => {
+    if (isChecked !== false) {
+      toast.error("You need to update the cart before proceed");
+      return;
+    }
+    const { totalPrice } = totalPriceNQty;
+    const products = updateProductsForPlacement(finalCart);
+    const shippingAddress = userAddress;
+    const totalAmount = (totalPrice + shippingAmount) / exchange;
+    const shippingCost = shippingAmount / exchange;
+    const subTotal = totalPrice / exchange;
+    const payment = paymentMethod.value;
+    orderPlacement(
+      products,
+      shippingAddress,
+      totalAmount,
+      subTotal,
+      payment,
+      shippingCost
+    );
+  };
+
+  // Effect on get exchange
+  useEffect(() => {
+    getExchangeRate();
+  }, [paymentMethod]);
+
+  // Effect on initial Load : productlist , cart items
+  useEffect(() => {
+    getProductList();
+    getCallerCartItems();
+    getShippingAmount();
+  }, [successDelete, backend]);
+
+  // Set Initial Prices
+  useEffect(() => {
+    if (cartItemDetails !== undefined) {
+      setFinalCart(cartItemDetails);
+      const { totalPrice, totalQuantity } = cartItemDetails.reduce(
+        (totals, cartItem) => {
+          totals.totalPrice += cartItem.variantSellPriceBasedOnQty;
+          totals.totalQuantity += cartItem.quantity;
+          return totals;
+        },
+        { totalPrice: 0, totalQuantity: 0 }
+      );
+
+      setUpdatedPriceNQty({ totalPrice, totalQuantity });
+      // Loading : till all the data gather from backend
+      const timeoutLoad = setTimeout(() => {
+        setIsFinalCartLoading(false);
+      }, 3000);
+      return () => clearTimeout(timeoutLoad);
+    }
+  }, [cartItems, productList, backend]);
+
+  // Effect on price and quantity
+  useEffect(() => {
+    if (finalCart && finalCart.length > 0) {
+      const { totalPrice, totalQuantity } = finalCart.reduce(
+        (totals, cartItem) => {
+          totals.totalPrice += cartItem.variantSellPriceBasedOnQty;
+          totals.totalQuantity += cartItem.quantity;
+          return totals;
+        },
+        { totalPrice: 0, totalQuantity: 0 }
+      );
+
+      setTotalPriceNQty({ totalPrice, totalQuantity });
+    }
+  }, [finalCart, isFinalCartLoading, backend]);
+
+  // console.log("finalcart", finalCart);
 
   return (
-    <>
-      <div className="container mx-auto px-6">
-        <TabChanges paths={pathsForTabChanges} />
-      </div>
-      {loading ? (
-        <div className="container mx-auto mt-4 px-6 flex items-center md:items-start justify-between md:flex-row flex-col">
-          <div className="   rounded-xl mb-3 mt-4 grid grid-cols-1 gap-3  md:w-[70%]">
-            {[...Array(3)].map((_, index) => (
-              <div
-                className="rounded-xl xl:flex justify-between  border-2 border-gray-200  items-center gap-2"
-                key={index}
-              >
-                <div className="flex justify-start items-start gap-2 mt-3">
-                  <div className="w-24  h-24 mb-2  bg-gray-300 rounded-lg ml-2 animated-pulse"></div>
-                  <div className="flex flex-col mt-2">
-                    <h4 className="w-[75px] h-[20px] rounded-full bg-gray-300 animated-pulse mb-1"></h4>
-                    <h4 className="w-[150px] h-[25px] rounded-full bg-gray-300 animated-pulse mb-2"></h4>
-                    <div className="flex gap-2">
-                      <h4 className="w-[60px] h-[15px] rounded-full bg-gray-300 animated-pulse"></h4>
-                      <h4 className="w-[60px] h-[15px] rounded-full bg-gray-300 animated-pulse"></h4>
-                    </div>
-                  </div>
+    <div className="container mx-auto p-6 max-md:px-2">
+      <TabChanges paths={pathsForTabChanges} />
+      {isFinalCartLoading ? (
+        <div className="flex gap-4 tracking-wider max-md:flex-col">
+          <div className="flex flex-col gap-4 flex-1">
+            <div className="flex items-end justify-end border-2 border-gray-300 mt-2   rounded-xl   p-5 w-[100%]">
+              <Button className="bg-black rounded-full text-sm text-white px-3 py-2">
+                Clear All
+              </Button>
+            </div>
+            <div className="border-2 rounded-2xl p-6 flex max-lg:flex-col">
+              <div className="flex gap-4 flex-1">
+                <div className="flex p-1 border border-gray-300 rounded-xl">
+                  <img
+                    src={NoImage}
+                    alt="_blank"
+                    className="max-w-24 max-h-24 object-contain rounded-xl"
+                  />
                 </div>
-                <div className="flex flex-col justify-between xl:items-end h-full mt-12 mr-2 xl:mb-0 mb-2">
-                  <div className="flex flex-col justify-end items-end gap-1">
-                    <h4 className="w-[80px] h-[20px] rounded-full bg-gray-300 animated-pulse"></h4>
-                    <h4 className="w-[80px] h-[20px] rounded-full bg-gray-300 animated-pulse"></h4>
-                    <div className="w-[130px] h-[30px] rounded-full bg-gray-300 animate-pulse"></div>
-                  </div>
+                <div className="flex flex-col gap-2 w-full">
+                  <span className="border-2 px-2 py-1 text-xs uppercase font-semibold w-3/12 bg-gray-300 h-5 rounded-md animate-pulse"></span>
+                  <p className="text-lg font-semibold capitalize flex gap-1 w-full">
+                    <span className="w-4/12 bg-gray-300 h-5 rounded-md animate-pulse"></span>
+                    <span className="w-6/12 bg-gray-300 h-5 rounded-md animate-pulse"></span>
+                    <span className="w-2/12 bg-gray-300 h-5 rounded-md animate-pulse"></span>
+                    <span className="w-5/12 bg-gray-300 h-5 rounded-md animate-pulse"></span>
+                  </p>
+                  <span className="flex gap-4">
+                    <p className="capitalize text-xs flex gap-1 items-center">
+                      <span className="w-6 bg-gray-300 h-3 rounded-md animate-pulse"></span>
+                      <span className="w-2 bg-gray-300 h-3 rounded-md animate-pulse"></span>
+                    </p>
+                    <p className="capitalize text-xs flex gap-1 items-center">
+                      <span className="w-6 bg-gray-300 h-3 rounded-md animate-pulse"></span>
+                      <span className="w-6 bg-gray-300 h-3 rounded-md animate-pulse"></span>
+                    </p>
+                  </span>
                 </div>
               </div>
-            ))}
+              <div className="flex justify-end flex-col gap-2 items-end">
+                <div className="flex gap-4 items-center">
+                  <p className="font-semibold text-2xl flex items-center gap-1 w-10 bg-gray-300 h-6 rounded-md animate-pulse"></p>
+                  <p className="line-through text-gray-500 w-6 bg-gray-300 h-4 rounded-md animate-pulse"></p>
+                </div>
+                <div className="flex gap-4 items-center w-4/12 h-6 bg-gray-300 rounded-md animate-pulse"></div>
+              </div>
+            </div>
+            <div className="border-2 rounded-2xl p-6 flex max-lg:flex-col">
+              <div className="flex gap-4 flex-1">
+                <div className="flex p-1 border border-gray-300 rounded-xl">
+                  <img
+                    src={NoImage}
+                    alt="_blank"
+                    className="max-w-24 max-h-24 object-contain rounded-xl"
+                  />
+                </div>
+                <div className="flex flex-col gap-2 w-full">
+                  <span className="border-2 px-2 py-1 text-xs uppercase font-semibold w-3/12 bg-gray-300 h-5 rounded-md animate-pulse"></span>
+                  <p className="text-lg font-semibold capitalize flex gap-1 w-full">
+                    <span className="w-4/12 bg-gray-300 h-5 rounded-md animate-pulse"></span>
+                    <span className="w-6/12 bg-gray-300 h-5 rounded-md animate-pulse"></span>
+                    <span className="w-2/12 bg-gray-300 h-5 rounded-md animate-pulse"></span>
+                    <span className="w-5/12 bg-gray-300 h-5 rounded-md animate-pulse"></span>
+                  </p>
+                  <span className="flex gap-4">
+                    <p className="capitalize text-xs flex gap-1 items-center">
+                      <span className="w-6 bg-gray-300 h-3 rounded-md animate-pulse"></span>
+                      <span className="w-2 bg-gray-300 h-3 rounded-md animate-pulse"></span>
+                    </p>
+                    <p className="capitalize text-xs flex gap-1 items-center">
+                      <span className="w-6 bg-gray-300 h-3 rounded-md animate-pulse"></span>
+                      <span className="w-6 bg-gray-300 h-3 rounded-md animate-pulse"></span>
+                    </p>
+                  </span>
+                </div>
+              </div>
+              <div className="flex justify-end flex-col gap-2 items-end">
+                <div className="flex gap-4 items-center">
+                  <p className="font-semibold text-2xl flex items-center gap-1 w-10 bg-gray-300 h-6 rounded-md animate-pulse"></p>
+                  <p className="line-through text-gray-500 w-6 bg-gray-300 h-4 rounded-md animate-pulse"></p>
+                </div>
+                <div className="flex gap-4 items-center w-4/12 h-6 bg-gray-300 rounded-md animate-pulse"></div>
+              </div>
+            </div>
+            <div className="border-2 rounded-2xl p-6 flex max-lg:flex-col">
+              <div className="flex gap-4 flex-1">
+                <div className="flex p-1 border border-gray-300 rounded-xl">
+                  <img
+                    src={NoImage}
+                    alt="_blank"
+                    className="max-w-24 max-h-24 object-contain rounded-xl"
+                  />
+                </div>
+                <div className="flex flex-col gap-2 w-full">
+                  <span className="border-2 px-2 py-1 text-xs uppercase font-semibold w-3/12 bg-gray-300 h-5 rounded-md animate-pulse"></span>
+                  <p className="text-lg font-semibold capitalize flex gap-1 w-full">
+                    <span className="w-4/12 bg-gray-300 h-5 rounded-md animate-pulse"></span>
+                    <span className="w-6/12 bg-gray-300 h-5 rounded-md animate-pulse"></span>
+                    <span className="w-2/12 bg-gray-300 h-5 rounded-md animate-pulse"></span>
+                    <span className="w-5/12 bg-gray-300 h-5 rounded-md animate-pulse"></span>
+                  </p>
+                  <span className="flex gap-4">
+                    <p className="capitalize text-xs flex gap-1 items-center">
+                      <span className="w-6 bg-gray-300 h-3 rounded-md animate-pulse"></span>
+                      <span className="w-2 bg-gray-300 h-3 rounded-md animate-pulse"></span>
+                    </p>
+                    <p className="capitalize text-xs flex gap-1 items-center">
+                      <span className="w-6 bg-gray-300 h-3 rounded-md animate-pulse"></span>
+                      <span className="w-6 bg-gray-300 h-3 rounded-md animate-pulse"></span>
+                    </p>
+                  </span>
+                </div>
+              </div>
+              <div className="flex justify-end flex-col gap-2 items-end">
+                <div className="flex gap-4 items-center">
+                  <p className="font-semibold text-2xl flex items-center gap-1 w-10 bg-gray-300 h-6 rounded-md animate-pulse"></p>
+                  <p className="line-through text-gray-500 w-6 bg-gray-300 h-4 rounded-md animate-pulse"></p>
+                </div>
+                <div className="flex gap-4 items-center w-4/12 h-6 bg-gray-300 rounded-md animate-pulse"></div>
+              </div>
+            </div>
           </div>
-          <div className="border-2 rounded-2xl  md:ml-4 mt-4 md:h-[30%] ">
+          <div className="border-2 rounded-2xl max-h-96">
             <div className="flex flex-col">
               <div className="border-b-2 py-6">
                 <span className="uppercase font-semibold px-6 text-xl text-slate-500">
@@ -313,285 +412,373 @@ const Cart = () => {
               </div>
               <div className="border-b-2 py-2 flex flex-col gap-4 border-dashed">
                 <div className="flex justify-between px-6 gap-2 font-medium">
-                  <p className="bg-gray-300 h-6 w-28 animate-pulse rounded-xl"></p>
-                  <span className="bg-gray-300 h-6 w-12 animate-pulse rounded-xl"></span>
+                  <p className="bg-gray-300 h-6 w-28 animate-pulse rounded-md"></p>
+                  <span className="bg-gray-300 h-6 w-12 animate-pulse rounded-md"></span>
                 </div>
                 <div className="flex justify-between px-6 gap-2 font-medium">
-                  <p className="bg-gray-300 h-6 w-36 animate-pulse rounded-xl"></p>
+                  <p className="bg-gray-300 h-6 w-36 animate-pulse rounded-md"></p>
                   <span className="flex gap-2">
-                    <p className="bg-gray-300 h-6 w-12 animate-pulse rounded-xl"></p>
+                    <p className="bg-gray-300 h-6 w-12 animate-pulse rounded-md"></p>
                   </span>
                 </div>
               </div>
               <div className="border-b-2 py-4 flex flex-col gap-4 border-dashed">
                 <div className="flex justify-between px-6 gap-2 font-bold">
-                  <p className="bg-gray-300 h-6 w-28 animate-pulse rounded-xl"></p>
-                  <span className="bg-gray-300 h-6 w-12 animate-pulse rounded-xl"></span>
+                  <p className="bg-gray-300 h-6 w-28 animate-pulse rounded-md"></p>
+                  <span className="bg-gray-300 h-6 w-12 animate-pulse rounded-md"></span>
                 </div>
               </div>
               <div className="border-b-2 py-4 flex flex-col gap-4 border-dashed">
-                <div className="px-6">
-                  <div className="bg-gray-300 h-6 w-72 animate-pulse rounded-xl"></div>
+                <div className="px-6 flex items-center justify-center">
+                  <div className="bg-gray-300 h-6 w-8/12 animate-pulse rounded-md"></div>
                 </div>
               </div>
-              <div className="p-6"></div>
             </div>
           </div>
         </div>
       ) : (
         <>
-          <div className="container mx-auto mt-4 px-6 flex items-center md:items-start justify-between md:flex-row flex-col">
-            <div className="md:w-[70%] w-[100%] ">
-              <div className="flex items-end justify-end border-2 border-gray-300 mt-2   rounded-xl   p-5 w-[100%]">
-                <Button
-                  className="bg-black rounded-full text-sm text-white px-3 py-2"
-                  onClick={openModal}
-                >
-                  Clear All
-                </Button>
-                {isModalOpen && (
-                  <Modal1
-                    closeModal={closeModal}
-                    title={"Are you sure you want to clear cart ?"}
-                    icon={<LuTrash size={40} color="red" />}
-                    btnClr="red"
-                    actName="Yes,Clear!"
-                    action={clearAll}
-                    isLoading={clearCartLoad}
-                    addOn={successClearAll}
+          {finalCart && finalCart.length > 0 ? (
+            <div className="flex gap-4 tracking-wider max-md:flex-col">
+              <div className="flex flex-col gap-4 flex-1">
+                <div className="flex items-end justify-end border-2 border-gray-300 mt-2   rounded-xl   p-5 w-[100%]">
+                  <Button
+                    className="bg-black rounded-full text-sm text-white px-3 py-2"
+                    onClick={openModal}
+                  >
+                    Clear All
+                  </Button>
+                  {isModalOpen && (
+                    <Modal1
+                      closeModal={closeModal}
+                      title={"Are you sure you want to clear cart ?"}
+                      icon={<LuTrash size={40} color="red" />}
+                      btnClr="red"
+                      actName="Yes,Clear!"
+                      action={clearAll}
+                      isLoading={clearCartLoad}
+                      addOn={successClearAll}
+                    />
+                  )}
+                </div>
+                {finalCart.map((cartItem, index) => (
+                  <CheckoutCard
+                    key={index}
+                    cartItem={cartItem}
+                    handleIncrease={() => handleIncrease(index)}
+                    handleDecrease={() => handleDecrease(index)}
+                    isChecked={isChecked === index}
+                    setIsChecked={setIsChecked}
+                    updateTotal={updateTotal}
+                    successDelete={successDelete}
+                    setSuccessDelete={setSuccessDelete}
                   />
-                )}
-              </div>
-
-              <div>
-                {product.map((item, index) => (
-                  <>
-                    <div className=" md:flex flex-wrap items-center m-0  xl: justify-between border-2 border-gray-300 mt-4  rounded-xl  p-2 py-2 w-[100%]">
-                      <div className="">
-                        <div className="flex m-2">
-                          <img
-                            src={
-                              errorImage
-                                ? placeholderImg
-                                : item.variantColor[0].img1
-                            }
-                            alt=""
-                            className="w-24  h-24 border-2 border-gray-300 bg-gray-400 rounded-lg ml-2"
-                            onError={handleError}
-                          />
-                          <div className="md:mt-6 md:ml-2 ml-4">
-                            <p className="border-2 border-gray-300 px-2 py-1 text-xs uppercase font-medium rounded-full max-w-max">
-                              {item.category}
-                            </p>
-                            <p>{item.title}</p>
-                            <span className="text-xs xl:text:sm">
-                              <span className="text-gray-400 ">size:</span>
-                              {size[index]?.size}
-                            </span>
-                            <span className="text-xs xl:text:sm">
-                              {" "}
-                              <span className="text-gray-400  ">
-                                color:
-                              </span>{" "}
-                              {color[index]?.color}
-                            </span>
-                          </div>
-                        </div>
-                      </div>
-                      <div className="xl:mt-4 mt-2">
-                        <div className="flex flex-col items-end  ">
-                          <s className="text-gray-400 text-xs">
-                            {(() => {
-                              const selectedVariant = item.variantColor.find(
-                                (variant) =>
-                                  variant.color === color[index]?.color
-                              );
-                              return selectedVariant
-                                ? (
-                                    selectedVariant.variant_price *
-                                    quantity[index]?.quantity
-                                  ).toFixed(2)
-                                : null;
-                            })()}
-                          </s>
-
-                          <p className="text-left flex items-center gap-1">
-                            <IcpLogo size={20} />
-                            {(() => {
-                              const selectedVariant = item.variantColor.find(
-                                (variant) =>
-                                  variant.color === color[index]?.color
-                              );
-                              return selectedVariant
-                                ? (
-                                    selectedVariant.variant_sale_price *
-                                    quantity[index]?.quantity
-                                  ).toFixed(2)
-                                : null;
-                            })()}
-                          </p>
-                        </div>
-                        <div className="xl:flex">
-                          <div className="flex items-center justify-end">
-                            <Button
-                              className=""
-                              onClick={() =>
-                                deleteCart(
-                                  cartItems[index].slug,
-                                  color[index]?.color,
-                                  size[index]?.size
-                                )
-                              }
-                            >
-                              <HiOutlineTrash className="w-5 h-5 text-gray-400 m-1 xl:m-4" />
-                            </Button>
-                          </div>
-
-                          <div className="flex items-center justify-end">
-                            <button
-                              className="bg-gray-100 py-2 px-4 border-t border-l border-b border-gray-300 rounded-l-md hover:bg-gray-200"
-                              onClick={() => decrement(index)}
-                            >
-                              <HiOutlineMinus />
-                            </button>
-                            <p className="w-16 text-center py-1 px-2 border-t border-b border-gray-300 bg-gray-100">
-                              {quantity[index]?.quantity}
-                            </p>
-                            <button
-                              className="bg-gray-100 py-2 px-4 border-t border-r border-b border-gray-300 rounded-r-md hover:bg-gray-200"
-                              onClick={() => increment(index)}
-                            >
-                              <HiOutlinePlus />
-                            </button>
-
-                            {isQuantityChanged &&
-                              selectedItemIndex === index && (
-                                <button
-                                  className="ml-2 bg-black text-white rounded-md py-2 px-4"
-                                  onClick={() =>
-                                    updateQuantity(
-                                      id[index].id,
-                                      quantity[index]?.quantity,
-                                      size[index]?.size,
-                                      color[index]?.color
-                                    )
-                                  }
-                                  disabled={isLoading}
-                                >
-                                  {isLoading &&
-                                  loadingItemId === id[index].id ? (
-                                    // Loading spinner
-                                    <TailSpin
-                                      height="20"
-                                      width="20"
-                                      color="white"
-                                      ariaLabel="tail-spin-loading"
-                                      radius="1"
-                                      visible={true}
-                                    />
-                                  ) : (
-                                    // Default icon
-                                    <div className="flex">
-                                      {/* <HiCheckBadge
-                                        color="green"
-                                        size={24}
-                                        className="cursor-pointer"
-                                      />  */}
-                                      Update Cart
-                                    </div>
-                                  )}
-                                </button>
-                              )}
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </>
                 ))}
               </div>
+              <div className="border-2 rounded-2xl max-h-80 lg:min-w-96">
+                <BillSection
+                  updatedPriceNQty={updatedPriceNQty}
+                  proceed={proceed}
+                  shippingAmount={shippingAmount}
+                  paymentMethod={paymentMethod}
+                  exchange={exchange}
+                  currencyLoad={currencyLoad}
+                />
+              </div>
             </div>
-
-            <Total totalPrice={totalPrice} flag={flag} />
-          </div>
+          ) : (
+            <EmptyCart />
+          )}
         </>
       )}
-    </>
+    </div>
   );
 };
 
 /* ----------------------------------------------------------------------------------------------------- */
-/*  @ cart card  Container
+/*  @ <Checkout /> : <CheckoutCard />
 /* ----------------------------------------------------------------------------------------------------- */
+const CheckoutCard = ({
+  cartItem,
+  handleIncrease,
+  handleDecrease,
+  isChecked,
+  setIsChecked,
+  updateTotal,
+  successDelete,
+  setSuccessDelete,
+}) => {
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const { deleteCartItemById, isLoading, updateCart } = CartApiHandler();
+  const [deleteLoad, setDeleteLoad] = useState(false);
+  const [errorImage, setErrorImage] = useState(false);
+  const handleError = () => {
+    setErrorImage(true);
+  };
 
-// const CartItem = ({ item, id }) => {
+  const openModal = () => {
+    setIsModalOpen(true);
+  };
 
-//   return (
-//     <div className=" md:flex flex-wrap items-center m-0  xl: justify-between border border-gray-300 mt-4  rounded-xl  p-2 py-2 w-[100%]">
-//       <div>
-//         <div className="flex m-2">
-//           <input
-//             type="checkbox"
-//             className="form-checkbox h-5 w-5 text-yellow-500  rounded-none"
-//             name="selectItem"
-//           />
-//           <img
-//             src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSNJNcA6I9f85ESkLkHq4HKYJ-CjzIdVXQTL25Am9yjcA&s"
-//             alt=""
-//             className="w-24  h-24 border border-gray-300 bg-gray-400 rounded-lg ml-2"
-//           />
-//           <div className="md:mt-6 md:ml-2 ml-4">
-//             <p className="border border-gray-300 rounded-full w-16 item-center pl-2">
-//               Other
-//             </p>
-//             <p>{item.title}</p>
-//             <span className="text-xs xl:text:sm">
-//               <span className="text-gray-400 ">Type:</span> Stereo
-//             </span>
-//             <span className="text-xs xl:text:sm">
-//               {" "}
-//               <span className="text-gray-400  ">color:</span> Blue
-//             </span>
-//           </div>
-//         </div>
-//       </div>
-//       <div className="xl:mt-4 mt-2">
-//         <div className="flex flex-col items-end  ">
-//           <s className="text-gray-400 text-xs">$50.00</s>
+  const closeModal = () => {
+    setIsModalOpen(false);
+  };
 
-//           <p className="text-left">{item.price}</p>
-//         </div>
-//         <div className="xl:flex">
-//           <div className="flex items-center justify-end">
-//             <Button className="" onClick={() => deleteCart(item.id)}>
-//               <HiOutlineTrash className="w-5 h-5 text-gray-400 m-1 xl:m-4" />
-//             </Button>
-//           </div>
+  const deleteCartItem = () => {
+    deleteCartItemById(
+      cartItem.product.slug,
+      cartItem.size,
+      cartItem.color,
+      setDeleteLoad,
+      setSuccessDelete
+    );
+  };
 
-//           <div className="flex items-center justify-end">
-//             <button
-//               className="bg-gray-100   py-2 px-4 border-t border-l border-b  border-gray-300 rounded-l-md hover:bg-gray-200"
-//               onClick={decrement}
-//             >
-//               <HiOutlineMinus />
-//             </button>
-//             <p
-//               type="text"
-//               className="w-16 text-center  py-1 px-2 border-t border-b border-gray-300   bg-gray-100  "
-//             >
-//               {id[1].id}
-//             </p>
+  const toggleUpdate = () => {
+    updateCart(
+      cartItem.orderId,
+      cartItem.quantity,
+      cartItem.color,
+      cartItem.size
+    );
+    setIsChecked(false);
+    updateTotal();
+  };
 
-//             <button
-//               className="bg-gray-100   py-2 px-4 border-t border-r border-b border-gray-300  rounded-r-md hover:bg-gray-200"
-//               onClick={increment}
-//             >
-//               <HiOutlinePlus />
-//             </button>
-//           </div>
-//         </div>
-//       </div>
-//     </div>
-//   );
-// };
+  return (
+    <div className="border-2 rounded-2xl p-6 flex max-lg:flex-col">
+      <div className="flex gap-4 flex-1">
+        <div className="flex p-1 border border-gray-300 rounded-xl">
+          <img
+            src={errorImage ? placeHolderImage : cartItem.img1}
+            alt="_blank"
+            className="max-w-24 max-h-24 object-contain rounded-xl"
+            onError={handleError}
+          />
+        </div>
+        <div className="flex flex-col gap-2">
+          <span className="border-2 px-2 py-1 text-xs uppercase font-semibold rounded-full max-w-max">
+            {cartItem.product.category}
+          </span>
+          <p className="text-lg font-semibold capitalize">
+            {cartItem.product.title}
+          </p>
+          <span className="flex gap-4">
+            <p className="capitalize text-xs">Size: {cartItem.size}</p>
+            <p className="capitalize text-xs">Color : {cartItem.color}</p>
+          </span>
+        </div>
+      </div>
+      <div className="flex justify-end flex-col gap-2 items-end">
+        <div className="flex gap-4 items-center">
+          <p className="font-semibold text-2xl flex items-center gap-1">
+            <IcpLogo />
+            {cartItem.variantSellPriceBasedOnQty}
+          </p>
+          <p className="line-through text-gray-500">
+            {cartItem.variantPriceBasedOnQty}
+          </p>
+        </div>
+        <div className="flex gap-4 items-center">
+          <Button onClick={openModal}>
+            <HiOutlineTrash size={24} color="grey" />
+          </Button>
+          {isModalOpen && (
+            <Modal1
+              closeModal={closeModal}
+              title={"Are you sure you want to remove ?"}
+              icon={<HiTrash size={40} color="red" />}
+              btnClr="red"
+              actName="Remove"
+              action={deleteCartItem}
+              isLoading={deleteLoad}
+              addOn={successDelete}
+            />
+          )}
+          <div className="flex items-center border rounded-md border-gray-300">
+            <Button
+              className="p-2 border-r border-r-gray-300"
+              onClick={() => handleDecrease()}
+            >
+              <HiOutlineMinus size={18} />
+            </Button>
+            <span className="min-w-16 flex items-center justify-center">
+              {cartItem.quantity}
+            </span>
+            <Button
+              className="p-2 border-l border-l-gray-300"
+              onClick={() => handleIncrease()}
+            >
+              <HiOutlinePlus size={18} />
+            </Button>
+          </div>
+          {isLoading ? (
+            <TailSpin
+              visible={true}
+              height="20"
+              width="20"
+              color="black"
+              ariaLabel="tail-spin-loading"
+              radius="1"
+              wrapperStyle={{}}
+              wrapperclassName=""
+            />
+          ) : (
+            isChecked && (
+              <HiCheckBadge
+                color="green"
+                size={24}
+                className="cursor-pointer"
+                onClick={toggleUpdate}
+              />
+            )
+          )}
+        </div>
+      </div>
+    </div>
+  );
+};
+
+/* ----------------------------------------------------------------------------------------------------- */
+/*  @ <Checkout /> : <BillSection />
+/* ----------------------------------------------------------------------------------------------------- */
+const BillSection = ({
+  updatedPriceNQty,
+  proceed,
+  shippingAmount,
+  paymentMethod,
+  exchange,
+  currencyLoad,
+}) => {
+  const { orderPlacementLoad } = CartApiHandler();
+  // const { backend } = useBackend();
+  // const { backend } = useAuth();
+  // const [exchange, setExchange] = useState(1);
+  // const [currencyLoad, setCurrencyLoad] = useState(true);
+  const priceWithShippingAmount = updatedPriceNQty.totalPrice + shippingAmount;
+
+  // const getExchangeRate = async () => {
+  //   const paymentOpt = { Cryptocurrency: null };
+  //   // const paymentOpt1 = { Cryptocurrency: null };
+  //   try {
+  //     setCurrencyLoad(true);
+  //     const res = await backend.get_exchange_rates(
+  //       { class: paymentOpt, symbol: "icp" },
+  //       { class: paymentOpt, symbol: paymentMethod.currency }
+  //     );
+  //     // console.log("Exchange rate first Response ", res);
+  //     const exchangeRate =
+  //       parseInt(res?.Ok?.rate) / Math.pow(10, res?.Ok?.metadata?.decimals);
+  //     // console.log("Exchange rate ", exchangeRate);
+  //     setExchange(exchangeRate);
+  //   } catch (error) {
+  //     console.log(error);
+  //   } finally {
+  //     // Loading
+  //     setCurrencyLoad(false);
+  //   }
+  // };
+
+  // // console.log("exchange state ", exchange);
+  // // console.log("total Price will be ", priceWithShippingAmount / exchange);
+
+  // useEffect(() => {
+  //   getExchangeRate();
+  // }, [paymentMethod]);
+
+  return (
+    <div className="flex flex-col">
+      <div className="border-b-2 py-6">
+        <span className="uppercase font-semibold px-6 text-xl text-slate-500">
+          Price details
+        </span>
+      </div>
+      <div className="border-b-2 py-2 flex flex-col gap-4 border-dashed">
+        <div className="flex justify-between px-6 gap-2 font-medium">
+          <p className="text-slate-500">
+            Price
+            <span className="italic">
+              ({updatedPriceNQty.totalQuantity}{" "}
+              {updatedPriceNQty.totalQuantity > 1 ? "items" : "item"})
+            </span>
+          </p>
+          <span className="font-bold flex items-center gap-2">
+            {/* <IcpLogo /> */}
+            <span>{paymentMethod.name}</span>
+            {currencyLoad ? (
+              <span className="animate-pulse bg-gray-300 text-gray-300 rounded-md">
+                00.0000
+              </span>
+            ) : (
+              (updatedPriceNQty.totalPrice / exchange).toFixed(4)
+            )}
+          </span>
+        </div>
+        <div className="flex justify-between px-6 gap-2 font-medium">
+          <p className="capitalize text-slate-500">Delivery charges</p>
+          <span className="flex gap-2">
+            <p className="text-green-700 font-bold">
+              {shippingAmount === 0 ? (
+                "Free"
+              ) : (
+                <span className="flex items-center gap-2">
+                  {/* <IcpLogo /> */}
+                  <span>{paymentMethod.name}</span>
+                  {currencyLoad ? (
+                    <span className="animate-pulse bg-gray-300 text-gray-300 rounded-md">
+                      00.0000
+                    </span>
+                  ) : (
+                    (shippingAmount / exchange)?.toFixed(4)
+                  )}
+                </span>
+              )}
+            </p>
+          </span>
+        </div>
+      </div>
+      <div className="border-b-2 py-4 flex flex-col gap-4 border-dashed">
+        <div className="flex justify-between px-6 gap-2 font-bold">
+          <p className="capitalize">Total Payable</p>
+          <span className="flex items-center gap-2">
+            {/* <IcpLogo /> */}
+            <span>{paymentMethod.name}</span>
+            {currencyLoad ? (
+              <span className="animate-pulse bg-gray-300 text-gray-300 rounded-md">
+                00.0000
+              </span>
+            ) : (
+              (priceWithShippingAmount / exchange)?.toFixed(4)
+            )}
+          </span>
+        </div>
+      </div>
+      <div className="p-6 flex w-full">
+        <Button
+          className="p-2 min-w-full min-h-10 text-white border bg-black rounded-full font-medium text-sm relative"
+          onClick={() => proceed()}
+          disabled={orderPlacementLoad}
+        >
+          {orderPlacementLoad ? (
+            <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
+              <TailSpin
+                visible={true}
+                height="20"
+                width="20"
+                color="white"
+                ariaLabel="tail-spin-loading"
+                radius="1"
+                wrapperStyle={{}}
+                wrapperclassName=""
+              />
+            </div>
+          ) : (
+            "Place order"
+          )}
+        </Button>
+      </div>
+    </div>
+  );
+};
 
 export default CartPage;

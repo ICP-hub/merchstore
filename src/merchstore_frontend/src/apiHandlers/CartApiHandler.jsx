@@ -339,10 +339,10 @@ const CartApiHandler = () => {
   };
 
   // Delte Cart Item
-  const deleteCartItemById = async (id, setDeleteLoad, setSuccessDelete) => {
+  const deleteCartItemById = async (id,size,color, setDeleteLoad, setSuccessDelete) => {
     try {
       setDeleteLoad(true);
-      const response = await backend.deleteCartItems(id);
+      const response = await backend.deleteCartItems(id,size,color);
       console.log("Delete cart item response ", response);
       toast.success("Item removed successfully");
     } catch (err) {
