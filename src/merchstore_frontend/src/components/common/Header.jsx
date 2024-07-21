@@ -86,7 +86,7 @@ const Header = ({ title }) => {
     const checkIsAdmin = async () => {
       try {
         if (isConnected) {
-          const res = await backend.isAdmin(Principal.fromText(principal));
+          const res = await backend.isAdmin(principal);
           setIsAdmin(res);
         }
       } catch (error) {
@@ -116,7 +116,7 @@ const Header = ({ title }) => {
     }
   }, [backend, carts]);
 
-/*   useEffect(() => {
+  /*   useEffect(() => {
     let intervalId;
 
     if (!vantaEffect) {

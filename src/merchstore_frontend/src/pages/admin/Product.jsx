@@ -60,6 +60,7 @@ const Products = () => {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [page, setPage] = useState(0);
+  const [statistics, setStatistics] = useState([]);
 
   useEffect(() => {
     listAllProducts();
@@ -67,8 +68,10 @@ const Products = () => {
 
   const listAllProducts = async () => {
     try {
-      const items = await backend.listallProducts(10, page);
+      console.log(backend);
+      const items = await backend.listallProducts(8, 0);
       setProducts(items.data);
+
       console.log(items.data);
     } catch (error) {
       console.error("Error listing all product:", error);
@@ -77,11 +80,29 @@ const Products = () => {
     }
   };
 
+  const totalpage = async () => {
+    try {
+      const res = await backend.getstatisticaldetailforadmin();
+      setStatistics(res.ok);
+    } catch {}
+  };
+  useEffect(() => {
+    totalpage();
+  }, [page]);
+
+  const itemsPerPage = 8; // Number of items per page
+
   const handleNext = () => {
-    setPage(page + 1);
+    const totalPages = statistics.totalProducts
+      ? Math.ceil(parseInt(statistics.totalProducts) / itemsPerPage)
+      : 0;
+    console.log(totalPages);
+    if (page < totalPages - 1) {
+      setPage(page + 1);
+    }
   };
 
-  const handleprevious = () => {
+  const handlePrevious = () => {
     if (page > 0) {
       setPage(page - 1);
     }
@@ -160,7 +181,7 @@ const Products = () => {
               columns={columns}
               data={extractedData}
               handleNext={handleNext}
-              handleprevious={handleprevious}
+              handleprevious={handlePrevious}
               page1={page}
             />
           )}
