@@ -36,9 +36,29 @@ const Categories = () => {
   const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(false);
   const [page, setPage] = useState(0);
-  const handleNext = () => {
-    setPage(page + 1);
+  const [statistics, setStatistics] = useState([]);
+  const totalpage = async () => {
+    try {
+      const res = await backend.getstatisticaldetailforadmin();
+      setStatistics(res.ok);
+    } catch {}
   };
+  useEffect(() => {
+    totalpage();
+  }, [page]);
+
+  const itemsPerPage = 8; // Number of items per page
+
+  const handleNext = () => {
+    const totalPages = statistics.totalCategories
+      ? Math.ceil(parseInt(statistics.totalCategories) / itemsPerPage)
+      : 0;
+    console.log(totalPages);
+    if (page < totalPages) {
+      setPage(page + 1);
+    }
+  };
+
 
   const handleprevious = () => {
     setPage(page - 1);

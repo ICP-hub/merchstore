@@ -17,6 +17,7 @@
   ],
   "dependencies": {
     "@dfinity/auth-client": "^2.0.0",
+    "intl-tel-input": "^23.6.1",
     "three": "^0.161.0",
     "vanta": "^0.5.24"
   },

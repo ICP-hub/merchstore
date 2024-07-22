@@ -30,9 +30,7 @@ const ContactPageContainerMain = () => {
       ? undefined
       : "Please enter a valid email address",
     // Required For Phone ?
-    contact_number: phone.isValidNumberPrecise()
-      ? undefined
-      : "Please Enter a valid phone number",
+    contact_number: phone ? undefined : "Please Enter a valid phone number",
     // Required for message ?
     // message: isNotEmpty(message) ? undefined : "Message is required",
   });

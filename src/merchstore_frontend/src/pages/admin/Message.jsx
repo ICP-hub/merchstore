@@ -42,8 +42,27 @@ const Message = () => {
   const [messages, setMessages] = useState([]);
   const [loading, setLoading] = useState();
   const [page, setPage] = useState(0);
+  const [statistics, setStatistics] = useState([]);
+  const totalpage = async () => {
+    try {
+      const res = await backend.getstatisticaldetailforadmin();
+      setStatistics(res.ok);
+    } catch {}
+  };
+  useEffect(() => {
+    totalpage();
+  }, [page]);
+
+  const itemsPerPage = 8; // Number of items per page
+
   const handleNext = () => {
-    setPage(page + 1);
+    const totalPages = statistics.totalContacts
+      ? Math.ceil(parseInt(statistics.totalContacts) / itemsPerPage)
+      : 0;
+    console.log(totalPages);
+    if (page < totalPages) {
+      setPage(page + 1);
+    }
   };
 
   const handleprevious = () => {
@@ -59,7 +78,7 @@ const Message = () => {
   const listAllMessage = async () => {
     try {
       setLoading(true);
-      const message = await backend.listContacts(1, page);
+      const message = await backend.listContacts(8, page);
       console.log(message.data);
       setMessages(message.data);
     } catch (error) {

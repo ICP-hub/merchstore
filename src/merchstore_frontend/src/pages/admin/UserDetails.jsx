@@ -41,6 +41,7 @@ const UserDetails = () => {
   const [user, setUser] = useState([]);
   const [loading, setLoading] = useState(true);
   const [page, setPage] = useState(0);
+  const [statistics, setStatistics] = useState([]);
   useEffect(() => {
     listusers();
   }, [backend, page]);
@@ -55,8 +56,26 @@ const UserDetails = () => {
       setLoading(false);
     }
   };
+  const totalpage = async () => {
+    try {
+      const res = await backend.getstatisticaldetailforadmin();
+      setStatistics(res.ok);
+    } catch {}
+  };
+  useEffect(() => {
+    totalpage();
+  }, [page]);
+
+  const itemsPerPage = 8; // Number of items per page
+
   const handleNext = () => {
-    setPage(page + 1);
+    const totalPages = statistics.totalUsers
+      ? Math.ceil(parseInt(statistics.totalUsers) / itemsPerPage)
+      : 0;
+    console.log(totalPages);
+    if (page < totalPages) {
+      setPage(page + 1);
+    }
   };
 
   const handleprevious = () => {

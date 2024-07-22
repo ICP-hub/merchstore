@@ -10,7 +10,7 @@ const UserApiHanlder = () => {
   // const { backend } = useBackend();
   const [isLoading, setIsLoading] = useState("");
   const [successfulSubmit, setSuccessfulSubmit] = useState(false);
-  const { backendActor } = useAuth();
+  const { backend } = useAuth();
   // Create Contact
   const createContact = async ({ name, email, contact_number, message }) => {
     // Temporary for contact component
@@ -20,7 +20,7 @@ const UserApiHanlder = () => {
     try {
       setIsLoading(true);
       // console.log(name, email, contact_number, message);
-      await backendActor.createContact({
+      await backend.createContact({
         name,
         email,
         message,
