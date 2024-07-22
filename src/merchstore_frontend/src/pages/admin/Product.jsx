@@ -69,7 +69,7 @@ const Products = () => {
   const listAllProducts = async () => {
     try {
       console.log(backend);
-      const items = await backend.listallProducts(8, 0);
+      const items = await backend.listallProducts(1, page);
       setProducts(items.data);
 
       console.log(items.data);
@@ -90,7 +90,7 @@ const Products = () => {
     totalpage();
   }, [page]);
 
-  const itemsPerPage = 8; // Number of items per page
+  const itemsPerPage = 1; // Number of items per page
 
   const handleNext = () => {
     const totalPages = statistics.totalProducts
