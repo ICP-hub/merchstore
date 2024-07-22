@@ -229,6 +229,7 @@ export const useAuthClient = () => {
         return;
       }
     };
+    // console.log("login status is ", loginStatus);
     if (loginStatus) {
       handlePlugLogin();
     }
@@ -270,7 +271,7 @@ export const useAuthClient = () => {
           setIdentity(identity);
         },
       });
-      if (isConnected && userObject.provider === "Plug") {
+      if (!isConnected && userObject.provider === "Plug") {
         localStorage.setItem("loginStatus", true);
       }
     }
@@ -282,8 +283,8 @@ export const useAuthClient = () => {
       setIsConnected(false);
       setPrincipal(null);
       setIdentity(null);
-      localStorage.setItem("loginStatus", false);
     }
+    localStorage.removeItem("loginStatus");
   };
 
   return {
