@@ -150,6 +150,8 @@ import { PlugLogin, StoicLogin, NFIDLogin, IdentityLogin } from "ic-auth";
 import { createActor } from "../../../../.dfx/local/canisters/merchstore_backend";
 import { Principal } from "@dfinity/principal";
 import { AuthClient } from "@dfinity/auth-client";
+import { CreateActor } from "ic-auth";
+import { idlFactory } from "../../../../.dfx/local/canisters/merchstore_backend/merchstore_backend.did.js";
 
 const AuthContext = createContext();
 
@@ -165,20 +167,22 @@ export const useAuthClient = () => {
 
   // console.log(backendActor, "backend actor");
 
-  const createOptions = {
-    idleOptions: {
-      idleTimeout: 1000 * 60 * 30,
-      disableDefaultIdleCallback: true,
-    },
-  };
+  // const createOptions = {
+  //   idleOptions: {
+  //     idleTimeout: 1000 * 60 * 30,
+  //     disableDefaultIdleCallback: true,
+  //   },
+  // };
 
   useEffect(() => {
     const initAuthClient = async () => {
-      const client = await AuthClient.create(createOptions);
+      const client = await AuthClient.create();
       setAuthClient(client);
       const isConnected = await client.isAuthenticated();
       const identity = client.getIdentity();
       const principal = identity.getPrincipal();
+
+      console.log("client is ", client);
 
       // if (principal.toText() === "2vxsx-fae") {
       //   await logout();
@@ -194,6 +198,7 @@ export const useAuthClient = () => {
         });
         setBackend(backendActor);
       }
+      // const actor = await CreateActor(agent, idlFactory, canisterID);
     };
     initAuthClient();
   }, []);
@@ -216,9 +221,11 @@ export const useAuthClient = () => {
       }
       // userObject = await IdentityLogin();
       console.log("User Object:", userObject);
+      const agent = userObject.agent;
       const identity = await userObject.agent._identity;
       const principal = Principal.fromText(userObject.principal);
-      const actor = createActor(canisterID, { agentOptions: { identity } });
+      // const actor = createActor(canisterID, { agentOptions: { identity } });
+      const actor = await CreateActor(agent, idlFactory, canisterID);
       setBackend(actor);
       setIsConnected(true);
       setPrincipal(principal);
@@ -234,6 +241,8 @@ export const useAuthClient = () => {
       });
     }
   };
+
+  console.log("backend is ", backend);
 
   const disconnect = async () => {
     if (authClient) {
