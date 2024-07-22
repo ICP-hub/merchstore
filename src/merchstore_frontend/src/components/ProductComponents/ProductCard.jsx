@@ -38,7 +38,7 @@ const ProductCard = ({ product }) => {
 
   const listCarts = async () => {
     try {
-      const cart = await backend.getCallerCartItems(10, 0);
+      const cart = await backend.getCallerCartItems(100, 0);
       setCarts(cart.data);
       console.log(cart, "cart items");
     } catch (error) {

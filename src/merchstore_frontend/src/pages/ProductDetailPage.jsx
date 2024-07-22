@@ -167,7 +167,7 @@ const ProductDetail = () => {
     try {
       setLoading4(false);
 
-      const cart = await backend.getCallerCartItems(10, 0);
+      const cart = await backend.getCallerCartItems(100, 0);
       setCarts(cart.data);
     } catch (error) {
       console.error("Error listing carts:", error);
@@ -238,7 +238,7 @@ const ProductDetail = () => {
     try {
       //setLoading4(true)
 
-      const wishlist2 = await backend.listWishlistItems(10, 0);
+      const wishlist2 = await backend.listWishlistItems(100, 0);
       setWishlist(wishlist2.data);
     } catch (error) {
       console.error("Error listing wishlist:", error);
