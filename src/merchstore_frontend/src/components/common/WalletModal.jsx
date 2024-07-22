@@ -10,7 +10,7 @@ const WalletModal = ({ onModalClose }) => {
   const walletOptions = [
     { name: "Plug", image: PlugSvg, provider: "Plug" },
     { name: "NFID", image: NFIDSvg, provider: "NFID" },
-    { name: "Stoic", image: StoicSvg, provider: "Stoic" },
+    // { name: "Stoic", image: StoicSvg, provider: "Stoic" },
     { name: "Internet Identity", image: DfinitySvg, provider: "Identity" },
   ];
 
