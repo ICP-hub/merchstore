@@ -165,6 +165,8 @@ export const useAuthClient = () => {
   const [identity, setIdentity] = useState(null);
   const [authClient, setAuthClient] = useState(null);
 
+  const loginStatus = localStorage.getItem("loginStatus");
+
   // console.log(backendActor, "backend actor");
 
   // const createOptions = {
@@ -181,9 +183,6 @@ export const useAuthClient = () => {
       const isConnected = await client.isAuthenticated();
       const identity = client.getIdentity();
       const principal = identity.getPrincipal();
-
-      console.log("client is ", client);
-
       // if (principal.toText() === "2vxsx-fae") {
       //   await logout();
       //   return;
@@ -192,16 +191,48 @@ export const useAuthClient = () => {
       setIdentity(identity);
       setPrincipal(principal);
 
-      if (createActor) {
+      if (createActor && !loginStatus) {
         const backendActor = createActor(canisterID, {
           agentOptions: { identity },
         });
         setBackend(backendActor);
       }
-      // const actor = await CreateActor(agent, idlFactory, canisterID);
+      // const actor = await CreateActor(identity, idlFactory, canisterID);
+      // setBackend(actor);
     };
     initAuthClient();
   }, []);
+
+  useEffect(() => {
+    const handlePlugLogin = async () => {
+      const plugPrincipal = principal?.toText();
+      if (plugPrincipal === "2vxsx-fae") {
+        let userObject = await PlugLogin(whitelist);
+        const agent = userObject.agent;
+        const identity = await userObject.agent._identity;
+        const principal = Principal.fromText(userObject.principal);
+        const actor = await CreateActor(agent, idlFactory, canisterID);
+        setBackend(actor);
+        setIsConnected(true);
+        setPrincipal(principal);
+        setIdentity(identity);
+
+        await authClient.login({
+          identity,
+          onSuccess: () => {
+            setIsConnected(true);
+            setPrincipal(principal);
+            setIdentity(identity);
+          },
+        });
+      } else {
+        return;
+      }
+    };
+    if (loginStatus) {
+      handlePlugLogin();
+    }
+  }, [principal]);
 
   const login = async (provider) => {
     if (authClient) {
@@ -239,10 +270,11 @@ export const useAuthClient = () => {
           setIdentity(identity);
         },
       });
+      if (isConnected && userObject.provider === "Plug") {
+        localStorage.setItem("loginStatus", true);
+      }
     }
   };
-
-  console.log("backend is ", backend);
 
   const disconnect = async () => {
     if (authClient) {
@@ -250,6 +282,7 @@ export const useAuthClient = () => {
       setIsConnected(false);
       setPrincipal(null);
       setIdentity(null);
+      localStorage.setItem("loginStatus", false);
     }
   };
 
