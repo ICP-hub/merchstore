@@ -535,12 +535,7 @@ const CheckoutCard = ({
   };
 
   const toggleUpdate = () => {
-    updateCart(
-      cartItem.orderId,
-      cartItem.quantity,
-      cartItem.color,
-      cartItem.size
-    );
+    updateCart(cartItem.product.slug, cartItem.quantity, cartItem.color, cartItem.size);
     setIsChecked(false);
     updateTotal();
   };

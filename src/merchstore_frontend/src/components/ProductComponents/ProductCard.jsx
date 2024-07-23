@@ -52,29 +52,37 @@ const ProductCard = ({ product }) => {
   }, [backend, product]);
 
   const AddToCart = async () => {
-    if (isConnected) {
-      try {
-        listCarts();
-        setLoading(true);
-        setAddedToCart(true);
+    try {
+      listCarts();
+      setLoading(true);
+      setAddedToCart(true);
 
-        let cartId;
-        let isProductInCart;
-        let quantity1;
+      let cartId;
+      let isProductInCart;
+      let quantity1;
 
-        carts?.some((item) => {
-          if (item?.product_slug === product?.slug) {
-            isProductInCart = true;
+      carts?.some((item) => {
+        if (item?.product_slug === product?.slug) {
+          isProductInCart = true;
 
-            quantity1 = item?.quantity;
-            console.log(quantity1, "befewb");
-            return true; // Stop iterating once the item is found
-          }
-          return false;
-        });
-        quantity1 = quantity1 + 1;
-        console.log(quantity1, "befssfsfwb");
-
+          quantity1 = item?.quantity;
+          console.log(quantity1, "befewb");
+          return true; // Stop iterating once the item is found
+        }
+        return false;
+      });
+      quantity1 = quantity1 + 1;
+      console.log(quantity1, "befssfsfwb");
+      if (isProductInCart) {
+        const res = await backend.updateCartItems(
+          product.slug,
+          quantity1,
+          product.variantSize[0].size,
+          product.variantColor[0].color
+        );
+        toast.success("item updated successfully");
+        console.log(res);
+      } else {
         const res = await backend.addtoCartItems(
           product.slug,
           product.variantSize[0].size,
@@ -90,14 +98,12 @@ const ProductCard = ({ product }) => {
           // Log an error if the response does not have "ok" property
           console.error("Unexpected response from backend:", res);
         }
-      } catch (error) {
-        // Log the error for debugging
-        console.error("An error occurred adding items to cart:", error);
-      } finally {
-        setLoading(false);
       }
-    } else {
-      toast.error("Please login first");
+    } catch (error) {
+      // Log the error for debugging
+      console.error("An error occurred adding items to cart:", error);
+    } finally {
+      setLoading(false);
     }
   };
   const buyNowHandler = async () => {

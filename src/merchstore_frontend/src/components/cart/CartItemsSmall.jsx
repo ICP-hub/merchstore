@@ -67,6 +67,7 @@ const CartItemsSmall = () => {
     }
   };
 
+  console.log(cartItems);
   useEffect(() => {
     getCartlist();
   }, [backend]);
