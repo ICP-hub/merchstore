@@ -191,7 +191,7 @@ export const useAuthClient = () => {
       setIdentity(identity);
       setPrincipal(principal);
 
-      if (createActor && loginStatus === null) {
+      if (createActor) {
         const backendActor = createActor(canisterID, {
           agentOptions: { identity },
         });
