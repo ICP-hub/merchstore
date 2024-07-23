@@ -205,31 +205,30 @@ export const useAuthClient = () => {
   }, []);
 
   useEffect(() => {
-    if (loginStatus) {
+    if (loginStatus && principal?.toText() === "2vxsx-fae") {
       plugLogin();
     }
-  }, []);
+  }, [principal]);
 
   const plugLogin = async () => {
     let userObject = await PlugLogin(whitelist);
     const agent = userObject.agent;
-    const identity = await userObject.agent._identity;
     const principal = Principal.fromText(userObject.principal);
     const actor = await CreateActor(agent, idlFactory, canisterID);
     setBackend(actor);
     setIsConnected(true);
     setPrincipal(principal);
-    setIdentity(identity);
 
-    await authClient.login({
-      identity,
-      onSuccess: () => {
-        setIsConnected(true);
-        setPrincipal(principal);
-        setIdentity(identity);
-      },
-    });
-    localStorage.setItem("plugLogin", true);
+    // await authClient.login({
+    //   identity,
+    //   onSuccess: () => {
+    //     setIsConnected(true);
+    //     setPrincipal(principal);
+    //   },
+    // });
+    {
+      !loginStatus && localStorage.setItem("plugLogin", true);
+    }
   };
 
   const login = async (provider) => {
