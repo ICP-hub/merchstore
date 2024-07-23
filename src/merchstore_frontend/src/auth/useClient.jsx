@@ -164,9 +164,8 @@ export const useAuthClient = () => {
   const [backend, setBackend] = useState(null);
   const [identity, setIdentity] = useState(null);
   const [authClient, setAuthClient] = useState(null);
-  // const [plugProvider, setPlugProvider] = useState()
 
-  const loginStatus = localStorage.getItem("plugLogin");
+  const loginStatus = localStorage.getItem("loginStatus");
 
   // console.log(backendActor, "backend actor");
 
@@ -192,7 +191,7 @@ export const useAuthClient = () => {
       setIdentity(identity);
       setPrincipal(principal);
 
-      if (createActor && !loginStatus) {
+      if (createActor && loginStatus === null) {
         const backendActor = createActor(canisterID, {
           agentOptions: { identity },
         });
@@ -205,31 +204,35 @@ export const useAuthClient = () => {
   }, []);
 
   useEffect(() => {
-    if (loginStatus && principal?.toText() === "2vxsx-fae") {
-      plugLogin();
+    const handlePlugLogin = async () => {
+      const plugPrincipal = principal?.toText();
+      if (plugPrincipal === "2vxsx-fae") {
+        let userObject = await PlugLogin(whitelist);
+        const agent = userObject.agent;
+        const principal = Principal.fromText(userObject.principal);
+        const actor = await CreateActor(agent, idlFactory, canisterID);
+        setBackend(actor);
+        setIsConnected(true);
+        setPrincipal(principal);
+        setIdentity(identity);
+
+        await authClient.login({
+          agent,
+          onSuccess: () => {
+            setIsConnected(true);
+            setPrincipal(principal);
+            setIdentity(identity);
+          },
+        });
+      } else {
+        return;
+      }
+    };
+    // console.log("login status is ", loginStatus);
+    if (loginStatus) {
+      handlePlugLogin();
     }
   }, [principal]);
-
-  const plugLogin = async () => {
-    let userObject = await PlugLogin(whitelist);
-    const agent = userObject.agent;
-    const principal = Principal.fromText(userObject.principal);
-    const actor = await CreateActor(agent, idlFactory, canisterID);
-    setBackend(actor);
-    setIsConnected(true);
-    setPrincipal(principal);
-
-    // await authClient.login({
-    //   identity,
-    //   onSuccess: () => {
-    //     setIsConnected(true);
-    //     setPrincipal(principal);
-    //   },
-    // });
-    {
-      !loginStatus && localStorage.setItem("plugLogin", true);
-    }
-  };
 
   const login = async (provider) => {
     if (authClient) {
@@ -238,7 +241,9 @@ export const useAuthClient = () => {
         agent: undefined,
         provider: "N/A",
       };
-      if (provider === "Stoic") {
+      if (provider === "Plug") {
+        userObject = await PlugLogin(whitelist);
+      } else if (provider === "Stoic") {
         userObject = await StoicLogin();
       } else if (provider === "NFID") {
         userObject = await NFIDLogin();
@@ -257,14 +262,19 @@ export const useAuthClient = () => {
       setPrincipal(principal);
       setIdentity(identity);
 
-      await authClient.login({
-        identity,
-        onSuccess: () => {
-          setIsConnected(true);
-          setPrincipal(principal);
-          setIdentity(identity);
-        },
-      });
+      if (userObject.provider !== "Plug") {
+        await authClient.login({
+          identity,
+          onSuccess: () => {
+            setIsConnected(true);
+            setPrincipal(principal);
+            setIdentity(identity);
+          },
+        });
+      }
+      if (!isConnected && userObject.provider === "Plug") {
+        localStorage.setItem("loginStatus", true);
+      }
     }
   };
 
@@ -275,7 +285,7 @@ export const useAuthClient = () => {
       setPrincipal(null);
       setIdentity(null);
     }
-    localStorage.removeItem("plugLogin");
+    localStorage.removeItem("loginStatus");
   };
 
   return {
@@ -285,7 +295,6 @@ export const useAuthClient = () => {
     principal,
     backend,
     identity,
-    plugLogin,
   };
 };
 
