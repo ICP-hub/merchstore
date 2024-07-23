@@ -116,7 +116,7 @@ const Header = ({ title }) => {
     }
   }, [backend, carts]);
 
-  /*   useEffect(() => {
+    useEffect(() => {
     let intervalId;
 
     if (!vantaEffect) {
@@ -147,16 +147,16 @@ const Header = ({ title }) => {
     return () => {
       clearInterval(intervalId);
     };
-  }, [vantaEffect]); */
+  }, [vantaEffect]); 
 
   // console.log(carts.length, "carts2");
 
   return (
     <div
-      //ref={myRef}
+      ref={myRef}
       className={`w-full ${
         isHomePage ? `h-[650px] md:h-[650px]` : `h-[250px] md:h-[350px]`
-      } relative z-10 bg-gray-200 bg-cover bg-center bg-no-repeat overflow-hidden bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500`}
+      } relative z-10 bg-gray-200 bg-cover bg-center bg-no-repeat overflow-hidden`}
     >
       <nav className="w-full z-20 bg-transparent fixed top-0">
         <div className="md:container md:mx-auto">
