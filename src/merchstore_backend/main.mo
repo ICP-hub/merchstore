@@ -932,15 +932,17 @@ actor {
     };
 
     // 📍📍📍📍📍
-    public shared func listallProducts(chunksize : Nat , pageNo : Nat) : async {data : [Types.Product]; current_page : Nat; total_pages : Nat} {
-        let index_pages =  Utils.paginate<(Types.SlugId,Index)>(Iter.toArray(products.entries()),chunksize);
+    public shared func listallProducts(chunksize : Nat , pageNo : Nat, is_active : ?Bool,  ) : async {data : [Types.Product]; current_page : Nat; total_pages : Nat} {
+        let index_pages = Utils.paginate<(Types.SlugId,Index)>(Iter.toArray(products.entries()),chunksize);
         
         if (index_pages.size() < pageNo) {
             throw Error.reject("Page not found");
         };
+
         if (index_pages.size() == 0) {
             throw Error.reject("No products found");
         };
+
         let pages_data = index_pages[pageNo];
         var product_list = List.nil<Types.Product>();
         for ((k,v) in pages_data.vals()) {
@@ -948,8 +950,8 @@ actor {
             let product : ?Types.Product = from_candid(product_blob);
             switch(product){
                 case null {
-                    throw Error.reject("no blob found in stable memory for the caller");
-                };
+                    throw Error.reject("no blob found in stable memory for the caller"); 
+           };
                 case(?val){
                     product_list := List.push(val, product_list);
                 };

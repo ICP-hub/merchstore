@@ -82,13 +82,11 @@ func process_character(char : Char) : Char {
             for (j in Iter.range(0, chunkSize -1)) {
                 var index = i * chunkSize + j;
                 if (index < array.size()) {
-                    tempArray := List.push(array[index], tempArray);
+                  tempArray := List.push(array[index],tempArray);
                 };
             };
-            paginationArray := List.push(List.toArray(tempArray), paginationArray);
+          paginationArray := List.push(List.toArray(List.reverse(tempArray)), paginationArray);
         };
-        List.toArray(paginationArray);
+      List.toArray(List.reverse(paginationArray));
     };
-
-
 };
