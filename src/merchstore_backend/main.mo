@@ -931,6 +931,33 @@ actor {
         // If the post is not found, this will return an error as result.
     };
 
+    public shared func search_by_title(chunksize : Nat , page : Nat , is_active :Bool , Title : Text) : async {data : [Types.Product]; current_page : Nat; total_pages : Nat} {
+        var product_list = List.nil<Types.Product>();
+        for ((k,v) in products.entries()) {
+            let product_blob = await stable_get(v, product_state);
+            let product : ?Types.Product = from_candid(product_blob);
+            switch(product){
+                case null {
+                    throw Error.reject("no blob found in stable memory for the caller");
+                };
+                case(?val){
+                    if (val.title == Title and val.active == is_active){
+                        product_list := List.push(val, product_list);
+                    };
+                };
+            };
+        };
+        let index_pages = Utils.paginate<(Types.SlugId,Index)>(List.toArray(product_list),chunksize);
+        if (index_pages.size() < page) {
+            throw Error.reject("Page not found");
+        };
+        if (index_pages.size() == 0) {
+            throw Error.reject("No products found");
+        };
+        let pages_data = index_pages[page];
+        return { data = List.toArray(product_list); current_page = page + 1; total_pages = index_pages.size(); };
+    };
+
     // 📍📍📍📍📍
     public shared ({caller}) func listallProducts(chunksize : Nat , pageNo : Nat, is_active : Bool,  ) : async {data : [Types.Product]; current_page : Nat; total_pages : Nat} {
         let adminstatus = await isAdmin(caller);
