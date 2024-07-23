@@ -335,7 +335,7 @@ const CheckoutCard = ({
 
   const toggleUpdate = () => {
     updateCart(
-      cartItem.orderId,
+      cartItem.product.slug,
       cartItem.quantity,
       cartItem.color,
       cartItem.size
