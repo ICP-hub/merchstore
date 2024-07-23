@@ -6,7 +6,7 @@ import DfinitySvg from "../../assets/wallet-images/dfinity.svg";
 import { useAuth } from "../../auth/useClient";
 
 const WalletModal = ({ onModalClose }) => {
-  const { login } = useAuth();
+  const { login, plugLogin } = useAuth();
   const walletOptions = [
     { name: "Plug", image: PlugSvg, provider: "Plug" },
     { name: "NFID", image: NFIDSvg, provider: "NFID" },
@@ -37,7 +37,9 @@ const WalletModal = ({ onModalClose }) => {
             whileTap="hover"
             variants={animationVar}
             className="px-8 py-3 mr-24 md:mr-32 w-full font-medium text-lg hover:bg-foreground min-w-64"
-            onClick={() => login(wallet.provider)}
+            onClick={() =>
+              wallet.provider === "Plug" ? plugLogin() : login(wallet.provider)
+            }
           >
             <div className="flex items-center space-x-4">
               <img

@@ -9,6 +9,8 @@ const ProductApiHandler = ({ currentPage = 0 }) => {
   // const { backend } = useBackend();
   const { backend } = useAuth();
 
+  console.log("backend is ", backend);
+
   // State variables for product list, loading status, and category list
   const [productList, setProductList] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
