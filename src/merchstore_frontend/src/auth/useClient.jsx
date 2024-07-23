@@ -209,7 +209,6 @@ export const useAuthClient = () => {
       if (plugPrincipal === "2vxsx-fae") {
         let userObject = await PlugLogin(whitelist);
         const agent = userObject.agent;
-        const identity = await userObject.agent._identity;
         const principal = Principal.fromText(userObject.principal);
         const actor = await CreateActor(agent, idlFactory, canisterID);
         setBackend(actor);
@@ -218,7 +217,7 @@ export const useAuthClient = () => {
         setIdentity(identity);
 
         await authClient.login({
-          identity,
+          agent,
           onSuccess: () => {
             setIsConnected(true);
             setPrincipal(principal);
@@ -263,14 +262,16 @@ export const useAuthClient = () => {
       setPrincipal(principal);
       setIdentity(identity);
 
-      await authClient.login({
-        identity,
-        onSuccess: () => {
-          setIsConnected(true);
-          setPrincipal(principal);
-          setIdentity(identity);
-        },
-      });
+      if (userObject.provider !== "Plug") {
+        await authClient.login({
+          identity,
+          onSuccess: () => {
+            setIsConnected(true);
+            setPrincipal(principal);
+            setIdentity(identity);
+          },
+        });
+      }
       if (!isConnected && userObject.provider === "Plug") {
         localStorage.setItem("loginStatus", true);
       }
