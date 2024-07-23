@@ -947,7 +947,7 @@ actor {
                 };
             };
         };
-        let index_pages = Utils.paginate<(Types.SlugId,Index)>(List.toArray(product_list),chunksize);
+        let index_pages = Utils.paginate<(Types.Product)>(List.toArray(product_list),chunksize);
         if (index_pages.size() < page) {
             throw Error.reject("Page not found");
         };
