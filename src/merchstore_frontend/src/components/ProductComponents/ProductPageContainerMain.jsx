@@ -47,7 +47,9 @@ const ProductPageContainerMain = () => {
       setInitialLoad(false);
     }
   }, [getProductList, initialLoad, currentPage, backend]);
-  console.log(currentPage);
+ 
+
+  
 
   return (
     <div className="container mx-auto p-6 rounded-2xl max-md:px-2">

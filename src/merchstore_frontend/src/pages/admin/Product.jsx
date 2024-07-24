@@ -69,7 +69,7 @@ const Products = () => {
   const listAllProducts = async () => {
     try {
       console.log(backend);
-      const items = await backend.listallProducts(8, page);
+      const items = await backend.listallProducts(8, page, true);
       setProducts(items.data);
 
       console.log(items.data);
