@@ -6,5 +6,3 @@ cp src/declarations/merchstore_backend/* .dfx/local/canisters/merchstore_backend
 dfx deploy
 dfx deploy --network ic
 ```
-
-
