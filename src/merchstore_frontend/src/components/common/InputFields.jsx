@@ -118,6 +118,7 @@ const TelephoneInput = ({
           inputMode="numeric"
           pattern="[0-9]*"
           value={phone}
+          required
         />
       </div>
     </div>
