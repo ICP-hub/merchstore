@@ -24,7 +24,7 @@ const useFormValidation = (validationRules) => {
     return errors;
   };
 
-  return { validationErrors, validateForm };
+  return { validationErrors, validateForm, setValidationErrors };
 };
 
 export default useFormValidation;

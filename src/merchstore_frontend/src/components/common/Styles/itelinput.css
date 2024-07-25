@@ -4,13 +4,16 @@
   display: flex !important;
   width: 100% !important;
   height: inherit;
+  border-radius: 50% !important;
+
   /* border-radius: 9999px !important; */
 }
 .iti__flag-container {
-  width: 100px !important;
+  width: 50px !important;
   position: relative !important;
-  /* border-radius: 9999px !important; */
-  /* border: 1px solid; */
+
+  border-radius: 50% !important;
+  border: 1px solid;
 }
 
 /* .iti--show-selected-dial-code .iti__selected-flag {
@@ -31,7 +34,7 @@
 .iti--show-selected-dial-code input.iti__tel-input,
 .iti--show-selected-dial-code input.iti__tel-input[type="text"],
 .iti--show-selected-dial-code input.iti__tel-input[type="tel"] {
-  padding-left: 10px !important;
+  padding-left: 44px !important;
 }
 
 .iti--show-selected-dial-code .iti__selected-flag {

@@ -3,7 +3,6 @@ import intlTelInput from "intl-tel-input";
 import "intl-tel-input/build/css/intlTelInput.css";
 import "intl-tel-input/build/js/utils.js";
 import "./Styles/itelinput.css";
- 
 
 //import { Country, State, City } from "country-state-city";
 
@@ -99,7 +98,7 @@ const TelephoneInput = ({
           type="tel"
           id="phone"
           ref={phoneInputRef}
-          className={`${inputClass} outline-none absolute left-10`}
+          className={`${inputClass} outline-none `}
           disabled={disabled}
           onInput={handleInput}
           inputMode="numeric"

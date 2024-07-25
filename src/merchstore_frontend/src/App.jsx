@@ -246,19 +246,11 @@ const router = createBrowserRouter([
   },
   {
     path: "/admin/messages",
-    element: (
-      <ProtectedAdmin>
-        <Message />
-      </ProtectedAdmin>
-    ),
+    element: <Message />,
   },
   {
     path: "/admin/messages/:id",
-    element: (
-      <ProtectedAdmin>
-        <MessageDetail />
-      </ProtectedAdmin>
-    ),
+    element: <MessageDetail />,
   },
   {
     path: "/admin/shipping",

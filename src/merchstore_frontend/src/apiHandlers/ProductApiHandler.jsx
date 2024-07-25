@@ -3,7 +3,7 @@ import { useAuth } from "../auth/useClient";
 import { useLocation } from "react-router-dom";
 
 // Custom hook: initialize the backend Canister
-const ProductApiHandler = ({ currentPage = 0 }) => {
+const ProductApiHandler = ({ currentPage = 0, category = 0 }) => {
   const { backend } = useAuth();
 
   const [productList, setProductList] = useState(null);
@@ -12,6 +12,7 @@ const ProductApiHandler = ({ currentPage = 0 }) => {
   const [initialProductList, setInitialProductList] = useState([]); // For 'all' filter in category tab
   const [searchResults, setSearchResults] = useState(null);
   const { state } = useLocation();
+  console.log(state);
   /* ----------------------------------------------------------------------------------------------------- */
   /*  @ Product related
   /* ----------------------------------------------------------------------------------------------------- */
@@ -58,21 +59,17 @@ const ProductApiHandler = ({ currentPage = 0 }) => {
   /*  @ Category related
   /* ----------------------------------------------------------------------------------------------------- */
   const searchProductByCategory = async (searchInput) => {
-    if (searchInput === "All") {
-      setIsCategorySearch(false);
-      setProductList(initialProductList);
-      return;
-    }
-
     try {
       setIsLoading(true);
-      console.log(currentPage, "current page");
+      console.log(category, "current  category page");
+
       const productsFound = await backend.search_by_category(
         8,
-        currentPage,
+        category,
         true,
         searchInput
       );
+      console.log(productsFound);
       setProductList(productsFound.data);
     } catch (err) {
       console.error("Error searching by category:", err);
@@ -80,10 +77,9 @@ const ProductApiHandler = ({ currentPage = 0 }) => {
       setIsLoading(false);
     }
   };
-
   useEffect(() => {
     searchProductByCategory();
-  }, [currentPage]);
+  }, [category]);
 
   const getCategoryList = async () => {
     try {
