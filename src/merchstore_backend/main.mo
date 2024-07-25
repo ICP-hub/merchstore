@@ -941,7 +941,7 @@ actor {
                     throw Error.reject("no blob found in stable memory for the caller");
                 };
                 case(?val){
-                    if (val.title == Title and val.active == is_active){
+                    if (Text.contains(val.title, #text Title) == true and val.active == is_active){
                         product_list := List.push(val, product_list);
                     };
                 };
@@ -985,7 +985,7 @@ actor {
         return { data = pages_data; current_page = pageNo + 1; total_pages = index_pages.size(); };
     };
 
-    
+
 
     // 📍📍📍📍📍
     public shared ({caller}) func listallProducts(chunksize : Nat , pageNo : Nat, is_active : Bool,  ) : async {data : [Types.Product]; current_page : Nat; total_pages : Nat} {
