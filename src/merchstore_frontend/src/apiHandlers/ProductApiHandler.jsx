@@ -52,7 +52,7 @@ const ProductApiHandler = ({ currentPage = 0 }) => {
       console.error("Error searching by name:", err);
     }
   };
-  console.log(currentPage);
+  // console.log(currentPage);
 
   /* ----------------------------------------------------------------------------------------------------- */
   /*  @ Category related
@@ -74,6 +74,7 @@ const ProductApiHandler = ({ currentPage = 0 }) => {
         searchInput
       );
       setProductList(productsFound.data);
+      console.log("Product found ", productsFound);
     } catch (err) {
       console.error("Error searching by category:", err);
     } finally {
@@ -81,9 +82,9 @@ const ProductApiHandler = ({ currentPage = 0 }) => {
     }
   };
 
-  useEffect(() => {
-    searchProductByCategory();
-  }, [currentPage]);
+  // useEffect(() => {
+  //   searchProductByCategory();
+  // }, [currentPage]);
 
   const getCategoryList = async () => {
     try {
