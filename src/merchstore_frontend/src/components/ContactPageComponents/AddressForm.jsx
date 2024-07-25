@@ -16,7 +16,7 @@ const AddressForm = ({
 }) => {
   const [formValues, setFormValues] = useState(initialFormValues || {});
   const { createAddress, updateAddress, isLoading } = UserAddressApiHandler();
-  const [phone, setPhone] = useState(null);
+  const [phone, setPhone] = useState(initialFormValues.phone_number);
   const [isSubmitted, setIsSubmitted] = useState(false);
 
   const validationRules = {
@@ -67,7 +67,7 @@ const AddressForm = ({
     }
     const updatedFormValues = {
       ...formValues,
-      phone_number: phone.getNumber(),
+      phone_number: phone,
     };
     console.log(updatedFormValues);
     createAddress(updatedFormValues, setSuccessfulSubmit);

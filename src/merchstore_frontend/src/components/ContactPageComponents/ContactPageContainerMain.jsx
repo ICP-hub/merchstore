@@ -39,7 +39,7 @@ const ContactPageContainerMain = () => {
   const handleCreateContact = (e) => {
     e.preventDefault();
     // Get Phone number fron itl input : check console.log(phone)
-    const contact_number = phone.getNumber();
+    const contact_number = phone;
     const formData = { name, email, contact_number, message };
     // console.log(formData);
     const errors = validateForm(formData);

@@ -56,7 +56,13 @@ const Message = () => {
   const itemsPerPage = 8; // Number of items per page
 
   const handleNext = () => {
-    setPage(page + 1);
+    const totalPages = statistics.totalContacts
+      ? Math.ceil(parseInt(statistics.totalContacts) / itemsPerPage)
+      : 0;
+    console.log(totalPages);
+    if (page < totalPages) {
+      setPage(page + 1);
+    }
   };
 
   const handleprevious = () => {

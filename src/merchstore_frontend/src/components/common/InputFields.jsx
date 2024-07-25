@@ -40,6 +40,7 @@ const CommonInput = ({
 /* ----------------------------------------------------------------------------------------------------- */
 /*  @ Telephone Input Component ITel
 /* ----------------------------------------------------------------------------------------------------- */
+
 const TelephoneInput = ({
   divClass,
   inputClass,
@@ -50,6 +51,7 @@ const TelephoneInput = ({
   error,
 }) => {
   const phoneInputRef = useRef(null);
+  const [phone, setPhoneState] = useState("");
 
   useEffect(() => {
     const iti = intlTelInput(phoneInputRef.current, {
@@ -71,13 +73,25 @@ const TelephoneInput = ({
       iti.setNumber(phoneNumber);
     }
 
+    phoneInputRef.current.addEventListener("countrychange", () => {
+      setPhoneState(iti.getNumber());
+    });
+
     return () => {
       iti.destroy();
     };
-  }, []);
+  }, [phoneNumber, setPhone]);
+
   const handleInput = (event) => {
-    event.target.value = event.target.value.replace(/\D/g, "");
+    const sanitizedValue = event.target.value.replace(/\D/g, "");
+    setPhoneState(sanitizedValue);
   };
+
+  useEffect(() => {
+    if (setPhone) {
+      setPhone(phone);
+    }
+  }, [phone, setPhone]);
 
   return (
     <div>
@@ -103,6 +117,7 @@ const TelephoneInput = ({
           onInput={handleInput}
           inputMode="numeric"
           pattern="[0-9]*"
+          value={phone}
         />
       </div>
     </div>
