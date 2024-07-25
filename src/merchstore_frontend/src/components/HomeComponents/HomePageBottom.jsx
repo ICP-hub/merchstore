@@ -227,12 +227,18 @@ const ExpCategories = () => {
 const CategoryCard = ({ name, category_img }) => {
   // Link from react-router-dom breaking css
   const navigate = useNavigate();
+
+  const navigateAndFilter = () => {
+    navigate("/products");
+    sessionStorage.setItem("category", name);
+  };
+
   return (
     <div
       data-aos="fade-up"
       style={{ backgroundImage: `url(${category_img})` }}
       className={`item-category rounded-2xl bg-cover bg-center bg-no-repeat grayscale hover:grayscale-0 transition duration-300 ease-in-out cursor-pointer`}
-      onClick={() => navigate("/products", { state: name })}
+      onClick={navigateAndFilter}
     >
       <div className="h-full w-full bg-black/50 rounded-2xl flex flex-col justify-center items-center">
         <h4 className="font-semibold text-white text-4xl capitalize ">

@@ -53,7 +53,7 @@ const ProductApiHandler = ({ currentPage = 0, category = 0 }) => {
       console.error("Error searching by name:", err);
     }
   };
-  console.log(currentPage);
+  // console.log(currentPage);
 
   /* ----------------------------------------------------------------------------------------------------- */
   /*  @ Category related
@@ -71,15 +71,17 @@ const ProductApiHandler = ({ currentPage = 0, category = 0 }) => {
       );
       console.log(productsFound);
       setProductList(productsFound.data);
+      console.log("Product found ", productsFound);
     } catch (err) {
       console.error("Error searching by category:", err);
     } finally {
       setIsLoading(false);
     }
   };
-  useEffect(() => {
-    searchProductByCategory();
-  }, [category]);
+
+  // useEffect(() => {
+  //   searchProductByCategory();
+  // }, [currentPage]);
 
   const getCategoryList = async () => {
     try {

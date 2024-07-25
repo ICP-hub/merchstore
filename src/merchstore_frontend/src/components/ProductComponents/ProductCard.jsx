@@ -23,7 +23,7 @@ const ProductCard = ({ product }) => {
   const [loading3, setLoading3] = useState(false);
   const [wishlist, setWishlist] = useState([]);
   // const { backend } = useBackend();
-  console.log(principal, "principal", isConnected);
+  // console.log(principal, "principal", isConnected);
 
   const [isProductInLocalWishlist, setProductInLocalWishlist] = useState(false);
 
