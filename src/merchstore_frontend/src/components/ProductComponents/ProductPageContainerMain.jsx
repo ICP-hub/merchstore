@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import SearchBar from "../common/SearchBar";
 import ProductCard from "./ProductCard";
-import Pagination from "./Pagination";
+// import Pagination from "./Pagination";
 import SmoothList from "react-smooth-list";
 import ProductApiHandler from "../../apiHandlers/ProductApiHandler";
 import NoDataFound from "../common/NoDataFound";
@@ -15,8 +15,9 @@ import Button from "../common/Button";
 /* ----------------------------------------------------------------------------------------------------- */
 const ProductPageContainerMain = () => {
   const [currentPage, setCurrentPage] = useState(0);
-  const { getCategoryList, categoryList } = ProductApiHandler({ currentPage });
+  // const { getCategoryList, categoryList, isLoading } = ProductApiHandler({ currentPage });
   const { backend } = useAuth();
+  const [categoryList, setCategoryList] = useState(null);
   const [productList, setProductList] = useState(null);
   const [productLoad, setProductLoad] = useState(true);
   const [selectedCategory, setSelectedCategory] = useState(
@@ -27,17 +28,26 @@ const ProductPageContainerMain = () => {
   const handlePrevPage = () =>
     setCurrentPage((prev) => (prev > 0 ? prev - 1 : 0));
 
+  const handleCategoryClick = (category) => {
+    setSelectedCategory(category);
+  };
+
   const getProductList = async (category) => {
     sessionStorage.setItem("category", category);
     setProductLoad(true);
     try {
-      const response = await backend.listallProducts(8, currentPage, true);
       if (category === "all") {
-        setProductList(response.data);
+        const response = await backend.listallProducts(8, currentPage, true);
+        setProductList(response);
+        console.log("Product list response ", response);
       } else {
-        const filteredProducts = response.data.filter(
-          (product) => product.category === category
+        const filteredProducts = await backend.search_by_category(
+          8,
+          currentPage,
+          true,
+          selectedCategory
         );
+        console.log("filtered products are ", filteredProducts);
         setProductList(filteredProducts);
       }
     } catch (err) {
@@ -47,84 +57,207 @@ const ProductPageContainerMain = () => {
     }
   };
 
+  // Get Category List
   useEffect(() => {
-    getCategoryList();
-  }, [backend]); // Only run when backend changes
+    const fetchCategoryList = async () => {
+      try {
+        const categoryListResponse = await backend.listCategories(10, 0);
+        setCategoryList(categoryListResponse.data);
+        console.log("Category list response ", categoryListResponse);
+      } catch (err) {
+        console.error("Error fetching category list ", err);
+      }
+    };
+
+    fetchCategoryList();
+  }, [backend]);
 
   useEffect(() => {
-    getProductList(selectedCategory); // Use selectedCategory directly
-  }, [currentPage, backend, selectedCategory]); // Update when any of these change
-
-  const handleCategoryClick = (category) => {
-    setSelectedCategory(category);
-  };
+    getProductList(selectedCategory);
+  }, [currentPage, backend, selectedCategory]);
 
   return (
     <div className="container mx-auto p-6 rounded-2xl max-md:px-2">
-      <div className="flex max-md:flex-col">
-        <div className="space-y-4 min-w-60">
-          <h1 className="font-semibold text-lg">Categories</h1>
+      <ProductPageContainerTopSearch />
+      <ProductPageContainerMid
+        categoryList={categoryList}
+        selectedCategory={selectedCategory}
+        onCategoryClick={handleCategoryClick}
+        onProductLoad={productLoad}
+        productList={productList}
+        handleNextPage={handleNextPage}
+        handlePrevPage={handlePrevPage}
+      />
+    </div>
+  );
+};
+
+// Top search bar
+const ProductPageContainerTopSearch = () => {
+  const [searchProductInput, setSearchProductInput] = useState("");
+
+  return (
+    <SmoothList
+      delay={200}
+      className="max-md:px-2 py-6 flex items-center gap-6 max-md:flex-col max-md:items-start sm:justify-between"
+    >
+      <div className="font-bold text-3xl">Give All You Need</div>
+      {/* Search bar component : dynamic value and change handler */}
+      <SearchBar
+        type="text"
+        placeholder="Search on Merch Store"
+        icon
+        value={searchProductInput}
+        onChange={(e) => setSearchProductInput(e.target.value)}
+      />
+    </SmoothList>
+  );
+};
+
+const ProductPageContainerMid = ({
+  categoryList,
+  selectedCategory,
+  onCategoryClick,
+  onProductLoad,
+  productList,
+  handleNextPage,
+  handlePrevPage,
+}) => {
+  const totalPages = parseInt(productList?.total_pages);
+  const currentPage = parseInt(productList?.current_page);
+
+  return (
+    <div className="flex gap-2 max-md:flex-col py-6 w-full">
+      <div className="flex flex-col min-w-40 gap-2 max-md:w-full max-md:items-center nax-md:justify-center">
+        <h1 className="text-lg font-bold">Categories</h1>
+        <SmoothList delay={200}>
           {categoryList ? (
-            <div className="space-y-1">
+            <>
               <button
-                className={`w-full border rounded-full px-4 py-2 ${
+                className={`px-4 py-2 rounded-full focus:bg-black hover:text-white hover:bg-black focus:text-white flex items-start font-semibold max-md:text-sm w-full max-md:justify-center capitalize mb-px ${
                   selectedCategory === "all" ? "bg-black text-white" : ""
                 }`}
-                onClick={() => handleCategoryClick("all")}
+                onClick={() => onCategoryClick("all")}
               >
                 All
               </button>
-              {categoryList.map((category) => (
+              {categoryList?.map((category, index) => (
                 <button
-                  key={category.slug}
-                  className={`w-full border rounded-full px-4 py-2 ${
+                  index={index}
+                  className={`px-4 py-2 rounded-full focus:bg-black hover:text-white hover:bg-black focus:text-white flex items-start font-semibold max-md:text-sm w-full max-md:justify-center capitalize mb-px ${
                     selectedCategory === category.slug
                       ? "bg-black text-white"
                       : ""
                   }`}
-                  onClick={() => handleCategoryClick(category.slug)}
+                  onClick={() => onCategoryClick(category.slug)}
                 >
                   {category.name}
                 </button>
               ))}
-            </div>
+            </>
           ) : (
-            <div>Loading</div>
+            <div>Loading..</div>
           )}
-        </div>
-        <div className="w-full">
-          {productLoad ? (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-x-4 gap-y-8">
+        </SmoothList>
+      </div>
+      <div className="flex flex-col w-full">
+        <div className="flex w-full">
+          {onProductLoad ? (
+            <div className="grid lg:grid-cols-3 xl:grid-cols-4 gap-8 max-lg:grid-cols-2 max-sm:grid-cols-1 pb-4 border-b border-b-slate-500">
               {Array.from({ length: 8 }, (_, index) => (
                 <TrendingProductCardLoader key={index} />
               ))}
             </div>
-          ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-x-4 gap-y-8">
-              {productList?.map((product, index) => (
-                <ProductCard key={index} product={product} />
-              ))}
-            </div>
-          )}
-          <div className="flex justify-between items-center w-full mt-8">
-            <Button
-              className="font-semibold flex items-center gap-1"
-              onClick={handlePrevPage}
-            >
-              Previous
-            </Button>
-            <Button
-              className="font-semibold flex items-center gap-1"
-              onClick={handleNextPage}
-            >
-              Next
-            </Button>
-          </div>
+          ) : productList ? (
+            productList.data.length > 0 ? (
+              <SmoothList
+                delay={200}
+                className="grid lg:grid-cols-3 xl:grid-cols-4 gap-8 max-lg:grid-cols-2 max-sm:grid-cols-1 pb-4 border-b border-b-slate-500"
+              >
+                {productList.data.map((product, index) => (
+                  <ProductCard key={index} product={product} />
+                ))}
+              </SmoothList>
+            ) : (
+              <div className="text-center text-gray-500 font-semibold w-full bg-gray-300 rounded-2xl">
+                <NoDataFound
+                  title={"No Product Found"}
+                  bgcolor={"bg-white/50 backdrop-blur-sm"}
+                />
+              </div>
+            )
+          ) : null}
         </div>
+        <Pagination
+          currentPage={currentPage}
+          totalPages={totalPages}
+          handlePrevPage={handlePrevPage}
+          handleNextPage={handleNextPage}
+        />
       </div>
     </div>
   );
 };
+
+const Pagination = ({
+  currentPage,
+  totalPages,
+  handlePrevPage,
+  handleNextPage,
+}) => {
+  return (
+    <div className="flex items-center gap-2 mt-4">
+      {/* Prev Button: Show only if currentPage is greater than 1 */}
+      {currentPage > 1 && (
+        <button
+          className="font-semibold flex items-center gap-1 px-4 py-2 border border-gray-300 rounded justify-start"
+          onClick={handlePrevPage}
+        >
+          Prev
+        </button>
+      )}
+
+      {/* Next Button: Show only if currentPage is less than totalPages */}
+      <div className="flex w-full justify-end">
+        {currentPage < totalPages && (
+          <button
+            className="font-semibold flex justify-end items-center gap-1 px-4 py-2 border border-gray-300 rounded"
+            onClick={handleNextPage}
+          >
+            Next
+          </button>
+        )}
+      </div>
+    </div>
+  );
+};
+
+// Top Container component
+export const ProductPageContainerTop = ({ searchProductByName }) => {
+  const [searchProductInput, setSearchProductInput] = useState("");
+
+  useEffect(() => {
+    searchProductByName(searchProductInput);
+  }, [searchProductInput]);
+
+  return (
+    <SmoothList
+      delay={200}
+      className="max-md:px-2 py-6 flex items-center gap-6 max-md:flex-col max-md:items-start sm:justify-between"
+    >
+      <div className="font-bold text-3xl">Give All You Need</div>
+      {/* Search bar component : dynamic value and change handler */}
+      <SearchBar
+        type="text"
+        placeholder="Search on Merch Store"
+        icon
+        value={searchProductInput}
+        onChange={(e) => setSearchProductInput(e.target.value)}
+      />
+    </SmoothList>
+  );
+};
+
 // const ProductPageContainerMain = () => {
 // const [initialLoad, setInitialLoad] = useState(true);
 // const [currentPage, setCurrentPage] = useState(0);
@@ -179,32 +312,6 @@ const ProductPageContainerMain = () => {
 // </div>
 // );
 // };
-
-// Top Container component
-export const ProductPageContainerTop = ({ searchProductByName }) => {
-  const [searchProductInput, setSearchProductInput] = useState("");
-
-  useEffect(() => {
-    searchProductByName(searchProductInput);
-  }, [searchProductInput]);
-
-  return (
-    <SmoothList
-      delay={200}
-      className="max-md:px-2 py-6 flex items-center gap-6 max-md:flex-col max-md:items-start sm:justify-between"
-    >
-      <div className="font-bold text-3xl">Give All You Need</div>
-      {/* Search bar component : dynamic value and change handler */}
-      <SearchBar
-        type="text"
-        placeholder="Search on Merch Store"
-        icon
-        value={searchProductInput}
-        onChange={(e) => setSearchProductInput(e.target.value)}
-      />
-    </SmoothList>
-  );
-};
 
 // // Main container : categories, products, and pagination
 // const ContainerMid = ({
