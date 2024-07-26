@@ -18,7 +18,7 @@ import { HiOutlineMinus } from "react-icons/hi2";
 import Button from "../components/common/Button.jsx";
 import { Link } from "react-router-dom";
 import CartApiHandler from "../apiHandlers/CartApiHandler.jsx";
-import ProductApiHandler from "../apiHandlers/ProductApiHandler.jsx";
+import ProductApiHandler from "../apiHandlers/ProductApi.jsx";
 import { getCartItemDetails } from "../apiHandlers/cartUtils.js";
 import UserAddressApiHandler from "../apiHandlers/UserAddressApiHandler.jsx";
 import NoImage from "../assets/placeholderImg-Small.jpeg";
@@ -330,7 +330,13 @@ const CheckoutCard = ({
   };
 
   const deleteCartItem = () => {
-    deleteCartItemById(cartItem.product.slug,cartItem.size,cartItem.color, setDeleteLoad, setSuccessDelete);
+    deleteCartItemById(
+      cartItem.product.slug,
+      cartItem.size,
+      cartItem.color,
+      setDeleteLoad,
+      setSuccessDelete
+    );
   };
 
   const toggleUpdate = () => {

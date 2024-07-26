@@ -11,7 +11,7 @@ import UserAddressApiHandler from "../apiHandlers/UserAddressApiHandler.jsx";
 import { Link } from "react-router-dom";
 import toast from "react-hot-toast";
 import CartApiHandler from "../apiHandlers/CartApiHandler.jsx";
-import ProductApiHandler from "../apiHandlers/ProductApiHandler.jsx";
+import ProductApiHandler from "../apiHandlers/ProductApi.jsx";
 import {
   getCartItemDetails,
   totalCartSellPrice,
@@ -44,7 +44,7 @@ const AddressDetail = () => {
   const { getAddressList, userAddressList } = UserAddressApiHandler();
   const { getCallerCartItems, cartItems, getShippingAmount, shippingAmount } =
     CartApiHandler();
-  const { productList, getProductList } = ProductApiHandler(1);
+  const { productList, getProductList } = ProductApiHandler(0);
   const [selectedAddress, setSelectedAddress] = useState(null);
   const [showForm, setShowForm] = useState(false);
   const [successfulSubmit, setSuccessfulSubmit] = useState(false);

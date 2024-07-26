@@ -52,6 +52,7 @@ const ProductCard = ({ product }) => {
   }, [backend, product]);
 
   const AddToCart = async () => {
+    if (isConnected) {
     try {
       listCarts();
       setLoading(true);
@@ -105,6 +106,9 @@ const ProductCard = ({ product }) => {
     } finally {
       setLoading(false);
     }
+  } else {
+    toast.error("Please login first");
+  }
   };
   const buyNowHandler = async () => {
     if (isConnected) {
