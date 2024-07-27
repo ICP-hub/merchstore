@@ -1369,10 +1369,14 @@ actor {
                                  return #err(#WishlistItemNotFound);
                             };
                             case (?a) {
-                                 let updatedWishlistItems = List.filter<Types.WishlistItem>(
+                                 let updatedWishlistItems = List.mapFilter<Types.WishlistItem,Types.WishlistItem>(
                                       newWishlistItems,
-                                      func(a : Types.WishlistItem) : Bool {
-                                        return a.product_slug != product_slug and a.color != color and a.size != size;
+                                      func(a : Types.WishlistItem) : ?Types.WishlistItem {
+                                            if (a.product_slug == product_slug and a.color == color and a.size == size) {
+                                                return null;
+                                            };
+                                            return ?a;
+                                        
                                     }); 
 
                                 Debug.print("updatedWishlistItems are " # debug_show(updatedWishlistItems));
