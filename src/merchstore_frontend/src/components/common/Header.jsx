@@ -116,7 +116,7 @@ const Header = ({ title }) => {
     }
   }, [backend, carts]);
 
-    useEffect(() => {
+  useEffect(() => {
     let intervalId;
 
     if (!vantaEffect) {
@@ -147,7 +147,7 @@ const Header = ({ title }) => {
     return () => {
       clearInterval(intervalId);
     };
-  }, [vantaEffect]); 
+  }, [vantaEffect]);
 
   // console.log(carts.length, "carts2");
 
@@ -544,9 +544,8 @@ const Header = ({ title }) => {
                     <button
                       onClick={() => {
                         navigate("/login");
-                        toast.error("Please connect your wallet first!");
                       }}
-                      className="border-[1px] border-gray-700 rounded-full w-12 h-12 rounded-full flex justify-center items-center"
+                      className="border-[1px] border-gray-700 w-12 h-12 rounded-full flex justify-center items-center"
                     >
                       <HiOutlineUser className="w-7 h-7 text-gray-700" />
                     </button>

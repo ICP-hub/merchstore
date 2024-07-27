@@ -208,7 +208,7 @@ const CartItemsSmall = () => {
                   <div className="w-5 h-5 rounded-full bg-gray-100 animate-pulse"></div>
                 ) : (
                   <>
-                    <button
+                    {/* <button
                       className={`w-5 h-5 text-gray-400 ${
                         loading3 && "opacity-50"
                       }`}
@@ -230,7 +230,7 @@ const CartItemsSmall = () => {
                           className={`w-full h-full`}
                         />
                       )}
-                    </button>
+                    </button> */}
                   </>
                 )}
               </div>
