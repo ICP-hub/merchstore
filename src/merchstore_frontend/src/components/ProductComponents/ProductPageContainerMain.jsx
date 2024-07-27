@@ -23,6 +23,7 @@ const ProductPageContainerMain = () => {
   const [selectedCategory, setSelectedCategory] = useState(
     sessionStorage.getItem("category") || "all"
   );
+  const [searchProductInput, setSearchProductInput] = useState("");
 
   const handleNextPage = () => setCurrentPage((prev) => prev + 1);
   const handlePrevPage = () =>
@@ -73,12 +74,23 @@ const ProductPageContainerMain = () => {
   }, [backend]);
 
   useEffect(() => {
+    setCurrentPage(0);
+  }, [selectedCategory]);
+
+  useEffect(() => {
     getProductList(selectedCategory);
   }, [currentPage, backend, selectedCategory]);
 
+  useEffect(() => {
+    // console.log("search input ", searchProductInput);
+  }, [searchProductInput]);
+
   return (
     <div className="container mx-auto p-6 rounded-2xl max-md:px-2">
-      <ProductPageContainerTopSearch />
+      <ProductPageContainerTopSearch
+        searchProductInput={searchProductInput}
+        setSearchProductInput={setSearchProductInput}
+      />
       <ProductPageContainerMid
         categoryList={categoryList}
         selectedCategory={selectedCategory}
@@ -93,9 +105,10 @@ const ProductPageContainerMain = () => {
 };
 
 // Top search bar
-const ProductPageContainerTopSearch = () => {
-  const [searchProductInput, setSearchProductInput] = useState("");
-
+const ProductPageContainerTopSearch = ({
+  searchProductInput,
+  setSearchProductInput,
+}) => {
   return (
     <SmoothList
       delay={200}
