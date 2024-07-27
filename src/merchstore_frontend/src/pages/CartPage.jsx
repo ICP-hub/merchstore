@@ -472,6 +472,9 @@ const Cart = () => {
                     updateTotal={updateTotal}
                     successDelete={successDelete}
                     setSuccessDelete={setSuccessDelete}
+                    length={finalCart.length}
+                    clearAll={clearAll}
+                    getCallerCartItems={getCallerCartItems}
                   />
                 ))}
               </div>
@@ -507,6 +510,8 @@ const CheckoutCard = ({
   updateTotal,
   successDelete,
   setSuccessDelete,
+  clearAll,
+  length,
 }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const { deleteCartItemById, isLoading, updateCart } = CartApiHandler();
@@ -527,13 +532,20 @@ const CheckoutCard = ({
   };
 
   const deleteCartItem = () => {
-    deleteCartItemById(
-      cartItem.product.slug,
-      cartItem.size,
-      cartItem.color,
-      setDeleteLoad,
-      setSuccessDelete
-    );
+    console.log(length);
+    if (length == 1) {
+      clearAll();
+    } else {
+      deleteCartItemById(
+        cartItem.product.slug,
+        cartItem.size,
+        cartItem.color,
+        setDeleteLoad,
+        setSuccessDelete,
+        closeModal
+      );
+      setSuccessDelete(true);
+    }
   };
 
   const toggleUpdate = () => {
@@ -582,18 +594,12 @@ const CheckoutCard = ({
           </p>
         </div>
         <div className="flex gap-4 items-center">
-          <Button
-            onClick={() => {
-              openModal;
-            }}
-          >
+          <Button onClick={openModal}>
             <HiOutlineTrash size={24} color="grey" />
           </Button>
           {isModalOpen && (
             <Modal1
-              closeModal={() => {
-                closeModal;
-              }}
+              closeModal={closeModal}
               title={"Are you sure you want to remove ?"}
               icon={<HiTrash size={40} color="red" />}
               btnClr="red"
