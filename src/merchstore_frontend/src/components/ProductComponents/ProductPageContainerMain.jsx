@@ -36,6 +36,7 @@ const ProductPageContainerMain = () => {
   const getProductList = async (category) => {
     sessionStorage.setItem("category", category);
     setProductLoad(true);
+    setSearchProductInput("");
     try {
       if (category === "all") {
         const response = await backend.listallProducts(8, currentPage, true);
@@ -82,7 +83,27 @@ const ProductPageContainerMain = () => {
   }, [currentPage, backend, selectedCategory]);
 
   useEffect(() => {
-    // console.log("search input ", searchProductInput);
+    // Search by title
+    const searchByTitle = async () => {
+      setProductLoad(true);
+      try {
+        const response = await backend.search_by_title(
+          8,
+          currentPage,
+          true,
+          searchProductInput
+        );
+        setProductList(response);
+        console.log("response searchby input", response);
+      } catch (err) {
+        console.error("Error fetching search by title ", err);
+      } finally {
+        setProductLoad(false);
+      }
+    };
+    if (searchProductInput.length >= 3) {
+      searchByTitle();
+    }
   }, [searchProductInput]);
 
   return (
