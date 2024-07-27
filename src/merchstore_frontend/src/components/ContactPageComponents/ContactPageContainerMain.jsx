@@ -110,6 +110,7 @@ const ContactPageContainerMain = () => {
                 className="px-4 py-4 border border-slate-500 rounded-full focus:outline-none w-full"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
+                required
               />
             </div>
             <div className="flex flex-col gap-4">
@@ -121,6 +122,7 @@ const ContactPageContainerMain = () => {
                   className=" focus:outline-none w-full"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
+                  required
                 />
               </div>
             </div>
@@ -136,6 +138,7 @@ const ContactPageContainerMain = () => {
                 rows={4} // Adjust the number of rows as needed
                 value={message}
                 onChange={(e) => setMessage(e.target.value)}
+                required
               ></textarea>
             </div>
             <Button className="flex w-full bg-black text-white justify-center rounded-full p-4">

@@ -518,10 +518,12 @@ const CheckoutCard = ({
 
   const openModal = () => {
     setIsModalOpen(true);
+    console.log("open");
   };
 
   const closeModal = () => {
     setIsModalOpen(false);
+    console.log("close");
   };
 
   const deleteCartItem = () => {
@@ -580,12 +582,18 @@ const CheckoutCard = ({
           </p>
         </div>
         <div className="flex gap-4 items-center">
-          <Button onClick={openModal}>
+          <Button
+            onClick={() => {
+              openModal;
+            }}
+          >
             <HiOutlineTrash size={24} color="grey" />
           </Button>
           {isModalOpen && (
             <Modal1
-              closeModal={closeModal}
+              closeModal={() => {
+                closeModal;
+              }}
               title={"Are you sure you want to remove ?"}
               icon={<HiTrash size={40} color="red" />}
               btnClr="red"
