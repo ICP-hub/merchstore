@@ -165,6 +165,9 @@ export const useAuthClient = () => {
   const [identity, setIdentity] = useState(null);
   const [authClient, setAuthClient] = useState(null);
 
+  // NON-Relevant
+  const [isCartUpdated, setIsCartUpdated] = useState(false);
+
   const loginStatus = localStorage.getItem("loginStatus");
 
   // console.log(backendActor, "backend actor");
@@ -288,6 +291,10 @@ export const useAuthClient = () => {
     localStorage.removeItem("loginStatus");
   };
 
+  const refreshCart = () => {
+    setIsCartUpdated((prev) => !prev);
+  };
+
   return {
     isConnected,
     login,
@@ -295,6 +302,8 @@ export const useAuthClient = () => {
     principal,
     backend,
     identity,
+    isCartUpdated,
+    refreshCart,
   };
 };
 

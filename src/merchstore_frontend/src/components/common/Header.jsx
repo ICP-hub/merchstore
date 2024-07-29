@@ -73,7 +73,8 @@ const Header = ({ title }) => {
   const [vantaEffect, setVantaEffect] = useState(null);
   const myRef = useRef(null);
   // const { isConnected, disconnect, principal } = useConnect();
-  const { isConnected, disconnect, principal, backend } = useAuth();
+  const { isConnected, disconnect, principal, backend, isCartUpdated } =
+    useAuth();
   const [carts, setCarts] = useState([]);
   // const [backend] = useCanister("backend");
   // const { backend } = useBackend();
@@ -114,7 +115,7 @@ const Header = ({ title }) => {
     if (backend && isConnected) {
       listCarts();
     }
-  }, [backend, carts]);
+  }, [backend, isCartUpdated]);
 
   useEffect(() => {
     let intervalId;
