@@ -190,7 +190,13 @@ const CartApiHandler = () => {
     console.log("metadata ", formattedMetadata);
     const parsedBalance = parseInt(balance, 10);
     console.log("Balance:", parsedBalance);
-    transferApprove(parsedBalance, formattedMetadata, tokenActor, totalAmount);
+    transferApprove(
+      parsedBalance,
+      formattedMetadata,
+      tokenActor,
+      totalAmount,
+      orderDetails
+    );
   };
 
   const getPaymentCanisterId = (tokenType) => {
@@ -251,7 +257,8 @@ const CartApiHandler = () => {
     currentBalance,
     currentMetaData,
     tokenActor,
-    totalAmount
+    totalAmount,
+    orderDetails
   ) => {
     try {
       const decimals = parseInt(currentMetaData["icrc1:decimals"], 10);
@@ -263,42 +270,42 @@ const CartApiHandler = () => {
 
       console.log("sendable amount console ", sendableAmount);
       console.log("current balance console ", currentBalance);
-      // if (currentBalance > sendableAmount) {
-      let transaction = {
-        from_subaccount: [],
-        spender: {
-          owner: Principal.fromText(ids.backendCan),
-          subaccount: [],
-        },
-        amount: Number(sendableAmount) + Number(currentMetaData["icrc1:fee"]),
-        expected_allowance: [],
-        expires_at: [],
-        fee: [currentMetaData["icrc1:fee"]],
-        memo: [],
-        created_at_time: [],
-      };
-      console.log("transaction ", transaction);
-      // console.log("Token Actor ICRC2 APPROVE", tokenActor.icrc2_approve);
-      const approveRes = await tokenActor.icrc2_approve(transaction);
-      console.log("Payment Approve Response ", approveRes);
-      // if (approveRes.Err) {
-      //   const errorMessage = `Insufficient funds. Balance: ${approveRes.Err.InsufficientFunds.balance}`;
-      //   toast.error(errorMessage);
-      //   return;
-      // } else {
-      // afterPaymentApprove(
-      //   parseInt(approveRes?.Ok).toString(),
-      //   sendableAmount,
-      //   currentBalance
-      // );
-      // afterPaymentApprove();
-      // }
-      // } else {
-      //   console.log("Insufficient Balance to purchase");
-      //   toast.error(
-      //     `Insufficient balance. Balance : ${currentBalance / 10 ** 8}`
-      //   );
-      // }
+      if (currentBalance > sendableAmount) {
+        let transaction = {
+          from_subaccount: [],
+          spender: {
+            owner: Principal.fromText(ids.backendCan),
+            subaccount: [],
+          },
+          amount: Number(sendableAmount) + Number(currentMetaData["icrc1:fee"]),
+          expected_allowance: [],
+          expires_at: [],
+          fee: [currentMetaData["icrc1:fee"]],
+          memo: [],
+          created_at_time: [],
+        };
+        console.log("transaction ", transaction);
+        // console.log("Token Actor ICRC2 APPROVE", tokenActor.icrc2_approve);
+        const approveRes = await tokenActor.icrc2_approve(transaction);
+        console.log("Payment Approve Response ", approveRes);
+        if (approveRes.Err) {
+          const errorMessage = `Insufficient funds. Balance: ${approveRes.Err.InsufficientFunds.balance}`;
+          toast.error(errorMessage);
+          return;
+        } else {
+          afterPaymentApprove(
+            parseInt(approveRes?.Ok).toString(),
+            sendableAmount,
+            currentBalance
+          );
+          afterPaymentApprove(orderDetails);
+        }
+      } else {
+        console.log("Insufficient Balance to purchase");
+        toast.error(
+          `Insufficient balance. Balance : ${currentBalance / 10 ** 8}`
+        );
+      }
     } catch (err) {
       console.error("Error in transfer approve", err);
     } finally {
@@ -306,8 +313,16 @@ const CartApiHandler = () => {
   };
 
   // After payment approve
-  const afterPaymentApprove = () => {
+  const afterPaymentApprove = async (orderDetails) => {
     console.log("Payment Approve done!!");
+    console.log("order confirming..........");
+    try {
+      const response = await backend.place_order(orderDetails);
+      console.log("response after order confirm ", response);
+    } catch (err) {
+      console.error("Failed to get response after order confirm ", err);
+    } finally {
+    }
   };
 
   // Get Order List
@@ -339,10 +354,16 @@ const CartApiHandler = () => {
   };
 
   // Delte Cart Item
-  const deleteCartItemById = async (id,size,color, setDeleteLoad, setSuccessDelete) => {
+  const deleteCartItemById = async (
+    id,
+    size,
+    color,
+    setDeleteLoad,
+    setSuccessDelete
+  ) => {
     try {
       setDeleteLoad(true);
-      const response = await backend.deleteCartItems(id,size,color);
+      const response = await backend.deleteCartItems(id, size, color);
       console.log("Delete cart item response ", response);
       toast.success("Item removed successfully");
     } catch (err) {
