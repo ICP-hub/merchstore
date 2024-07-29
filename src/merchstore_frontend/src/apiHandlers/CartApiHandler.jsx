@@ -25,7 +25,7 @@ const CartApiHandler = () => {
   // Init backend
   // const { backend } = useBackend();
   // const { principal } = useConnect();
-  const { principal, identity, backend } = useAuth();
+  const { principal, identity, backend, refreshCart } = useAuth();
   const [isLoading, setIsLoading] = useState(false);
   const [cartItems, setCartItems] = useState(null);
   const [orderList, setOrderList] = useState(null);
@@ -359,7 +359,8 @@ const CartApiHandler = () => {
     size,
     color,
     setDeleteLoad,
-    setSuccessDelete
+    setSuccessDelete,
+    closeModel
   ) => {
     try {
       setDeleteLoad(true);
@@ -372,6 +373,7 @@ const CartApiHandler = () => {
     } finally {
       setDeleteLoad(false);
       setSuccessDelete(false);
+      refreshCart();
       closeModel();
     }
   };
