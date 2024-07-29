@@ -105,7 +105,7 @@ const CartApiHandler = () => {
   const getCallerCartItems = async () => {
     try {
       setIsLoading(true);
-      const response = await backend.getCallerCartItems(10, 0);
+      const response = await backend.getCallerCartItems(100, 0);
       console.log("getCallerCartItems response ", response);
       setCartItems(response.data);
     } catch (err) {
@@ -372,6 +372,7 @@ const CartApiHandler = () => {
     } finally {
       setDeleteLoad(false);
       setSuccessDelete(false);
+      closeModel();
     }
   };
 

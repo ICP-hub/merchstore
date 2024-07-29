@@ -30,6 +30,7 @@ import Modal1 from "../components/common/Styles/Modal1.jsx";
 import TabChanges from "../components/Tabchanges.jsx";
 import IcpLogo from "../assets/IcpLogo.jsx";
 import LoadingScreen from "../components/common/LoadingScreen.jsx";
+import { useNavigate } from "react-router-dom";
 
 /* ----------------------------------------------------------------------------------------------------- */
 /*  @ Main checkout Container
@@ -191,6 +192,29 @@ const Checkout = () => {
       shippingCost
     );
   };
+  const navigate = useNavigate();
+  const clearAll = async () => {
+    try {
+      setIsFinalCartLoading(true);
+
+      const res = await backend.clearallcartitmesbyprincipal();
+
+      if ("ok" in res) {
+        console.log(res);
+
+        toast.success("All items are removed");
+        navigate("/");
+      } else {
+        console.log("error while deleting all the items", res);
+      }
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setSuccessClearAll(false);
+
+      setIsFinalCartLoading(false);
+    }
+  };
 
   // Effect on get exchange
   useEffect(() => {
@@ -268,6 +292,9 @@ const Checkout = () => {
                     updateTotal={updateTotal}
                     successDelete={successDelete}
                     setSuccessDelete={setSuccessDelete}
+                    length={finalCart.length}
+                    clearAll={clearAll}
+                    getCallerCartItems={getCallerCartItems}
                   />
                 ))}
                 <AddressSection
@@ -312,6 +339,8 @@ const CheckoutCard = ({
   updateTotal,
   successDelete,
   setSuccessDelete,
+  clearAll,
+  length,
 }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const { deleteCartItemById, isLoading, updateCart } = CartApiHandler();
@@ -330,13 +359,20 @@ const CheckoutCard = ({
   };
 
   const deleteCartItem = () => {
-    deleteCartItemById(
-      cartItem.product.slug,
-      cartItem.size,
-      cartItem.color,
-      setDeleteLoad,
-      setSuccessDelete
-    );
+    console.log(length);
+    if (length == 1) {
+      clearAll();
+    } else {
+      deleteCartItemById(
+        cartItem.product.slug,
+        cartItem.size,
+        cartItem.color,
+        setDeleteLoad,
+        setSuccessDelete,
+        closeModal
+      );
+      setSuccessDelete(true);
+    }
   };
 
   const toggleUpdate = () => {

@@ -472,6 +472,9 @@ const Cart = () => {
                     updateTotal={updateTotal}
                     successDelete={successDelete}
                     setSuccessDelete={setSuccessDelete}
+                    length={finalCart.length}
+                    clearAll={clearAll}
+                    getCallerCartItems={getCallerCartItems}
                   />
                 ))}
               </div>
@@ -507,6 +510,8 @@ const CheckoutCard = ({
   updateTotal,
   successDelete,
   setSuccessDelete,
+  clearAll,
+  length,
 }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const { deleteCartItemById, isLoading, updateCart } = CartApiHandler();
@@ -518,20 +523,29 @@ const CheckoutCard = ({
 
   const openModal = () => {
     setIsModalOpen(true);
+    console.log("open");
   };
 
   const closeModal = () => {
     setIsModalOpen(false);
+    console.log("close");
   };
 
   const deleteCartItem = () => {
-    deleteCartItemById(
-      cartItem.product.slug,
-      cartItem.size,
-      cartItem.color,
-      setDeleteLoad,
-      setSuccessDelete
-    );
+    console.log(length);
+    if (length == 1) {
+      clearAll();
+    } else {
+      deleteCartItemById(
+        cartItem.product.slug,
+        cartItem.size,
+        cartItem.color,
+        setDeleteLoad,
+        setSuccessDelete,
+        closeModal
+      );
+      setSuccessDelete(true);
+    }
   };
 
   const toggleUpdate = () => {

@@ -11,8 +11,7 @@ const ProductApiHandler = ({ currentPage = 0, category = 0 }) => {
   const [categoryList, setCategoryList] = useState(null);
   const [initialProductList, setInitialProductList] = useState([]); // For 'all' filter in category tab
   const [searchResults, setSearchResults] = useState(null);
-  const { state } = useLocation();
-  console.log(state);
+
   /* ----------------------------------------------------------------------------------------------------- */
   /*  @ Product related
   /* ----------------------------------------------------------------------------------------------------- */

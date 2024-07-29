@@ -61,6 +61,7 @@ const MyWishList = () => {
   const [product, getProduct] = useState([]);
   const [id, setId] = useState("");
   const [loading, setLoading] = useState(true);
+  const [empty, setEmpty] = useState(true);
 
   const wishlist = [
     {
@@ -101,6 +102,8 @@ const MyWishList = () => {
         console.log(item);
       }
     } catch (error) {
+      setLoading(false);
+      setEmpty(false);
       console.error("Error listing user:", error);
     } finally {
     }
@@ -109,9 +112,9 @@ const MyWishList = () => {
   useEffect(() => {
     getWishlist();
   }, [backend]);
-  const deleteWishlist = async (id) => {
+  const deleteWishlist = async (id, size, color) => {
     try {
-      const remove = await backend.deleteWishlistItems(id);
+      const remove = await backend.deleteWishlistItems(id, size, color);
 
       if ("ok" in remove) {
         getWishlist();
@@ -157,6 +160,7 @@ const MyWishList = () => {
       // Cleanup the timeout on component unmount
     }
   }, [backend, wishlists]);
+  console.log(product);
 
   return (
     <div className="flex flex-col w-full border border-gray-300 rounded-2xl tracking-normal">
@@ -194,7 +198,7 @@ const MyWishList = () => {
         </div>
       ) : (
         <>
-          {!loading && product.length > 0 ? (
+          {empty ? (
             <div className=" flex flex-col">
               {product.map((wishlists, index) => (
                 <div
@@ -234,7 +238,13 @@ const MyWishList = () => {
                       <div className="flex gap-6">
                         <Button
                           className=" hover:text-red-500"
-                          onClick={() => deleteWishlist(wishlists.product_slug)}
+                          onClick={() =>
+                            deleteWishlist(
+                              wishlists?.slug,
+                              wishlists?.variantSize[0].size,
+                              wishlists?.variantColor[0]?.color
+                            )
+                          }
                         >
                           <BsTrash3 size={20} />
                         </Button>
