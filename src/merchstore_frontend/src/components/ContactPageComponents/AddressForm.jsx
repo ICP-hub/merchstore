@@ -1,9 +1,10 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import UserAddressApiHandler from "../../apiHandlers/UserAddressApiHandler";
 import useFormValidation from "../common/FormValidation";
 import { CommonInput, TelephoneInput } from "../common/InputFields";
 import { TailSpin } from "react-loader-spinner";
 import countries from "./countries.json";
+
 /* ----------------------------------------------------------------------------------------------------- */
 /*  @ MyAddress Page : ShippingAddress page <MyAddressForm component/>.
 /* ----------------------------------------------------------------------------------------------------- */
@@ -16,7 +17,6 @@ const AddressForm = ({
   const [formValues, setFormValues] = useState(initialFormValues || {});
   const { createAddress, updateAddress, isLoading } = UserAddressApiHandler();
   const [phone, setPhone] = useState(null);
-  // const [isPhoneValid, setIsPhoneValid] = useState(null);
   const [isSubmitted, setIsSubmitted] = useState(false);
 
   const validationRules = {
@@ -37,11 +37,24 @@ const AddressForm = ({
         error: "Pincode must contain only numbers",
       },
     ],
+    country: [{ required: true }],
+    state: [{ required: true }],
+    city: [{ required: true }],
   };
 
-  const { validationErrors, validateForm } = useFormValidation(validationRules);
+  const { validationErrors, validateForm, setValidationErrors } =
+    useFormValidation(validationRules);
+
+  const clearValidationError = (key) => {
+    setValidationErrors((prevErrors) => {
+      const newErrors = { ...prevErrors };
+      delete newErrors[key];
+      return newErrors;
+    });
+  };
 
   const handleChange = (key, value) => {
+    clearValidationError(key);
     setFormValues((prevForm) => ({ ...prevForm, [key]: value }));
   };
 
@@ -54,7 +67,7 @@ const AddressForm = ({
     }
     const updatedFormValues = {
       ...formValues,
-      phone_number: phone.getNumber(),
+      phone_number: phone,
     };
     console.log(updatedFormValues);
     createAddress(updatedFormValues, setSuccessfulSubmit);
@@ -69,15 +82,11 @@ const AddressForm = ({
     }
     const updatedFormValues = {
       ...formValues,
-      phone_number: phone.getNumber(),
+      phone_number: phone,
     };
 
     updateAddress(updatedFormValues, setSuccessfulSubmit);
   };
-
-  // useEffect(() => {
-  //   setIsPhoneValid(phone?.isValidNumberPrecise());
-  // }, [phone]);
 
   const formFields = [
     { key: "firstname", label: "First Name", type: "text" },
@@ -104,7 +113,7 @@ const AddressForm = ({
           <TelephoneInput
             key={key}
             label={label}
-            divClass="border border-gray-300 rounded-full overflow-hidden w-[90%]  md:w-full p-[6px]"
+            divClass="border border-gray-300 rounded-full w-[90%]  md:w-full p-[6px]"
             inputclassName="focus:outline-none p-2 h-[38px] placeholder:font-light"
             setPhone={setPhone}
             phoneNumber={formValues?.phone_number}
@@ -112,7 +121,7 @@ const AddressForm = ({
         ) : type === "select" && key === "country" ? (
           <div key={key} className="flex flex-col gap-1 md:w-full">
             <div className="flex">
-              <label className="h-full flex   w-full font-medium uppercase text-xs px-3">
+              <label className="h-full flex w-full font-medium uppercase text-xs px-3">
                 {label}
               </label>
               {validationErrors[key] && (

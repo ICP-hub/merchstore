@@ -18,7 +18,7 @@ import { HiOutlineMinus } from "react-icons/hi2";
 import Button from "../components/common/Button.jsx";
 import { Link, useNavigate } from "react-router-dom";
 import CartApiHandler from "../apiHandlers/CartApiHandler.jsx";
-import ProductApiHandler from "../apiHandlers/ProductApiHandler.jsx";
+import ProductApiHandler from "../apiHandlers/ProductApi.jsx";
 import { getCartItemDetails } from "../apiHandlers/cartUtils.js";
 import UserAddressApiHandler from "../apiHandlers/UserAddressApiHandler.jsx";
 import NoImage from "../assets/placeholderImg-Small.jpeg";
@@ -472,6 +472,9 @@ const Cart = () => {
                     updateTotal={updateTotal}
                     successDelete={successDelete}
                     setSuccessDelete={setSuccessDelete}
+                    length={finalCart.length}
+                    clearAll={clearAll}
+                    getCallerCartItems={getCallerCartItems}
                   />
                 ))}
               </div>
@@ -507,6 +510,8 @@ const CheckoutCard = ({
   updateTotal,
   successDelete,
   setSuccessDelete,
+  clearAll,
+  length,
 }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const { deleteCartItemById, isLoading, updateCart } = CartApiHandler();
@@ -518,24 +523,38 @@ const CheckoutCard = ({
 
   const openModal = () => {
     setIsModalOpen(true);
+    console.log("open");
   };
 
   const closeModal = () => {
     setIsModalOpen(false);
+    console.log("close");
   };
 
   const deleteCartItem = () => {
-    deleteCartItemById(
-      cartItem.product.slug,
-      cartItem.size,
-      cartItem.color,
-      setDeleteLoad,
-      setSuccessDelete
-    );
+    console.log(length);
+    if (length == 1) {
+      clearAll();
+    } else {
+      deleteCartItemById(
+        cartItem.product.slug,
+        cartItem.size,
+        cartItem.color,
+        setDeleteLoad,
+        setSuccessDelete,
+        closeModal
+      );
+      setSuccessDelete(true);
+    }
   };
 
   const toggleUpdate = () => {
-    updateCart(cartItem.product.slug, cartItem.quantity, cartItem.color, cartItem.size);
+    updateCart(
+      cartItem.product.slug,
+      cartItem.quantity,
+      cartItem.color,
+      cartItem.size
+    );
     setIsChecked(false);
     updateTotal();
   };

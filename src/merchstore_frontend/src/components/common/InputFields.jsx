@@ -3,7 +3,6 @@ import intlTelInput from "intl-tel-input";
 import "intl-tel-input/build/css/intlTelInput.css";
 import "intl-tel-input/build/js/utils.js";
 import "./Styles/itelinput.css";
- 
 
 //import { Country, State, City } from "country-state-city";
 
@@ -41,6 +40,7 @@ const CommonInput = ({
 /* ----------------------------------------------------------------------------------------------------- */
 /*  @ Telephone Input Component ITel
 /* ----------------------------------------------------------------------------------------------------- */
+
 const TelephoneInput = ({
   divClass,
   inputClass,
@@ -51,6 +51,7 @@ const TelephoneInput = ({
   error,
 }) => {
   const phoneInputRef = useRef(null);
+  const [phone, setPhoneState] = useState("");
 
   useEffect(() => {
     const iti = intlTelInput(phoneInputRef.current, {
@@ -72,13 +73,25 @@ const TelephoneInput = ({
       iti.setNumber(phoneNumber);
     }
 
+    phoneInputRef.current.addEventListener("countrychange", () => {
+      setPhoneState(iti.getNumber());
+    });
+
     return () => {
       iti.destroy();
     };
-  }, []);
+  }, [phoneNumber, setPhone]);
+
   const handleInput = (event) => {
-    event.target.value = event.target.value.replace(/\D/g, "");
+    const sanitizedValue = event.target.value.replace(/\D/g, "");
+    setPhoneState(sanitizedValue);
   };
+
+  useEffect(() => {
+    if (setPhone) {
+      setPhone(phone);
+    }
+  }, [phone, setPhone]);
 
   return (
     <div>
@@ -99,11 +112,13 @@ const TelephoneInput = ({
           type="tel"
           id="phone"
           ref={phoneInputRef}
-          className={`${inputClass} outline-none absolute left-10`}
+          className={`${inputClass} outline-none `}
           disabled={disabled}
           onInput={handleInput}
           inputMode="numeric"
           pattern="[0-9]*"
+          value={phone}
+          required
         />
       </div>
     </div>

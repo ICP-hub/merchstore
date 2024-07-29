@@ -13,25 +13,12 @@ const Modal1 = ({
   isLoading,
   addOn,
 }) => {
-  const [isVisible, setIsVisible] = useState(true);
-
   const closeModalWithAnimation = () => {
-    setIsVisible(false);
+    closeModal();
   };
 
-  useEffect(() => {
-    if (!addOn) {
-      setIsVisible(false);
-    }
-  }, [addOn]);
-
   return (
-    <motion.div
-      initial={{ opacity: 0, y: "-100%" }}
-      animate={{ opacity: isVisible ? 1 : 0, y: isVisible ? "0%" : "-100%" }}
-      exit={{ opacity: 0, y: "-100%" }}
-      transition={{ duration: 0.3 }}
-      onAnimationComplete={() => !isVisible && closeModal()}
+    <div
       className={`fixed inset-0 p-4 flex flex-wrap justify-center items-center w-full h-full z-[1000] before:fixed before:inset-0 before:w-full before:h-full before:bg-[rgba(0,0,0,0.5)] overflow-auto font-[sans-serif]`}
     >
       <div className="w-full max-w-md bg-white shadow-lg rounded-2xl px-5 py-8 relative">
@@ -74,7 +61,7 @@ const Modal1 = ({
           </button>
         </div>
       </div>
-    </motion.div>
+    </div>
   );
 };
 

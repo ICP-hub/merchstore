@@ -24,8 +24,6 @@ const MessageDetail = () => {
 
   const getMessage = async () => {
     try {
-      setLoading2(false);
-
       const item = await backend.getContact(param.id);
       if (item.ok) {
         setFormData({
@@ -41,6 +39,7 @@ const MessageDetail = () => {
     } catch (error) {
       console.error("Error listing user:", error);
     } finally {
+      setLoading2(false);
     }
   };
 

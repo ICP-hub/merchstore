@@ -941,7 +941,7 @@ actor {
                     throw Error.reject("no blob found in stable memory for the caller");
                 };
                 case(?val){
-                    if (val.title == Title and val.active == is_active){
+                    if (Text.contains(val.title, #text Title) == true and val.active == is_active){
                         product_list := List.push(val, product_list);
                     };
                 };
@@ -985,7 +985,7 @@ actor {
         return { data = pages_data; current_page = pageNo + 1; total_pages = index_pages.size(); };
     };
 
-    
+
 
     // 📍📍📍📍📍
     public shared ({caller}) func listallProducts(chunksize : Nat , pageNo : Nat, is_active : Bool,  ) : async {data : [Types.Product]; current_page : Nat; total_pages : Nat} {
@@ -1369,10 +1369,14 @@ actor {
                                  return #err(#WishlistItemNotFound);
                             };
                             case (?a) {
-                                 let updatedWishlistItems = List.filter<Types.WishlistItem>(
+                                 let updatedWishlistItems = List.mapFilter<Types.WishlistItem,Types.WishlistItem>(
                                       newWishlistItems,
-                                      func(a : Types.WishlistItem) : Bool {
-                                        return a.product_slug != product_slug and a.color != color and a.size != size;
+                                      func(a : Types.WishlistItem) : ?Types.WishlistItem {
+                                            if (a.product_slug == product_slug and a.color == color and a.size == size) {
+                                                return null;
+                                            };
+                                            return ?a;
+                                        
                                     }); 
 
                                 Debug.print("updatedWishlistItems are " # debug_show(updatedWishlistItems));
@@ -1577,7 +1581,7 @@ actor {
                         };
                         case (?val) {
                             var newCartItemslist = val.cartItemlist;
-                            Debug.print("items before deletion are " # debug_show(newCartItemslist));
+                            Debug.print("items before deletion are " # " ---------> " #  debug_show(newCartItemslist));
                             let result = List.find<Types.CartItem>(
                                 newCartItemslist,
                                 func(a : Types.CartItem) : Bool {
@@ -1588,17 +1592,24 @@ actor {
                                         return #err(#CartItemNotFound);
                                     };
                                     case (?a) {
-                                        let updatedCartItems = List.filter<Types.CartItem>(
-                                            newCartItemslist,
-                                            func(a : Types.CartItem) : Bool {
-                                            return a.product_slug != product_slug and a.size != size and a.color != color;
-                                            });
-                                        Debug.print("items after deletion are " # debug_show(updatedCartItems));
+                                        // let updatedCartItems = List.filter<Types.CartItem>(
+                                        //     newCartItemslist,
+                                        //     func(a : Types.CartItem) : Bool { 
+                                        //     return a.product_slug != product_slug and a.size != size and a.color != color;
+                                        //     });
+                                        // Debug.print("items after deletion are " # "  <--------->   " # debug_show(updatedCartItems));
 
-                                        let newcartitemsobject : Types.cartItemobject = {userprincipal = msg.caller ;cartItemlist = updatedCartItems};
 
+
+                                        let after_deletion_list = List.mapFilter<Types.CartItem,Types.CartItem>(newCartItemslist, func (a : Types.CartItem) : ?Types.CartItem {
+                                            if (a.product_slug == product_slug and a.size == size and a.color == color) {
+                                                return null;
+                                            };
+                                            return ?a;
+                                        });
+
+                                        let newcartitemsobject : Types.cartItemobject = {userprincipal = msg.caller ;cartItemlist = after_deletion_list};
                                         let newCartBlob = to_candid(newcartitemsobject);
-
                                         ignore await update_stable(v, newCartBlob, cart_state);
                                         return #ok(());
                             };

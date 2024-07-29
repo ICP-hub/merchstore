@@ -11,7 +11,7 @@ const ProductApiHandler = ({ currentPage = 0, category = 0 }) => {
   const [categoryList, setCategoryList] = useState(null);
   const [initialProductList, setInitialProductList] = useState([]); // For 'all' filter in category tab
   const [searchResults, setSearchResults] = useState(null);
-
+  
   /* ----------------------------------------------------------------------------------------------------- */
   /*  @ Product related
   /* ----------------------------------------------------------------------------------------------------- */
@@ -20,7 +20,7 @@ const ProductApiHandler = ({ currentPage = 0, category = 0 }) => {
 
     try {
       setIsLoading(true);
-      const response = await backend.listallProducts(8, currentPage, true);
+      const response = await backend.listallProducts(100, currentPage, true);
       console.log(response);
       setProductList(response.data);
       setInitialProductList(response.data);
