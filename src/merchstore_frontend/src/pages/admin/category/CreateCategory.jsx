@@ -49,9 +49,10 @@ const CreateCategory = () => {
         return;
       }
       setLoading(true);
+      const formattedName = formData.name.trim().replace(/\s+/g, "-");
 
       const res = await backend.createCategory(
-        formData.name,
+        formattedName,
         formData.img,
         formData.status,
         formData.active
@@ -61,6 +62,7 @@ const CreateCategory = () => {
       if ("ok" in res) {
         toast.success("Category Added Successfully");
         setFormData({ name: "" });
+        setFormData({ img: "" });
       } else if ("error" in res && res.error.includes("already exists")) {
         toast.error("Category already exists. Please choose a different name.");
       }
