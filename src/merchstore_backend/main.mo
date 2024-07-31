@@ -795,9 +795,9 @@ actor {
         // };
         let category_slug = p.category;
 
-        if (checkifcategoryexists(category_slug) == false) {
+        /* if (checkifcategoryexists(category_slug) == false) {
             return #err(#CategoryNotFound);
-        };  
+        }; */  
         if (p.title == "") { return #err(#EmptyTitle) };
         let productId = nextProduct;
         nextProduct += 1;

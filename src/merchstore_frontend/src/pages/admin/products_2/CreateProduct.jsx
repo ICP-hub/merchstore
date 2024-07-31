@@ -257,7 +257,7 @@ const CreateCategory = () => {
               >
                 <option value="">Select Product Category</option>
                 {categories.map((item, index) => (
-                  <option value={item[1].name} key={index}>
+                  <option value={item[1].slug} key={index}>
                     {item[1].name}
                   </option>
                 ))}

@@ -49,10 +49,10 @@ const CreateCategory = () => {
         return;
       }
       setLoading(true);
-      const formattedName = formData.name.trim().replace(/\s+/g, "-");
+      //const formattedName = formData.name.trim().replace(/\s+/g, "-");
 
       const res = await backend.createCategory(
-        formattedName,
+        formData.name,
         formData.img,
         formData.status,
         formData.active
