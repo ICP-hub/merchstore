@@ -37,28 +37,15 @@ const Categories = () => {
   const [loading, setLoading] = useState(false);
   const [page, setPage] = useState(0);
   const [statistics, setStatistics] = useState([]);
-  const totalpage = async () => {
-    try {
-      const res = await backend.getstatisticaldetailforadmin();
-      setStatistics(res.ok);
-    } catch {}
-  };
-  useEffect(() => {
-    totalpage();
-  }, [page]);
+  const [totalPages, setTotalPages] = useState(0);
 
   const itemsPerPage = 8; // Number of items per page
 
   const handleNext = () => {
-    const totalPages = statistics.totalCategories
-      ? Math.ceil(parseInt(statistics.totalCategories) / itemsPerPage)
-      : 0;
-    console.log(totalPages);
-    if (page < totalPages-1) {
+    if (page < totalPages - 1) {
       setPage(page + 1);
     }
   };
-
 
   const handleprevious = () => {
     setPage(page - 1);
@@ -73,7 +60,7 @@ const Categories = () => {
       setLoading(true);
       const category = await backend.listCategories(8, page);
       console.log(category, "hello from list categories");
-
+      setTotalPages(parseInt(category.total_pages));
       setCategories(category.data);
     } catch (error) {
       console.error("Error listing all category:", error);

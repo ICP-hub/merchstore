@@ -61,6 +61,7 @@ const Products = () => {
   const [loading, setLoading] = useState(true);
   const [page, setPage] = useState(0);
   const [statistics, setStatistics] = useState([]);
+  const [totalPages, setTotalPages] = useState(0);
 
   useEffect(() => {
     listAllProducts();
@@ -71,6 +72,7 @@ const Products = () => {
       setLoading(true);
       const items = await backend.listallProducts(8, page, true);
       setProducts(items.data);
+      setTotalPages(parseInt(items.total_pages));
 
       console.log(items.data);
     } catch (error) {
@@ -80,23 +82,9 @@ const Products = () => {
     }
   };
 
-  const totalpage = async () => {
-    try {
-      const res = await backend.getstatisticaldetailforadmin();
-      setStatistics(res.ok);
-    } catch {}
-  };
-  useEffect(() => {
-    totalpage();
-  }, [page]);
-
   const itemsPerPage = 8; // Number of items per page
 
   const handleNext = () => {
-    const totalPages = statistics.totalProducts
-      ? Math.ceil(parseInt(statistics.totalProducts) / itemsPerPage)
-      : 0;
-    console.log(totalPages);
     if (page < totalPages - 1) {
       setPage(page + 1);
     }

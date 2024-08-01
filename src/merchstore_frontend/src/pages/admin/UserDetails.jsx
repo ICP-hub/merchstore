@@ -42,6 +42,7 @@ const UserDetails = () => {
   const [loading, setLoading] = useState(true);
   const [page, setPage] = useState(0);
   const [statistics, setStatistics] = useState([]);
+  const [totalPages, setTotalPages] = useState(0);
   useEffect(() => {
     listusers();
   }, [backend, page]);
@@ -51,29 +52,17 @@ const UserDetails = () => {
       setLoading(true);
       const userData = await backend.listUsers(8, page);
       setUser(userData.data);
+      setTotalPages(parseInt(userData.total_Pages));
     } catch (error) {
       console.error("Error listing all Users:", error);
     } finally {
       setLoading(false);
     }
   };
-  const totalpage = async () => {
-    try {
-      const res = await backend.getstatisticaldetailforadmin();
-      setStatistics(res.ok);
-    } catch {}
-  };
-  useEffect(() => {
-    totalpage();
-  }, [page]);
 
   const itemsPerPage = 8; // Number of items per page
 
   const handleNext = () => {
-    const totalPages = statistics.totalUsers
-      ? Math.ceil(parseInt(statistics.totalUsers) / itemsPerPage)
-      : 0;
-    console.log(totalPages);
     if (page < totalPages - 1) {
       setPage(page + 1);
     }
