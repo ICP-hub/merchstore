@@ -40,7 +40,7 @@ const Message = () => {
   // const { backend } = useBackend();
   const { backend } = useAuth();
   const [messages, setMessages] = useState([]);
-  const [loading, setLoading] = useState();
+  const [loading, setLoading] = useState(true);
   const [page, setPage] = useState(0);
   const [statistics, setStatistics] = useState([]);
   const totalpage = async () => {
@@ -60,14 +60,16 @@ const Message = () => {
       ? Math.ceil(parseInt(statistics.totalContacts) / itemsPerPage)
       : 0;
     console.log(totalPages);
-    if (page < totalPages) {
+    if (page < totalPages-1) {
       setPage(page + 1);
+   
     }
   };
 
   const handleprevious = () => {
     if (page > 0) {
       setPage(page - 1);
+    
     }
   };
 

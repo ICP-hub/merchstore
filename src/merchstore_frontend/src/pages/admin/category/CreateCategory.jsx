@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import toast from "react-hot-toast";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { IoMdArrowBack } from "react-icons/io";
 import { useBackend, useAuth } from "../../../auth/useClient";
 import { HiArrowDownLeft } from "react-icons/hi2";
@@ -10,6 +10,7 @@ const CreateCategory = () => {
   // const { backend } = useBackend();
   const { backend } = useAuth();
   const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
 
   const [formData, setFormData] = useState({
     name: "",
@@ -61,6 +62,7 @@ const CreateCategory = () => {
       console.log(res);
       if ("ok" in res) {
         toast.success("Category Added Successfully");
+        navigate("/admin/categories");
         setFormData({ name: "" });
         setFormData({ img: "" });
       } else if ("error" in res && res.error.includes("already exists")) {

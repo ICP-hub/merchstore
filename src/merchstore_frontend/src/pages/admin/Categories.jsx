@@ -54,7 +54,7 @@ const Categories = () => {
       ? Math.ceil(parseInt(statistics.totalCategories) / itemsPerPage)
       : 0;
     console.log(totalPages);
-    if (page < totalPages) {
+    if (page < totalPages-1) {
       setPage(page + 1);
     }
   };

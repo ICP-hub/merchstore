@@ -48,6 +48,7 @@ const UserDetails = () => {
 
   const listusers = async () => {
     try {
+      setLoading(true);
       const userData = await backend.listUsers(8, page);
       setUser(userData.data);
     } catch (error) {
@@ -73,7 +74,7 @@ const UserDetails = () => {
       ? Math.ceil(parseInt(statistics.totalUsers) / itemsPerPage)
       : 0;
     console.log(totalPages);
-    if (page < totalPages) {
+    if (page < totalPages - 1) {
       setPage(page + 1);
     }
   };

@@ -351,7 +351,7 @@ function Table({ columns, data, handleNext, handleprevious, page1 }) {
         <div className="hidden sm:flex-1 sm:flex sm:items-center sm:justify-between">
           <div className="flex gap-x-2 items-baseline">
             <span className="text-sm text-gray-700">
-              Page <span className="font-medium">{page1}</span>
+              Page <span className="font-medium">{page1 + 1}</span>
             </span>
             <label>
               <span className="sr-only">Items Per Page</span>
@@ -362,7 +362,7 @@ function Table({ columns, data, handleNext, handleprevious, page1 }) {
                   setPageSize(Number(e.target.value));
                 }}
               >
-                {[5, 10, 20].map((pageSize) => (
+                {[5, 8].map((pageSize) => (
                   <option key={pageSize} value={pageSize}>
                     Show {pageSize}
                   </option>

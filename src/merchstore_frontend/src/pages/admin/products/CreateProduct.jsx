@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 
-import { Link } from "react-router-dom";
+import { Link, Navigate, useNavigate } from "react-router-dom";
 import { CiCircleCheck, CiCircleChevLeft } from "react-icons/ci";
 import { TailSpin } from "react-loader-spinner";
 import { useBackend, useAuth } from "../../../auth/useClient";
@@ -16,6 +16,7 @@ const CreateCategory = () => {
   const [loading, setLoading] = useState(false);
   const [loading2, setLoading2] = useState(false);
   const [categorylist, setCategorylist] = useState([]);
+  const navigate = useNavigate();
 
   const [tags, setTags] = useState([]);
 
@@ -228,6 +229,7 @@ const CreateCategory = () => {
         console.log(res);
         if ("ok" in res) {
           toast.success("Product Added Successfully");
+          navigate("/admin/products");
 
           setFormData({
             title: "",
@@ -262,6 +264,7 @@ const CreateCategory = () => {
     } catch (error) {
       toast.error("An error occurred while creating the product.");
       console.error("An error occurred:", error);
+      navigate("/admin/products");
     } finally {
       setLoading(false);
     }
