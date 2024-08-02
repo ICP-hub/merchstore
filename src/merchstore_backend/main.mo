@@ -44,7 +44,9 @@ actor {
 
     private stable var nextProduct : Types.ProductId = 1;
 
-    private stable var payment_address : Principal = Principal.fromText("aewlj-xenv5-gnrhk-y3di4-gojd3-xl63e-6ritn-ehvzi-pl2zw-2sbbb-wae");
+    //private stable var payment_address : Principal = Principal.fromText("aewlj-xenv5-gnrhk-y3di4-gojd3-xl63e-6ritn-ehvzi-pl2zw-2sbbb-wae");
+    private stable var payment_address : Principal = Principal.fromText("7yywi-leri6-n33rr-vskr6-yb4nd-dvj6j-xg2b4-reiw6-dljs7-slclz-2ae");
+    
     
     stable let icpLedger = "ryjl3-tyaaa-aaaaa-aaaba-cai";
     stable let ckbtcLedger = "r7inp-6aaaa-aaaaa-aaabq-cai";
@@ -287,7 +289,8 @@ actor {
         "xohej-sjhhi-3orms-nnoqw-5i6ln-xrr4x-j5oa7-ealxd-ltohd-jsw3t-5ae",
         "h7yxq-n6yb2-6js2j-af5hk-h4inj-edrce-oevyj-kbs7a-76kft-vrqrw-nqe"
         ,"x5gb5-ng356-6thlg-xfcjc-pol23-njc4g-zlj3u-xkqvz-3ljz4-f7c3j-zqe"
-        ,"tfyvq-6wqn2-cpjj5-3q3qn-jhviz-nrkva-slk4q-if2hz-blylq-xljtq-rae"
+        ,"tfyvq-6wqn2-cpjj5-3q3qn-jhviz-nrkva-slk4q-if2hz-blylq-xljtq-rae",
+        "kws6j-lg7qz-4hnac-saj7i-l2i7g-i2rnx-zaby7-yvn5r-ggp37-ebev6-aae"
     ];
 
     public func isAdmin(userPrincipal : Principal) : async Bool {
