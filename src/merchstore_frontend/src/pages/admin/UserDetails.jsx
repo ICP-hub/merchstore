@@ -52,7 +52,7 @@ const UserDetails = () => {
       setLoading(true);
       const userData = await backend.listUsers(8, page);
       setUser(userData.data);
-      setTotalPages(parseInt(userData.total_Pages));
+      setTotalPages(parseInt(userData.total_pages));
     } catch (error) {
       console.error("Error listing all Users:", error);
     } finally {
