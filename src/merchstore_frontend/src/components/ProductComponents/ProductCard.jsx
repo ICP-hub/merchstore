@@ -327,7 +327,7 @@ const ProductCard = ({ product }) => {
                     : productInfo.variantInfo.img1
                 }
                 alt="prod name"
-                className="rounded-xl product-image lg:size-72 "
+                className="rounded-xl product-image lg:size-72  object-cover "
                 onError={handleError}
               />
             </div>
