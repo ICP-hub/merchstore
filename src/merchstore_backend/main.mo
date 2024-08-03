@@ -2284,4 +2284,9 @@ actor {
         };
         return #ok(statisticalDetail);
     };
+
+
+    public func get_trusted_origins() : async [Text] {
+    ["https://ez3it-6qaaa-aaaak-akwyq-cai.icp0.io","http://localhost:3000","http://bd3sg-teaaa-aaaaa-qaaba-cai.localhost:4943","http://127.0.0.1:4943/?canisterId=bd3sg-teaaa-aaaaa-qaaba-cai","http://127.0.0.1:4943"]
+};
 };

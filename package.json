@@ -17,6 +17,7 @@
   ],
   "dependencies": {
     "@dfinity/auth-client": "^2.0.0",
+    "@nfid/embed": "^0.10.3",
     "intl-tel-input": "^19.2.16",
     "three": "^0.161.0",
     "vanta": "^0.5.24"
