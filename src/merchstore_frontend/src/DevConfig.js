@@ -5,7 +5,7 @@ export const host = production ? "https://icp-api.io" : "http://127.0.0.1:4943";
 
 export const ids = {
   backendCan: production
-    ? "l4mwy-piaaa-aaaak-akqdq-cai"
+    ? "e62oh-tiaaa-aaaak-akwya-cai"
     : "bkyz2-fmaaa-aaaaa-qaaaq-cai",
   ICPtokenCan: production
     ? "ryjl3-tyaaa-aaaaa-aaaba-cai"
