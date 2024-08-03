@@ -186,6 +186,8 @@ export const useAuthClient = () => {
             agentOptions: { identity },
           });
           setBackend(actor);
+        } else {
+          setBackend(createActor(canisterID));
         }
       } catch (err) {
         console.error("Error initializing AuthClient:", err);
@@ -324,6 +326,7 @@ export const useAuthClient = () => {
 
 export const AuthProvider = ({ children }) => {
   const auth = useAuthClient();
+  console.log("Auth is ", auth);
   return <AuthContext.Provider value={auth}>{children}</AuthContext.Provider>;
 };
 
