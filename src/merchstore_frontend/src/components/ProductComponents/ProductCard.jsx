@@ -147,7 +147,7 @@ const ProductCard = ({ product }) => {
     try {
       //setLoading4(true)
 
-      const wishlist2 = await backend.listWishlistItems(10, 0);
+      const wishlist2 = await backend.listWishlistItems(100, 0);
       setWishlist(wishlist2.data);
     } catch (error) {
       console.error("Error listing wishlist:", error);
@@ -327,7 +327,7 @@ const ProductCard = ({ product }) => {
                     : productInfo.variantInfo.img1
                 }
                 alt="prod name"
-                className="rounded-xl product-image"
+                className="rounded-xl product-image lg:size-72 "
                 onError={handleError}
               />
             </div>

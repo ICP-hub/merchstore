@@ -26,7 +26,7 @@ const TrendingProductCard = ({ product }) => {
         <img
           src={errorImage ? placeholderImg : product?.variantColor[0]?.img1}
           alt="product1"
-          className="w-full object-cover bg-gray-300 rounded-xl mb-2"
+          className="w-full object-cover bg-gray-300 rounded-xl mb-2 size-60"
           onError={handleError}
         />
         <div className="flex justify-between items-center px-1 mb-2">

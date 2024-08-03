@@ -108,7 +108,7 @@ const Cart = () => {
   };
 
   const cartItemDetails = getCartItemDetails(cartItems, productList);
-  // console.log("cartItemDetails", cartItemDetails);
+  console.log("cartItemDetails", cartItemDetails);
   // console.log("finalCart", finalCart);
   const pathsForTabChanges = ["Home", "cart"];
 

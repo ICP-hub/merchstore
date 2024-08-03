@@ -41,7 +41,8 @@ const ShippingAddressPage = () => {
 /*  @ <AddressDetail />.
 /* ----------------------------------------------------------------------------------------------------- */
 const AddressDetail = () => {
-  const { getAddressList, userAddressList } = UserAddressApiHandler();
+  const { getAddressList, userAddressList, isLoading } =
+    UserAddressApiHandler();
   const { getCallerCartItems, cartItems, getShippingAmount, shippingAmount } =
     CartApiHandler();
   const { productList, getProductList } = ProductApiHandler(0);
@@ -108,7 +109,7 @@ const AddressDetail = () => {
   return (
     <div className="container mx-auto p-6 max-md:px-2">
       <TabChanges paths={pathsForTabChanges} />
-      {finalIsLoading ? (
+      {isLoading ? (
         <ShippingAddressPageLoader />
       ) : (
         <div className="flex w-full max-md:flex-col gap-4">
