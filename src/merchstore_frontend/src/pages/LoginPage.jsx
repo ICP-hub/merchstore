@@ -11,8 +11,6 @@ import { TiChevronLeftOutline } from "react-icons/ti";
 import { PiWalletBold } from "react-icons/pi";
 import { useAuth } from "../auth/useClient";
 import WalletModal from "../components/common/WalletModal";
-import { NFID } from "@nfid/embed";
-import { Principal } from '@dfinity/principal';
 
 export default function LoginPage() {
   // const { open } = useDialog();
@@ -25,7 +23,7 @@ export default function LoginPage() {
   const handleWalletModalOpen = () => setIsLoggedIn(true);
   const handleWalletModalClose = () => setIsLoggedIn(false);
 
-    useEffect(() => {
+  useEffect(() => {
     let intervalId;
 
     if (!vantaEffect) {
@@ -57,7 +55,7 @@ export default function LoginPage() {
       clearInterval(intervalId);
     };
   }, [vantaEffect]);
- 
+
   // const loginHandler = () => {
   //   // open();
   //   login("ii");
@@ -68,51 +66,6 @@ export default function LoginPage() {
     toast.success("Logout successfully.");
   };
   // console.log(isConnected);
-
-
-  const [nfid, setNfid] = useState(null);
-  const [delegation, setDelegation] = useState(null);
-  const [error, setError] = useState(null);
-
-  useEffect(() => {
-    const initNFID = async () => {
-      try {
-        const nfIDInstance = await NFID.init({
-          application: {
-            name: "NFID Login",
-            logo: "https://dev.nfid.one/static/media/id.300eb72f3335b50f5653a7d6ad5467b3.svg"
-          },
-        });
-        setNfid(nfIDInstance);
-      } catch (error) {
-        console.error("Error initializing NFID:", error);
-        setError("Failed to initialize NFID.");
-      }
-    };
-
-    initNFID();
-  }, []);
-
-
-  const handleNFIDCall = async () => {
-    // const canisterArray = ["fnrir-yiaaa-aaaak-qirwa-cai"];
-    const canisterArray = [process.env.CANISTER_ID_MERCHSTORE_BACKEND];
-    
-    if (nfid) {
-      try {
-        const delegationResult = await nfid.getDelegation({ targets: canisterArray });
-        const theUserPrincipal = Principal.from(delegationResult.getPrincipal()).toText();
-        console.log(theUserPrincipal);
-        setDelegation(theUserPrincipal);
-      } catch (error) {
-        console.error("Error during NFID call:", error);
-        setError("Failed to get NFID delegation.");
-      }
-    } else {
-      console.warn("NFID is not initialized.");
-      setError("NFID is not initialized.");
-    }
-  };
 
   return (
     <>
@@ -135,27 +88,15 @@ export default function LoginPage() {
                 <p className="text-xs text-gray-700 mb-10 text-center">
                   Select what wallet you want to connect below
                 </p>
-
-                {error && <div className="error">{error}</div>}
-      {nfid ? (
-        <>
-          <div>NFID Initialized</div>
-          <button onClick={handleNFIDCall}>Make NFID Call</button>
-          {delegation && <div><b>Principal_Id:</b> {(delegation)}</div>}
-        </>
-      ) : (
-        <div>Loading NFID...</div>
-      )}
-                {/* {!isConnected && (
+                {!isConnected && (
                   <Button
-                    //onClick={handleWalletModalOpen}
-                    onClick={handleNFIDCall}
+                    onClick={handleWalletModalOpen}
                     className="w-full rounded-full text-white font-semibold bg-black border border-black px-4 py-2 mb-3 flex justify-center items-center gap-1.5"
                   >
                     <PiWalletBold className="w-5 h-5" /> Connect Your Wallet
                   </Button>
-                )} */}
-                {/* {isConnected && (
+                )}
+                {isConnected && (
                   <Button
                     onClick={logoutHandler}
                     className="w-full rounded-full text-white font-semibold bg-black border border-black px-4 py-2 mb-3 flex justify-center items-center"
@@ -163,7 +104,7 @@ export default function LoginPage() {
                     <PiWalletBold className="w-5 h-5" />
                     Disconnect
                   </Button>
-                )} */}
+                )}
                 <Button
                   onClick={() => navigate("/")}
                   className="w-full rounded-full text-black font-semibold bg-white border border-white px-4 py-2 flex justify-center items-center"
