@@ -230,7 +230,7 @@ const CartApiHandler = () => {
 
   /**************************** Payment Process ******************/
   const createTokenActor = async (canisterId) => {
-    //console.log("identity : ",identity)
+    console.log("identity in cartApiHandler: ", identity);
     const agent = new HttpAgent({
       identity,
       host,
