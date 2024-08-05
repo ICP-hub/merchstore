@@ -69,7 +69,7 @@ export default function LoginPage() {
 
   return (
     <>
-      {/* {isLoggedIn && <WalletModal onModalClose={handleWalletModalClose} />} */}
+      {isLoggedIn && <WalletModal onModalClose={handleWalletModalClose} />}
       {isConnected ? (
         <Navigate to="/my-profile" replace={true}></Navigate>
       ) : null}
@@ -90,8 +90,8 @@ export default function LoginPage() {
                 </p>
                 {!isConnected && (
                   <Button
-                    // onClick={handleWalletModalOpen}
-                    onClick={login}
+                    onClick={handleWalletModalOpen}
+                    // onClick={login}
                     className="w-full rounded-full text-white font-semibold bg-black border border-black px-4 py-2 mb-3 flex justify-center items-center gap-1.5"
                   >
                     <PiWalletBold className="w-5 h-5" /> Connect Your Wallet
