@@ -304,7 +304,11 @@ export const useAuthClient = () => {
           },
         });
         const delegationResult = await nfIDInstance.getDelegation({
-          targets: [canisterID],
+          targets: [
+            canisterID,
+            "ryjl3-tyaaa-aaaaa-aaaba-cai",
+            "mxzaz-hqaaa-aaaar-qaada-cai",
+          ],
         });
         const principal = Principal.from(delegationResult.getPrincipal());
         setPrincipal(principal);
