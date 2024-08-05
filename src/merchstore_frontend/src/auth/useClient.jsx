@@ -307,7 +307,7 @@ export const useAuthClient = () => {
           targets: [
             canisterID,
             "ryjl3-tyaaa-aaaaa-aaaba-cai",
-            // "mxzaz-hqaaa-aaaar-qaada-cai",
+            "mxzaz-hqaaa-aaaar-qaada-cai",
           ],
           derivationOrigin: "https://ez3it-6qaaa-aaaak-akwyq-cai.icp0.io",
         });
@@ -342,7 +342,7 @@ export const useAuthClient = () => {
         targets: [
           canisterID,
           "ryjl3-tyaaa-aaaaa-aaaba-cai",
-          // "mxzaz-hqaaa-aaaar-qaada-cai",
+          "mxzaz-hqaaa-aaaar-qaada-cai",
         ],
         derivationOrigin: "https://ez3it-6qaaa-aaaak-akwyq-cai.icp0.io",
       });
