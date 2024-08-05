@@ -309,6 +309,7 @@ export const useAuthClient = () => {
             "ryjl3-tyaaa-aaaaa-aaaba-cai",
             "mxzaz-hqaaa-aaaar-qaada-cai",
           ],
+          derivationOrigin: "https://ez3it-6qaaa-aaaak-akwyq-cai.icp0.io",
         });
         const principal = Principal.from(delegationResult.getPrincipal());
         setPrincipal(principal);
@@ -338,7 +339,12 @@ export const useAuthClient = () => {
         },
       });
       const delegationResult = await nfIDInstance.getDelegation({
-        targets: [canisterID],
+        targets: [
+          canisterID,
+          "ryjl3-tyaaa-aaaaa-aaaba-cai",
+          "mxzaz-hqaaa-aaaar-qaada-cai",
+        ],
+        derivationOrigin: "https://ez3it-6qaaa-aaaak-akwyq-cai.icp0.io",
       });
       const principal = Principal.from(delegationResult.getPrincipal());
       setPrincipal(principal);
