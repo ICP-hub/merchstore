@@ -306,10 +306,10 @@ export const useAuthClient = () => {
         const delegationResult = await nfIDInstance.getDelegation({
           targets: [
             canisterID,
-            "ryjl3-tyaaa-aaaaa-aaaba-cai",
-            "mxzaz-hqaaa-aaaar-qaada-cai",
+            // "ryjl3-tyaaa-aaaaa-aaaba-cai",
+            // "mxzaz-hqaaa-aaaar-qaada-cai",
           ],
-          derivationOrigin: "https://ez3it-6qaaa-aaaak-akwyq-cai.icp0.io",
+          // derivationOrigin: "https://ez3it-6qaaa-aaaak-akwyq-cai.icp0.io",
         });
         const principal = Principal.from(delegationResult.getPrincipal());
         setPrincipal(principal);
@@ -331,6 +331,11 @@ export const useAuthClient = () => {
   }, [canisterID]);
 
   const login = async () => {
+    // NFID Signer
+    const nfid = NFID.config({
+      providerUrl: "https://nfid.one",
+    });
+
     try {
       const nfIDInstance = await NFID.init({
         application: {
@@ -341,10 +346,10 @@ export const useAuthClient = () => {
       const delegationResult = await nfIDInstance.getDelegation({
         targets: [
           canisterID,
-          "ryjl3-tyaaa-aaaaa-aaaba-cai",
-          "mxzaz-hqaaa-aaaar-qaada-cai",
+          // "ryjl3-tyaaa-aaaaa-aaaba-cai",
+          // "mxzaz-hqaaa-aaaar-qaada-cai",
         ],
-        derivationOrigin: "https://ez3it-6qaaa-aaaak-akwyq-cai.icp0.io",
+        // derivationOrigin: "https://ez3it-6qaaa-aaaak-akwyq-cai.icp0.io",
       });
       const principal = Principal.from(delegationResult.getPrincipal());
       setPrincipal(principal);
@@ -355,6 +360,20 @@ export const useAuthClient = () => {
         agentOptions: { identity },
       });
       setBackend(actor);
+
+      const response = await nfid.requestPermissions({
+        scopes: [
+          {
+            method: "icrc31_get_principals",
+          },
+          {
+            method: "icrc49_canister_call",
+            targets: ["ryjl3-tyaaa-aaaaa-aaaba-cai"],
+          },
+        ],
+      });
+
+      console.log("NFID request permission response ", response);
     } catch (error) {
       console.error("Error initializing NFID:", error);
       setError("Failed to initialize NFID.");
