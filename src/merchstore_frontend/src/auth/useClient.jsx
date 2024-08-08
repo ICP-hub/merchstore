@@ -168,206 +168,209 @@ export const useAuthClient = () => {
   const [nfid, setNfid] = useState(null);
   const [error, setError] = useState(null);
 
-  useEffect(() => {
-    const initAuthClient = async () => {
-      try {
-        const client = await AuthClient.create();
-        setAuthClient(client);
-        const isAuthenticated = await client.isAuthenticated();
-        const identity = client.getIdentity();
-        const principal = identity.getPrincipal();
-
-        setIsConnected(isAuthenticated);
-        setIdentity(identity);
-        setPrincipal(principal);
-
-        if (isAuthenticated) {
-          const actor = await createActor(canisterID, {
-            agentOptions: { identity },
-          });
-          setBackend(actor);
-        } else {
-          setBackend(createActor(canisterID));
-        }
-      } catch (err) {
-        console.error("Error initializing AuthClient:", err);
-        setError("Failed to initialize AuthClient.");
-      }
-    };
-
-    initAuthClient();
-  }, []);
-
-  useEffect(() => {
-    const handlePlugLogin = async () => {
-      if (principal?.toText() === "2vxsx-fae") {
-        try {
-          const userObject = await PlugLogin(whitelist);
-          const agent = userObject.agent;
-          const principal = Principal.fromText(userObject.principal);
-          const actor = await CreateActor(agent, idlFactory, canisterID);
-
-          setBackend(actor);
-          setIsConnected(true);
-          setPrincipal(principal);
-          setIdentity(userObject.agent._identity);
-
-          await authClient.login({ agent });
-        } catch (err) {
-          console.error("Error during Plug login:", err);
-          setError("Failed to log in with Plug.");
-        }
-      }
-    };
-
-    const loginStatus = localStorage.getItem("loginStatus");
-    if (loginStatus) {
-      handlePlugLogin();
-    }
-  }, [principal, authClient]);
-
-  const login = async (provider) => {
-    if (!authClient) return;
-    try {
-      let userObject;
-      if (provider === "Plug") {
-        userObject = await PlugLogin(whitelist);
-      } else if (provider === "Stoic") {
-        userObject = await StoicLogin();
-      } else if (provider === "NFID") {
-        userObject = await NFIDLogin();
-      } else if (provider === "Identity") {
-        userObject = await IdentityLogin();
-      } else {
-        throw new Error("Unknown provider.");
-      }
-
-      const agent = userObject.agent;
-      const identity = agent._identity;
-      const principal = Principal.fromText(userObject.principal);
-      const actor = await CreateActor(agent, idlFactory, canisterID);
-
-      setBackend(actor);
-      setIsConnected(true);
-      setPrincipal(principal);
-      setIdentity(identity);
-
-      if (provider !== "Plug") {
-        await authClient.login({ identity });
-      }
-
-      if (provider === "Plug") {
-        localStorage.setItem("loginStatus", "true");
-      }
-    } catch (err) {
-      console.error(`Error during ${provider} login:`, err);
-      setError(`Failed to log in with ${provider}.`);
-    }
-  };
-
-  const disconnect = async () => {
-    if (authClient) {
-      try {
-        await authClient.logout();
-        setIsConnected(false);
-        setPrincipal(null);
-        setIdentity(null);
-        setBackend(null);
-        localStorage.removeItem("loginStatus");
-      } catch (err) {
-        console.error("Error during logout:", err);
-        setError("Failed to log out.");
-      }
-    }
-  };
-
   // useEffect(() => {
-  //   const initNFID = async () => {
+  //   const initAuthClient = async () => {
   //     try {
-  //       const nfIDInstance = await NFID.init({
-  //         application: {
-  //           name: "NFID Login",
-  //           logo: "https://dev.nfid.one/static/media/id.300eb72f3335b50f5653a7d6ad5467b3.svg",
-  //         },
-  //       });
-  //       const delegationResult = await nfIDInstance.getDelegation({
-  //         targets: [
-  //           canisterID,
-  //           // "ryjl3-tyaaa-aaaaa-aaaba-cai",
-  //           // "mxzaz-hqaaa-aaaar-qaada-cai",
-  //         ],
-  //         // derivationOrigin: "https://ez3it-6qaaa-aaaak-akwyq-cai.icp0.io",
-  //       });
-  //       const principal = Principal.from(delegationResult.getPrincipal());
-  //       setPrincipal(principal);
-  //       const identity = await nfIDInstance.getIdentity();
-  //       setIdentity(identity);
-  //       if (identity) setIsConnected(true);
-  //     } catch (error) {
-  //       console.error("Error initializing NFID:", error);
-  //       setError("Failed to initialize NFID.");
-  //     }
+  //       const client = await AuthClient.create();
+  //       console.log("client is ", client);
+  //       setAuthClient(client);
+  //       const isAuthenticated = await client.isAuthenticated();
+  //       const identity = client.getIdentity();
+  //       const principal = identity.getPrincipal();
 
-  //     const actor = await createActor(canisterID, {
-  //       agentOptions: { identity },
-  //     });
-  //     setBackend(actor);
+  //       setIsConnected(isAuthenticated);
+  //       setIdentity(identity);
+  //       setPrincipal(principal);
+
+  //       if (isAuthenticated) {
+  //         const actor = await createActor(canisterID, {
+  //           agentOptions: { identity },
+  //         });
+  //         setBackend(actor);
+  //       } else {
+  //         setBackend(createActor(canisterID));
+  //       }
+  //     } catch (err) {
+  //       console.error("Error initializing AuthClient:", err);
+  //       setError("Failed to initialize AuthClient.");
+  //     }
   //   };
 
-  //   initNFID();
-  // }, [canisterID]);
+  //   initAuthClient();
+  // }, []);
 
-  // const login = async () => {
-  //   // NFID Signer
-  //   const nfid = NFID.config({
-  //     providerUrl: "https://nfid.one",
-  //   });
+  // useEffect(() => {
+  //   const handlePlugLogin = async () => {
+  //     if (principal?.toText() === "2vxsx-fae") {
+  //       try {
+  //         const userObject = await PlugLogin(whitelist);
+  //         const agent = userObject.agent;
+  //         const principal = Principal.fromText(userObject.principal);
+  //         const actor = await CreateActor(agent, idlFactory, canisterID);
 
+  //         setBackend(actor);
+  //         setIsConnected(true);
+  //         setPrincipal(principal);
+  //         setIdentity(userObject.agent._identity);
+
+  //         await authClient.login({ agent });
+  //       } catch (err) {
+  //         console.error("Error during Plug login:", err);
+  //         setError("Failed to log in with Plug.");
+  //       }
+  //     }
+  //   };
+
+  //   const loginStatus = localStorage.getItem("loginStatus");
+  //   if (loginStatus) {
+  //     handlePlugLogin();
+  //   }
+  // }, [principal, authClient]);
+
+  // const login = async (provider) => {
+  //   if (!authClient) return;
   //   try {
-  //     const nfIDInstance = await NFID.init({
-  //       application: {
-  //         name: "NFID Login",
-  //         logo: "https://dev.nfid.one/static/media/id.300eb72f3335b50f5653a7d6ad5467b3.svg",
-  //       },
-  //     });
-  //     const delegationResult = await nfIDInstance.getDelegation({
-  //       targets: [
-  //         canisterID,
-  //         // "ryjl3-tyaaa-aaaaa-aaaba-cai",
-  //         // "mxzaz-hqaaa-aaaar-qaada-cai",
-  //       ],
-  //       // derivationOrigin: "https://ez3it-6qaaa-aaaak-akwyq-cai.icp0.io",
-  //     });
-  //     const principal = Principal.from(delegationResult.getPrincipal());
-  //     setPrincipal(principal);
-  //     const identity = await nfIDInstance.getIdentity();
-  //     setIdentity(identity);
-  //     if (identity) setIsConnected(true);
-  //     const actor = await createActor(canisterID, {
-  //       agentOptions: { identity },
-  //     });
+  //     let userObject;
+  //     if (provider === "Plug") {
+  //       userObject = await PlugLogin(whitelist);
+  //     } else if (provider === "Stoic") {
+  //       userObject = await StoicLogin();
+  //     } else if (provider === "NFID") {
+  //       userObject = await NFIDLogin();
+  //     } else if (provider === "Identity") {
+  //       userObject = await IdentityLogin();
+  //     } else {
+  //       throw new Error("Unknown provider.");
+  //     }
+
+  //     console.log("User object is ", userObject);
+
+  //     const agent = userObject.agent;
+  //     const identity = agent._identity;
+  //     const principal = Principal.fromText(userObject.principal);
+  //     const actor = await CreateActor(agent, idlFactory, canisterID);
+
   //     setBackend(actor);
+  //     setIsConnected(true);
+  //     setPrincipal(principal);
+  //     setIdentity(identity);
 
-  //     const response = await nfid.requestPermissions({
-  //       scopes: [
-  //         {
-  //           method: "icrc31_get_principals",
-  //         },
-  //         {
-  //           method: "icrc49_canister_call",
-  //           targets: ["ryjl3-tyaaa-aaaaa-aaaba-cai"],
-  //         },
-  //       ],
-  //     });
+  //     if (provider !== "Plug") {
+  //       await authClient.login({ identity });
+  //     }
 
-  //     console.log("NFID request permission response ", response);
-  //   } catch (error) {
-  //     console.error("Error initializing NFID:", error);
-  //     setError("Failed to initialize NFID.");
+  //     if (provider === "Plug") {
+  //       localStorage.setItem("loginStatus", "true");
+  //     }
+  //   } catch (err) {
+  //     console.error(`Error during ${provider} login:`, err);
+  //     setError(`Failed to log in with ${provider}.`);
   //   }
   // };
 
-  // const disconnect = () => {};
+  // const disconnect = async () => {
+  //   if (authClient) {
+  //     try {
+  //       await authClient.logout();
+  //       setIsConnected(false);
+  //       setPrincipal(null);
+  //       setIdentity(null);
+  //       setBackend(null);
+  //       localStorage.removeItem("loginStatus");
+  //     } catch (err) {
+  //       console.error("Error during logout:", err);
+  //       setError("Failed to log out.");
+  //     }
+  //   }
+  // };
+
+  useEffect(() => {
+    const initNFID = async () => {
+      try {
+        const nfIDInstance = await NFID.init({
+          application: {
+            name: "NFID Login",
+            logo: "https://dev.nfid.one/static/media/id.300eb72f3335b50f5653a7d6ad5467b3.svg",
+          },
+        });
+        const delegationResult = await nfIDInstance.getDelegation({
+          targets: [
+            canisterID,
+            // "ryjl3-tyaaa-aaaaa-aaaba-cai",
+            // "mxzaz-hqaaa-aaaar-qaada-cai",
+          ],
+          // derivationOrigin: "https://ez3it-6qaaa-aaaak-akwyq-cai.icp0.io",
+        });
+        const principal = Principal.from(delegationResult.getPrincipal());
+        setPrincipal(principal);
+        const identity = await nfIDInstance.getIdentity();
+        setIdentity(identity);
+        if (identity) setIsConnected(true);
+      } catch (error) {
+        console.error("Error initializing NFID:", error);
+        setError("Failed to initialize NFID.");
+      }
+
+      const actor = await createActor(canisterID, {
+        agentOptions: { identity },
+      });
+      setBackend(actor);
+    };
+
+    initNFID();
+  }, [canisterID]);
+
+  const login = async () => {
+    // NFID Signer
+    // const nfid = NFID.config({
+    //   providerUrl: "https://nfid.one",
+    // });
+
+    try {
+      const nfIDInstance = await NFID.init({
+        application: {
+          name: "NFID Login",
+          logo: "https://dev.nfid.one/static/media/id.300eb72f3335b50f5653a7d6ad5467b3.svg",
+        },
+      });
+      const delegationResult = await nfIDInstance.getDelegation({
+        targets: [
+          canisterID,
+          // "ryjl3-tyaaa-aaaaa-aaaba-cai",
+          // "mxzaz-hqaaa-aaaar-qaada-cai",
+        ],
+        // derivationOrigin: "https://ez3it-6qaaa-aaaak-akwyq-cai.icp0.io",
+      });
+      const principal = Principal.from(delegationResult.getPrincipal());
+      setPrincipal(principal);
+      const identity = await nfIDInstance.getIdentity();
+      setIdentity(identity);
+      if (identity) setIsConnected(true);
+      const actor = await createActor(canisterID, {
+        agentOptions: { identity },
+      });
+      setBackend(actor);
+
+      // const response = await nfid.requestPermissions({
+      //   scopes: [
+      //     {
+      //       method: "icrc31_get_principals",
+      //     },
+      //     {
+      //       method: "icrc49_canister_call",
+      //       targets: ["ryjl3-tyaaa-aaaaa-aaaba-cai"],
+      //     },
+      //   ],
+      // });
+
+      // console.log("NFID request permission response ", response);
+    } catch (error) {
+      console.error("Error initializing NFID:", error);
+      setError("Failed to initialize NFID.");
+    }
+  };
+
+  const disconnect = () => {};
 
   return {
     isConnected,
