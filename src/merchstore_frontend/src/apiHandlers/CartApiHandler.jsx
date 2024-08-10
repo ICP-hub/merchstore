@@ -144,6 +144,9 @@ const CartApiHandler = () => {
       toast.error("You need to login first");
       return;
     }
+    // Check balance
+    const plugBalance = await window.ic.plug.requestBalance();
+    console.log("Plug balance is ", plugBalance);
     setTotalAmountForTransfer(totalAmount);
     // const userid = Principal.fromText(principal);
     // const userid = principal;

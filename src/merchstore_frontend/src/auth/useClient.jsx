@@ -169,7 +169,7 @@ export const useAuthClient = () => {
   // Refresh login
 
   useEffect(() => {
-    const isLoggedIn = localStorage.getItem("loginStatus");
+    const isLoggedIn = sessionStorage.getItem("loginStatus");
     const checkLoginStatus = async () => {
       const client = await AuthClient.create();
       setAuthClient(client);
@@ -177,9 +177,10 @@ export const useAuthClient = () => {
         if (isLoggedIn) {
           const loginData = await PlugLogin(whitelist);
           const agent = loginData.agent;
+          console.log("agent is ", agent);
           const principal = Principal.fromText(loginData.principal);
           const actor = await CreateActor(agent, idlFactory, canisterID);
-          await client.login({ agent });
+          // await client.login({ agent });
           setBackend(actor);
           setIsConnected(true);
           setPrincipal(principal);
@@ -205,7 +206,7 @@ export const useAuthClient = () => {
       setBackend(actor);
       setIsConnected(true);
       setPrincipal(principal);
-      if (loginData) localStorage.setItem("loginStatus", "true");
+      if (loginData) sessionStorage.setItem("loginStatus", "true");
     } catch (err) {
       console.error("Login Failed ", err);
     }
@@ -217,7 +218,7 @@ export const useAuthClient = () => {
       setIsConnected(false);
       setPrincipal(null);
       setIdentity(null);
-      localStorage.removeItem("loginStatus");
+      sessionStorage.removeItem("loginStatus");
     } catch (err) {
       console.error("Failed to disconnect ", err);
     }
