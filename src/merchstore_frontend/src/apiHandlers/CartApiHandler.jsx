@@ -128,10 +128,6 @@ const CartApiHandler = () => {
     }
   };
 
-  function formatWithUnderscore(number) {
-    return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, "_");
-  }
-
   // Gether order placement data for proceed
   const orderPlacement = async (
     products,
@@ -150,13 +146,10 @@ const CartApiHandler = () => {
     }
 
     const transformedTotal = Number(totalAmount * 10 ** 8);
-    const checkUnderscore = formatWithUnderscore(transformedTotal);
-    const finalTransferAmt = Number(Math.round(checkUnderscore));
-    console.log("Check underscore ", finalTransferAmt, typeof finalTransferAmt);
 
     const transferWindow = await window.ic.plug.requestTransfer({
       to: "uktss-xp5gu-uwif5-hfpwu-rujms-foroa-4zdkd-ofspf-uqqre-wxqyj-cqe",
-      amount: finalTransferAmt,
+      amount: transformedTotal,
       memo: "",
     });
 
