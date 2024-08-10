@@ -149,8 +149,8 @@ const CartApiHandler = () => {
       return;
     }
 
-    const transformedTotal = totalAmount * (10 ^ 8);
-    const checkUnderscore = Number(formatWithUnderscore(transformedTotal));
+    const transformedTotal = Number(totalAmount * 10 ** 8);
+    const checkUnderscore = formatWithUnderscore(transformedTotal);
 
     console.log("Check underscore ", checkUnderscore);
 
