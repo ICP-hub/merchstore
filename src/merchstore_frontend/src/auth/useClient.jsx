@@ -165,8 +165,63 @@ export const useAuthClient = () => {
   const [backend, setBackend] = useState(null);
   const [identity, setIdentity] = useState(null);
   const [authClient, setAuthClient] = useState(null);
-  const [nfid, setNfid] = useState(null);
-  const [error, setError] = useState(null);
+
+  // Refresh login
+
+  useEffect(() => {
+    const isLoggedIn = localStorage.getItem("loginStatus");
+    const checkLoginStatus = async () => {
+      const client = await AuthClient.create();
+      setAuthClient(client);
+      try {
+        if (isLoggedIn) {
+          const loginData = await PlugLogin(whitelist);
+          const agent = loginData.agent;
+          const principal = Principal.fromText(loginData.principal);
+          const actor = await CreateActor(agent, idlFactory, canisterID);
+          await client.login({ agent });
+          setBackend(actor);
+          setIsConnected(true);
+          setPrincipal(principal);
+        } else {
+          setBackend(createActor(canisterID));
+        }
+      } catch (err) {
+        console.error("Failed to fetch login details ", err);
+      }
+    };
+    checkLoginStatus();
+  }, []);
+
+  const login = async () => {
+    const client = await AuthClient.create();
+    setAuthClient(client);
+    try {
+      const loginData = await PlugLogin(whitelist);
+      const agent = loginData.agent;
+      const principal = Principal.fromText(loginData.principal);
+      const actor = await CreateActor(agent, idlFactory, canisterID);
+      // await client.login({ agent });
+      setBackend(actor);
+      setIsConnected(true);
+      setPrincipal(principal);
+      if (loginData) localStorage.setItem("loginStatus", "true");
+    } catch (err) {
+      console.error("Login Failed ", err);
+    }
+  };
+
+  const disconnect = async () => {
+    try {
+      await authClient.logout();
+      setIsConnected(false);
+      setPrincipal(null);
+      setIdentity(null);
+      localStorage.removeItem("loginStatus");
+    } catch (err) {
+      console.error("Failed to disconnect ", err);
+    }
+  };
 
   // useEffect(() => {
   //   const initAuthClient = async () => {
@@ -284,93 +339,93 @@ export const useAuthClient = () => {
   //   }
   // };
 
-  useEffect(() => {
-    const initNFID = async () => {
-      try {
-        const nfIDInstance = await NFID.init({
-          application: {
-            name: "NFID Login",
-            logo: "https://dev.nfid.one/static/media/id.300eb72f3335b50f5653a7d6ad5467b3.svg",
-          },
-        });
-        const delegationResult = await nfIDInstance.getDelegation({
-          targets: [
-            canisterID,
-            // "ryjl3-tyaaa-aaaaa-aaaba-cai",
-            // "mxzaz-hqaaa-aaaar-qaada-cai",
-          ],
-          // derivationOrigin: "https://ez3it-6qaaa-aaaak-akwyq-cai.icp0.io",
-        });
-        const principal = Principal.from(delegationResult.getPrincipal());
-        setPrincipal(principal);
-        const identity = await nfIDInstance.getIdentity();
-        setIdentity(identity);
-        if (identity) setIsConnected(true);
-      } catch (error) {
-        console.error("Error initializing NFID:", error);
-        setError("Failed to initialize NFID.");
-      }
+  // useEffect(() => {
+  //   const initNFID = async () => {
+  //     try {
+  //       const nfIDInstance = await NFID.init({
+  //         application: {
+  //           name: "NFID Login",
+  //           logo: "https://dev.nfid.one/static/media/id.300eb72f3335b50f5653a7d6ad5467b3.svg",
+  //         },
+  //       });
+  //       const delegationResult = await nfIDInstance.getDelegation({
+  //         targets: [
+  //           canisterID,
+  //           // "ryjl3-tyaaa-aaaaa-aaaba-cai",
+  //           // "mxzaz-hqaaa-aaaar-qaada-cai",
+  //         ],
+  //         // derivationOrigin: "https://ez3it-6qaaa-aaaak-akwyq-cai.icp0.io",
+  //       });
+  //       const principal = Principal.from(delegationResult.getPrincipal());
+  //       setPrincipal(principal);
+  //       const identity = await nfIDInstance.getIdentity();
+  //       setIdentity(identity);
+  //       if (identity) setIsConnected(true);
+  //     } catch (error) {
+  //       console.error("Error initializing NFID:", error);
+  //       setError("Failed to initialize NFID.");
+  //     }
 
-      const actor = await createActor(canisterID, {
-        agentOptions: { identity },
-      });
-      setBackend(actor);
-    };
+  //     const actor = await createActor(canisterID, {
+  //       agentOptions: { identity },
+  //     });
+  //     setBackend(actor);
+  //   };
 
-    initNFID();
-  }, [canisterID]);
+  //   initNFID();
+  // }, [canisterID]);
 
-  const login = async () => {
-    // NFID Signer
-    // const nfid = NFID.config({
-    //   providerUrl: "https://nfid.one",
-    // });
+  // const login = async () => {
+  //   // NFID Signer
+  //   // const nfid = NFID.config({
+  //   //   providerUrl: "https://nfid.one",
+  //   // });
 
-    try {
-      const nfIDInstance = await NFID.init({
-        application: {
-          name: "NFID Login",
-          logo: "https://dev.nfid.one/static/media/id.300eb72f3335b50f5653a7d6ad5467b3.svg",
-        },
-      });
-      const delegationResult = await nfIDInstance.getDelegation({
-        targets: [
-          canisterID,
-          // "ryjl3-tyaaa-aaaaa-aaaba-cai",
-          // "mxzaz-hqaaa-aaaar-qaada-cai",
-        ],
-        // derivationOrigin: "https://ez3it-6qaaa-aaaak-akwyq-cai.icp0.io",
-      });
-      const principal = Principal.from(delegationResult.getPrincipal());
-      setPrincipal(principal);
-      const identity = await nfIDInstance.getIdentity();
-      setIdentity(identity);
-      if (identity) setIsConnected(true);
-      const actor = await createActor(canisterID, {
-        agentOptions: { identity },
-      });
-      setBackend(actor);
+  //   try {
+  //     const nfIDInstance = await NFID.init({
+  //       application: {
+  //         name: "NFID Login",
+  //         logo: "https://dev.nfid.one/static/media/id.300eb72f3335b50f5653a7d6ad5467b3.svg",
+  //       },
+  //     });
+  //     const delegationResult = await nfIDInstance.getDelegation({
+  //       targets: [
+  //         canisterID,
+  //         // "ryjl3-tyaaa-aaaaa-aaaba-cai",
+  //         // "mxzaz-hqaaa-aaaar-qaada-cai",
+  //       ],
+  //       // derivationOrigin: "https://ez3it-6qaaa-aaaak-akwyq-cai.icp0.io",
+  //     });
+  //     const principal = Principal.from(delegationResult.getPrincipal());
+  //     setPrincipal(principal);
+  //     const identity = await nfIDInstance.getIdentity();
+  //     setIdentity(identity);
+  //     if (identity) setIsConnected(true);
+  //     const actor = await createActor(canisterID, {
+  //       agentOptions: { identity },
+  //     });
+  //     setBackend(actor);
 
-      // const response = await nfid.requestPermissions({
-      //   scopes: [
-      //     {
-      //       method: "icrc31_get_principals",
-      //     },
-      //     {
-      //       method: "icrc49_canister_call",
-      //       targets: ["ryjl3-tyaaa-aaaaa-aaaba-cai"],
-      //     },
-      //   ],
-      // });
+  //     // const response = await nfid.requestPermissions({
+  //     //   scopes: [
+  //     //     {
+  //     //       method: "icrc31_get_principals",
+  //     //     },
+  //     //     {
+  //     //       method: "icrc49_canister_call",
+  //     //       targets: ["ryjl3-tyaaa-aaaaa-aaaba-cai"],
+  //     //     },
+  //     //   ],
+  //     // });
 
-      // console.log("NFID request permission response ", response);
-    } catch (error) {
-      console.error("Error initializing NFID:", error);
-      setError("Failed to initialize NFID.");
-    }
-  };
+  //     // console.log("NFID request permission response ", response);
+  //   } catch (error) {
+  //     console.error("Error initializing NFID:", error);
+  //     setError("Failed to initialize NFID.");
+  //   }
+  // };
 
-  const disconnect = () => {};
+  // const disconnect = () => {};
 
   return {
     isConnected,
@@ -379,7 +434,6 @@ export const useAuthClient = () => {
     principal,
     backend,
     identity,
-    error,
   };
 };
 
