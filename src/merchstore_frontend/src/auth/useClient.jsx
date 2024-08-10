@@ -179,11 +179,11 @@ export const useAuthClient = () => {
           const agent = loginData.agent;
           console.log("agent is ", agent);
           const principal = Principal.fromText(loginData.principal);
-          // const actor = await CreateActor(agent, idlFactory, canisterID);
+          const actor = await CreateActor(agent, idlFactory, canisterID);
           // await client.login({ agent });
-          const actor = await createActor(canisterID, {
-            agentOptions: { agent },
-          });
+          // const actor = await createActor(canisterID, {
+          //   agentOptions: { agent },
+          // });
           setBackend(actor);
           setIsConnected(true);
           setPrincipal(principal);
@@ -204,11 +204,11 @@ export const useAuthClient = () => {
       const loginData = await PlugLogin(whitelist);
       const agent = loginData.agent;
       const principal = Principal.fromText(loginData.principal);
-      // const actor = await CreateActor(agent, idlFactory, canisterID);
+      const actor = await CreateActor(agent, idlFactory, canisterID);
       // await client.login({ agent });
-      const actor = await createActor(canisterID, {
-        agentOptions: { agent },
-      });
+      // const actor = await createActor(canisterID, {
+      //   agentOptions: { agent },
+      // });
       setBackend(actor);
       setIsConnected(true);
       setPrincipal(principal);
