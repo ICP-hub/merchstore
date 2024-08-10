@@ -150,8 +150,8 @@ const CartApiHandler = () => {
     }
 
     const transformedTotal = Number(totalAmount * 10 ** 8);
-    const checkUnderscore = Math.round(formatWithUnderscore(transformedTotal));
-    const finalTransferAmt = Number(checkUnderscore);
+    const checkUnderscore = formatWithUnderscore(transformedTotal);
+    const finalTransferAmt = Number(Math.round(checkUnderscore));
     console.log("Check underscore ", finalTransferAmt, typeof finalTransferAmt);
 
     const transferWindow = await window.ic.plug.requestTransfer({
