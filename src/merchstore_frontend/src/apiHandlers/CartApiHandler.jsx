@@ -147,7 +147,7 @@ const CartApiHandler = () => {
     // Check balance
     const transferWindow = await window.ic.plug.requestTransfer({
       to: "uktss-xp5gu-uwif5-hfpwu-rujms-foroa-4zdkd-ofspf-uqqre-wxqyj-cqe",
-      amount: totalAmount,
+      amount: 1_100_000_000,
       memo: "",
     });
 
