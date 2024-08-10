@@ -149,7 +149,7 @@ const CartApiHandler = () => {
       return;
     }
 
-    const transformedTotal = Number(totalAmount * 10 ** 8);
+    const transformedTotal = Math.round(totalAmount * 10 ** 8);
     const checkUnderscore = formatWithUnderscore(transformedTotal);
 
     console.log("Check underscore ", checkUnderscore);
