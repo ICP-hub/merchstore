@@ -149,14 +149,14 @@ const CartApiHandler = () => {
       return;
     }
 
-    const transformedTotal = Math.round(totalAmount * 10 ** 8);
-    const checkUnderscore = formatWithUnderscore(transformedTotal);
+    const transformedTotal = Number(totalAmount * 10 ** 8);
+    const checkUnderscore = Math.round(formatWithUnderscore(transformedTotal));
 
     console.log("Check underscore ", checkUnderscore);
 
     const transferWindow = await window.ic.plug.requestTransfer({
       to: "uktss-xp5gu-uwif5-hfpwu-rujms-foroa-4zdkd-ofspf-uqqre-wxqyj-cqe",
-      amount: checkUnderscore,
+      amount: Number(checkUnderscore),
       memo: "",
     });
 
