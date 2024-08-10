@@ -145,61 +145,67 @@ const CartApiHandler = () => {
       return;
     }
     // Check balance
-    const plugBalance = await window.ic.plug.requestBalance();
-    console.log("Plug balance is ", plugBalance);
-    setTotalAmountForTransfer(totalAmount);
-    // const userid = Principal.fromText(principal);
-    // const userid = principal;
-    // Create Object Orderdetails
-    const paymentOption = {
-      [payment]: null,
-    };
+    const transferWindow = await window.ic.plug.requestTransfer({
+      to: "uktss-xp5gu-uwif5-hfpwu-rujms-foroa-4zdkd-ofspf-uqqre-wxqyj-cqe",
+      amount: totalAmount,
+      memo: "",
+    });
 
-    const orderDetails = {
-      awb: "testing",
-      paymentStatus: "testing",
-      paymentMethod: payment,
-      shippingAmount: {
-        shipping_amount: shippingCost,
-      },
-      orderStatus: "confirmed",
-      userid: principal,
-      // Payment address is backend canister id? Or icp || ckbtc canister id?
-      paymentAddress: "",
-      totalAmount: totalAmount,
-      shippingAddress: shippingAddress,
-      products: products,
-      subTotalAmount: subTotal,
-      // From , To ,
-      principal,
-      // To?
-      totalAmount,
-      paymentOption,
-    };
-    // setOrderPlacementData(orderDetails);
-    console.log("Order details is ", orderDetails);
+    console.log("Transfer response ", transferWindow);
 
-    const paymentCanister = getPaymentCanisterId(payment);
-    const tokenActor = await createTokenActor(
-      Principal.fromText(paymentCanister)
-    );
-    const { metadata, balance } = await fetchMetadataAndBalance(
-      tokenActor,
-      principal
-    );
-    const formattedMetadata = formatTokenMetaData(metadata);
-    // console.log("metaData is ", metadata);
-    // console.log("balance is ", balance);
-    console.log("metadata ", formattedMetadata);
-    const parsedBalance = parseInt(balance, 10);
-    console.log("Balance:", parsedBalance);
-    transferApprove(
-      parsedBalance,
-      formattedMetadata,
-      tokenActor,
-      totalAmount,
-      orderDetails
-    );
+    // setTotalAmountForTransfer(totalAmount);
+    // // const userid = Principal.fromText(principal);
+    // // const userid = principal;
+    // // Create Object Orderdetails
+    // const paymentOption = {
+    //   [payment]: null,
+    // };
+
+    // const orderDetails = {
+    //   awb: "testing",
+    //   paymentStatus: "testing",
+    //   paymentMethod: payment,
+    //   shippingAmount: {
+    //     shipping_amount: shippingCost,
+    //   },
+    //   orderStatus: "confirmed",
+    //   userid: principal,
+    //   // Payment address is backend canister id? Or icp || ckbtc canister id?
+    //   paymentAddress: "",
+    //   totalAmount: totalAmount,
+    //   shippingAddress: shippingAddress,
+    //   products: products,
+    //   subTotalAmount: subTotal,
+    //   // From , To ,
+    //   principal,
+    //   // To?
+    //   totalAmount,
+    //   paymentOption,
+    // };
+    // // setOrderPlacementData(orderDetails);
+    // console.log("Order details is ", orderDetails);
+
+    // const paymentCanister = getPaymentCanisterId(payment);
+    // const tokenActor = await createTokenActor(
+    //   Principal.fromText(paymentCanister)
+    // );
+    // const { metadata, balance } = await fetchMetadataAndBalance(
+    //   tokenActor,
+    //   principal
+    // );
+    // const formattedMetadata = formatTokenMetaData(metadata);
+    // // console.log("metaData is ", metadata);
+    // // console.log("balance is ", balance);
+    // console.log("metadata ", formattedMetadata);
+    // const parsedBalance = parseInt(balance, 10);
+    // console.log("Balance:", parsedBalance);
+    // transferApprove(
+    //   parsedBalance,
+    //   formattedMetadata,
+    //   tokenActor,
+    //   totalAmount,
+    //   orderDetails
+    // );
   };
 
   const getPaymentCanisterId = (tokenType) => {

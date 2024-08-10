@@ -177,8 +177,8 @@ export const useAuthClient = () => {
         if (isLoggedIn) {
           const loginData = await PlugLogin(whitelist);
           const agent = loginData.agent;
-          console.log("agent is ", agent);
           const principal = Principal.fromText(loginData.principal);
+          console.log("Principal is ", principal);
           const actor = await CreateActor(agent, idlFactory, canisterID);
           // await client.login({ agent });
           // const actor = await createActor(canisterID, {
