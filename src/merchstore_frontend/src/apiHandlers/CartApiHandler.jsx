@@ -151,12 +151,12 @@ const CartApiHandler = () => {
 
     const transformedTotal = Number(totalAmount * 10 ** 8);
     const checkUnderscore = Math.round(formatWithUnderscore(transformedTotal));
-
-    console.log("Check underscore ", checkUnderscore, typeof checkUnderscore);
+    const finalTransferAmt = Number(checkUnderscore);
+    console.log("Check underscore ", finalTransferAmt, typeof finalTransferAmt);
 
     const transferWindow = await window.ic.plug.requestTransfer({
       to: "uktss-xp5gu-uwif5-hfpwu-rujms-foroa-4zdkd-ofspf-uqqre-wxqyj-cqe",
-      amount: checkUnderscore,
+      amount: finalTransferAmt,
       memo: "",
     });
 
