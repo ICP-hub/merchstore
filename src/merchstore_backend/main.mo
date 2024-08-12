@@ -49,7 +49,7 @@ actor {
     
     
     stable let icpLedger = "ryjl3-tyaaa-aaaaa-aaaba-cai";
-    stable let ckbtcLedger = "r7inp-6aaaa-aaaaa-aaabq-cai";
+    stable let ckbtcLedger = "mxzaz-hqaaa-aaaar-qaada-cai";
     stable let exchange_rate_canister = "uf6dk-hyaaa-aaaaq-qaaaq-cai";
 
     private var Users = TrieMap.TrieMap<Principal, Index>(Principal.equal, Principal.hash);
@@ -62,7 +62,7 @@ actor {
         var elems_count : Nat64 = 0;
     };
 
-    private var products = TrieMap.TrieMap<Types.SlugId, Index>( Text.equal, Text.hash);
+    private var products = TrieMap.TrieMap<Types.SlugId, Index>(Text.equal, Text.hash);
     private stable var stableproducts : [(Types.SlugId, Index)] = [];
 
     stable var product_state = {
@@ -1690,7 +1690,7 @@ actor {
         return shippingamount;
     };
 
-    func createOrder(order : Types.NewOrder ) : async Result.Result<Types.Order, Types.OrderError> {
+    public shared (msg)func createOrder(order : Types.NewOrder ) : async Result.Result<Types.Order, Types.OrderError> {
         // if (Principal.isAnonymous(msg.caller)) {
         //     return #err(#UserNotAuthenticated); // We require the user to be authenticated,
         // };
@@ -1726,79 +1726,79 @@ actor {
         };
     };
 
-    public shared (msg) func place_order(neworder : Types.NewOrder , from : Principal, amount : Nat , paymentOption : { #icp; #ckbtc }) : async  Result.Result<(Types.Order , ICRC.Result), Types.OrderError> {
-        // if (Principal.isAnonymous(msg.caller)) {
-        //     return #err(#UserNotAuthenticated); // We require the user to be authenticated,
-        // };
-        switch (paymentOption){
-            case (#icp) {
-                let response : ICRC.Result_2 = await icrc2_transferFrom(icpLedger, from, payment_address, amount);
-                switch (response) {
-                    case (#Err(index)) {
-                        throw Error.reject(debug_show (index));
-                    };
-                    case (#Ok(res)) {
-                        let order : Types.NewOrder = {
-                            userid = msg.caller;
-                            shippingAddress = neworder.shippingAddress;
-                            products = neworder.products;
-                            totalAmount = neworder.totalAmount;
-                            subTotalAmount = neworder.subTotalAmount;
-                            orderStatus = neworder.orderStatus;
-                            paymentStatus = neworder.paymentStatus;
-                            paymentAddress = neworder.paymentAddress;
-                            paymentMethod = neworder.paymentMethod;
-                            shippingAmount = neworder.shippingAmount;
-                            awb = neworder.awb;
-                        };
+    // public shared (msg) func place_order(neworder : Types.NewOrder , from : Principal, amount : Nat , paymentOption : { #icp; #ckbtc }) : async  Result.Result<(Types.Order , ICRC.Result), Types.OrderError> {
+    //     if (Principal.isAnonymous(msg.caller)) {
+    //         return #err(#UserNotAuthenticated); // We require the user to be authenticated,
+    //     };
+    //     switch (paymentOption){
+    //         case (#icp) {
+    //             let response : ICRC.Result_2 = await icrc2_transferFrom(icpLedger, from, payment_address, amount);
+    //             switch (response) {
+    //                 case (#Err(index)) {
+    //                     throw Error.reject(debug_show (index));
+    //                 };
+    //                 case (#Ok(res)) {
+    //                     let order : Types.NewOrder = {
+    //                         userid = msg.caller;
+    //                         shippingAddress = neworder.shippingAddress;
+    //                         products = neworder.products;
+    //                         totalAmount = neworder.totalAmount;
+    //                         subTotalAmount = neworder.subTotalAmount;
+    //                         orderStatus = neworder.orderStatus;
+    //                         paymentStatus = neworder.paymentStatus;
+    //                         paymentAddress = neworder.paymentAddress;
+    //                         paymentMethod = neworder.paymentMethod;
+    //                         shippingAmount = neworder.shippingAmount;
+    //                         awb = neworder.awb;
+    //                     };
 
-                        let order_status = await createOrder(order);
-                        switch (order_status) {
-                            case (#err(index)) {
-                                return #err(index);
-                            };
-                            case (#ok(response)) {
-                                return #ok(response,#Ok(res));
-                            };
-                        };
-                    };
-                }; 
-            };
-            case (#ckbtc) {
-                let response : ICRC.Result_2 = await icrc2_transferFrom(ckbtcLedger, from, payment_address, amount);
-                switch (response) {
-                    case (#Err(index)) {
-                        throw Error.reject(debug_show (index));
-                    };
-                    case (#Ok(res)) {
-                        let order : Types.NewOrder = {
-                            userid = msg.caller;
-                            shippingAddress = neworder.shippingAddress;
-                            products = neworder.products;
-                            totalAmount = neworder.totalAmount;
-                            subTotalAmount = neworder.subTotalAmount;
-                            orderStatus = neworder.orderStatus;
-                            paymentStatus = neworder.paymentStatus;
-                            paymentAddress = neworder.paymentAddress;
-                            paymentMethod = neworder.paymentMethod;
-                            shippingAmount = neworder.shippingAmount;
-                            awb = neworder.awb;
-                        };
-                        let order_status = await createOrder(order);
-                        switch (order_status) {
-                            case (#err(index)) {
-                                return #err(#UnableToCreate);
-                            };
-                            case (#ok(response)) {
-                                return #ok(response,#Ok(res));
-                            };
-                        };
-                    };
-                };
-        };
+    //                     let order_status = await createOrder(order);
+    //                     switch (order_status) {
+    //                         case (#err(index)) {
+    //                             return #err(index);
+    //                         };
+    //                         case (#ok(response)) {
+    //                             return #ok(response,#Ok(res));
+    //                         };
+    //                     };
+    //                 };
+    //             }; 
+    //         };
+    //         case (#ckbtc) {
+    //             let response : ICRC.Result_2 = await icrc2_transferFrom(ckbtcLedger, from, payment_address, amount);
+    //             switch (response) {
+    //                 case (#Err(index)) {
+    //                     throw Error.reject(debug_show (index));
+    //                 };
+    //                 case (#Ok(res)) {
+    //                     let order : Types.NewOrder = {
+    //                         userid = msg.caller;
+    //                         shippingAddress = neworder.shippingAddress;
+    //                         products = neworder.products;
+    //                         totalAmount = neworder.totalAmount;
+    //                         subTotalAmount = neworder.subTotalAmount;
+    //                         orderStatus = neworder.orderStatus;
+    //                         paymentStatus = neworder.paymentStatus;
+    //                         paymentAddress = neworder.paymentAddress;
+    //                         paymentMethod = neworder.paymentMethod;
+    //                         shippingAmount = neworder.shippingAmount;
+    //                         awb = neworder.awb;
+    //                     };
+    //                     let order_status = await createOrder(order);
+    //                     switch (order_status) {
+    //                         case (#err(index)) {
+    //                             return #err(#UnableToCreate);
+    //                         };
+    //                         case (#ok(response)) {
+    //                             return #ok(response,#Ok(res));
+    //                         };
+    //                     };
+    //                 };
+    //             };
+    //     };
 
-        };
-    };
+    //     };
+    // };
 
 
     func icrc2_transferFrom(ledgerId : Text, transferfrom : Principal, transferto : Principal, amount : Nat) : async (ICRC.Result_2) {
