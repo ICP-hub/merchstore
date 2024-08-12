@@ -7,6 +7,7 @@ import { useNavigate } from "react-router-dom";
 import { useAuth } from "../auth/useClient";
 import { idlFactory } from "../wallet/ledger.did";
 import { host, ids } from "../DevConfig";
+import usePaymentTransfer from "../auth/usePaymentTransfer";
 
 // Custom hook : initialize the backend Canister
 
@@ -35,6 +36,8 @@ const CartApiHandler = () => {
   // const paymentAddressForTransfer = usePaymentTransfer(totalAmountForTransfer);
   const [orderPlacementData, setOrderPlacementData] = useState(null);
   const [orderPlacementLoad, setOrderPlaceMentLoad] = useState(false);
+  const { transfer, loading, error } = usePaymentTransfer();
+  const [checkOutClicked, setCheckoutClicked] = useState(0);
 
   // const navigate = useNavigate();
 
@@ -101,6 +104,40 @@ const CartApiHandler = () => {
   //   }
   // }, [orderPlacementData]);
 
+  useEffect(() => {
+    const paymentAddressProcess = async () => {
+      console.log("Order placement data ", orderPlacementData);
+      if (totalAmountForTransfer !== null) {
+        try {
+          const response = await transfer(
+            "uktss-xp5gu-uwif5-hfpwu-rujms-foroa-4zdkd-ofspf-uqqre-wxqyj-cqe",
+            totalAmountForTransfer,
+            ""
+          );
+          console.log("response ", response);
+          // If response undefined return
+          if (response === undefined) {
+            toast.error("Something went wrong");
+            return;
+          }
+          // Proceed : get height
+          const { height } = response;
+          const paymentId = height.toString();
+          console.log("height is", height);
+          setOrderPlacementData((prev) => ({
+            ...prev,
+            paymentAddress: paymentId,
+          }));
+          finalizeOrder(orderPlacementData);
+        } catch (error) {
+          console.error("Error getting payment address:", error);
+        }
+      }
+    };
+    paymentAddressProcess();
+  }, [totalAmountForTransfer, checkOutClicked]);
+
+  // console.log("order placementData", orderPlacementData);
   // Get caller cart items
   const getCallerCartItems = async () => {
     try {
@@ -112,6 +149,15 @@ const CartApiHandler = () => {
       console.error("Error Fetching Cart", err);
     } finally {
       setIsLoading(false);
+    }
+  };
+
+  // Finalize order
+  const finalizeOrder = async (data) => {
+    if (data.paymentAddress !== "" && null) {
+      console.log("Finalize order", data);
+    } else {
+      console.log("Failded to get payment ID", data);
     }
   };
 
@@ -139,53 +185,53 @@ const CartApiHandler = () => {
   ) => {
     // {awb:text; paymentStatus:text; paymentMethod:text; shippingAmount:float64; orderStatus:text; userid:principal; paymentAddress:text; totalAmount:float64; shippingAddress:record {id:text; firstname:text; country:text; city:text; email:text; state:text; address_type:text; phone_number:text; pincode:text; lastname:text; addressline1:text; addressline2:text}; products:vec record {id:nat; color:text; size:text; sale_price:float64; quantity:nat8}; subTotalAmount:float64}) → (variant {ok:record {id:text; awb:text; timeUpdated:int; paymentStatus:text; paymentMethod:text; shippingAmount:float64; orderStatus:text; userid:principal; paymentAddress:text; timeCreated:int; totalAmount:float64; shippingAddress:record {id:text; firstname:text; country:text; city:text; email:text; state:text; address_type:text; phone_number:text; pincode:text; lastname:text; addressline1:text; addressline2:text}; products:vec record {id:nat; color:text; size:text; sale_price:float64; quantity:nat8}; subTotalAmount:float64};
     // If user not logged in :
-    console.log("principal is ", principal);
-    if (principal === undefined) {
-      toast.error("You need to login first");
-      return;
-    }
+    // console.log("principal is ", principal);
+    setCheckoutClicked((prev) => prev + 1);
+    // if (principal === undefined) {
+    //   toast.error("You need to login first");
+    //   return;
+    // }
 
     const transformedTotal = Number(totalAmount * 10 ** 8);
+    console.log(transformedTotal);
+    setTotalAmountForTransfer(transformedTotal);
 
-    const transferWindow = await window.ic.plug.requestTransfer({
-      to: "uktss-xp5gu-uwif5-hfpwu-rujms-foroa-4zdkd-ofspf-uqqre-wxqyj-cqe",
-      amount: transformedTotal,
-      memo: "",
-    });
+    try {
+      // const userid = principal;
+      // Create Object Orderdetails
+      const paymentOption = {
+        [payment]: null,
+      };
 
-    console.log("Transfer response ", transferWindow);
+      const orderDetails = {
+        awb: "testing",
+        paymentStatus: "testing",
+        paymentMethod: payment,
+        shippingAmount: {
+          shipping_amount: shippingCost,
+        },
+        orderStatus: "confirmed",
+        userid: principal,
+        // Payment address is backend canister id? Or icp || ckbtc canister id?
+        paymentAddress: "",
+        totalAmount: totalAmount,
+        shippingAddress: shippingAddress,
+        products: products,
+        subTotalAmount: subTotal,
+        // From , To ,
+        principal,
+        // To?
+        totalAmount,
+        paymentOption,
+      };
+      setOrderPlacementData(orderDetails);
+      // console.log("Order details is ", orderDetails);
+    } catch (err) {
+      console.error("Error while transfering amount ", err);
+    }
 
     // setTotalAmountForTransfer(totalAmount);
-    // // const userid = Principal.fromText(principal);
-    // // const userid = principal;
-    // // Create Object Orderdetails
-    // const paymentOption = {
-    //   [payment]: null,
-    // };
-
-    // const orderDetails = {
-    //   awb: "testing",
-    //   paymentStatus: "testing",
-    //   paymentMethod: payment,
-    //   shippingAmount: {
-    //     shipping_amount: shippingCost,
-    //   },
-    //   orderStatus: "confirmed",
-    //   userid: principal,
-    //   // Payment address is backend canister id? Or icp || ckbtc canister id?
-    //   paymentAddress: "",
-    //   totalAmount: totalAmount,
-    //   shippingAddress: shippingAddress,
-    //   products: products,
-    //   subTotalAmount: subTotal,
-    //   // From , To ,
-    //   principal,
-    //   // To?
-    //   totalAmount,
-    //   paymentOption,
-    // };
-    // // setOrderPlacementData(orderDetails);
-    // console.log("Order details is ", orderDetails);
+    // const userid = Principal.fromText(principal);
 
     // const paymentCanister = getPaymentCanisterId(payment);
     // const tokenActor = await createTokenActor(
