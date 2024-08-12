@@ -135,7 +135,7 @@ const Checkout = () => {
   // Required fields to pass for orderplacement
   const updateProductsForPlacement = (products) => {
     return products.map((product) => ({
-      id: product.orderId,
+      id: String(product.product.id),
       img: product.img1,
       size: product.size,
       title: product.product.title,
@@ -178,6 +178,8 @@ const Checkout = () => {
     }
     const { totalPrice } = totalPriceNQty;
     const products = updateProductsForPlacement(finalCart);
+    console.log("final cart", finalCart);
+    console.log("PRodcuts are  ", products);
     const shippingAddress = userAddress;
     const totalAmount = (totalPrice + shippingAmount) / exchange;
     const shippingCost = shippingAmount / exchange;
@@ -192,6 +194,7 @@ const Checkout = () => {
       shippingCost
     );
   };
+
   const navigate = useNavigate();
   const clearAll = async () => {
     try {
