@@ -52,7 +52,7 @@ const ProductCard = ({ product }) => {
   }, [backend, product]);
 
   const AddToCart = async () => {
-    if (isConnected) {
+    if (!isConnected) {
       try {
         listCarts();
         setLoading(true);
