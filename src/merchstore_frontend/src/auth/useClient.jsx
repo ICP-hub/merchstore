@@ -144,7 +144,6 @@
 // export const useBackend = () => {};
 // // Hook to access authentication context
 // export const useAuth = () => useContext(AuthContext);
-
 import React, { createContext, useContext, useEffect, useState } from "react";
 import { PlugLogin, StoicLogin, NFIDLogin, IdentityLogin } from "ic-auth";
 import { createActor } from "../../../../.dfx/local/canisters/merchstore_backend";
@@ -153,6 +152,7 @@ import { AuthClient } from "@dfinity/auth-client";
 import { CreateActor } from "ic-auth";
 import { idlFactory } from "../../../../.dfx/local/canisters/merchstore_backend/merchstore_backend.did.js";
 import { NFID } from "@nfid/embed";
+import { PlugMobileProvider } from "@funded-labs/plug-mobile-sdk"; // Import Plug Mobile SDK
 
 const AuthContext = createContext();
 
@@ -165,14 +165,36 @@ export const useAuthClient = () => {
   const [backend, setBackend] = useState(null);
   const [identity, setIdentity] = useState(null);
   const [authClient, setAuthClient] = useState(null);
+  const [mobileProvider, setMobileProvider] = useState(null);
 
-  // Refresh login
+  useEffect(() => {
+    const initializeMobileProvider = async () => {
+      const isMobile = PlugMobileProvider.isMobileBrowser();
+      if (isMobile) {
+        const provider = new PlugMobileProvider({
+          debug: true, // Enable debug logs in the console
+          walletConnectProjectId: "your-walletconnect-project-id", // Add your WalletConnect Project ID here
+          window: window,
+        });
+        await provider.initialize().catch(console.error);
+        setMobileProvider(provider);
+      }
+    };
+
+    initializeMobileProvider();
+  }, []);
 
   useEffect(() => {
     const isLoggedIn = sessionStorage.getItem("loginStatus");
+
     const checkLoginStatus = async () => {
       const client = await AuthClient.create();
       setAuthClient(client);
+
+      if (mobileProvider && !mobileProvider.isPaired()) {
+        await mobileProvider.pair().catch(console.error);
+      }
+
       try {
         if (isLoggedIn) {
           const loginData = await PlugLogin(whitelist);
@@ -180,10 +202,6 @@ export const useAuthClient = () => {
           const principal = Principal.fromText(loginData.principal);
           console.log("Principal is ", principal);
           const actor = await CreateActor(agent, idlFactory, canisterID);
-          // await client.login({ agent });
-          // const actor = await createActor(canisterID, {
-          //   agentOptions: { agent },
-          // });
           setBackend(actor);
           setIsConnected(true);
           setPrincipal(principal);
@@ -194,25 +212,36 @@ export const useAuthClient = () => {
         console.error("Failed to fetch login details ", err);
       }
     };
-    checkLoginStatus();
-  }, []);
+
+    if (mobileProvider) {
+      checkLoginStatus();
+    }
+  }, [mobileProvider]);
 
   const login = async () => {
     const client = await AuthClient.create();
     setAuthClient(client);
+
     try {
-      const loginData = await PlugLogin(whitelist);
-      const agent = loginData.agent;
-      const principal = Principal.fromText(loginData.principal);
+      let agent, principal;
+
+      if (mobileProvider) {
+        agent = await mobileProvider.createAgent({
+          host: "https://icp0.io",
+          targets: whitelist,
+        });
+        principal = await mobileProvider.getPrincipal();
+      } else {
+        const loginData = await PlugLogin(whitelist);
+        agent = loginData.agent;
+        principal = Principal.fromText(loginData.principal);
+      }
+
       const actor = await CreateActor(agent, idlFactory, canisterID);
-      // await client.login({ agent });
-      // const actor = await createActor(canisterID, {
-      //   agentOptions: { agent },
-      // });
       setBackend(actor);
       setIsConnected(true);
       setPrincipal(principal);
-      if (loginData) sessionStorage.setItem("loginStatus", "true");
+      sessionStorage.setItem("loginStatus", "true");
     } catch (err) {
       console.error("Login Failed ", err);
     }
@@ -230,6 +259,9 @@ export const useAuthClient = () => {
     }
   };
 
+ 
+
+ 
   // useEffect(() => {
   //   const initAuthClient = async () => {
   //     try {
