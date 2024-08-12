@@ -122,11 +122,11 @@ const CartApiHandler = () => {
           }
           // Proceed : get height
           const { height } = response;
-          const paymentId = height.toString();
+          const paymentId = height;
           console.log("paymentId is", paymentId);
           setOrderPlacementData((prev) => ({
             ...prev,
-            paymentAddress: paymentId,
+            paymentAddress: String(paymentId),
           }));
           console.log("Final order placement data", orderPlacementData);
           if (orderPlacementData.paymentAddress === "") {
