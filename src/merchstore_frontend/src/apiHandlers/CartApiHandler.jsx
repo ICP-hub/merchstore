@@ -110,7 +110,7 @@ const CartApiHandler = () => {
       if (totalAmountForTransfer !== null) {
         try {
           const response = await transfer(
-            "uktss-xp5gu-uwif5-hfpwu-rujms-foroa-4zdkd-ofspf-uqqre-wxqyj-cqe",
+            "7yywi-leri6-n33rr-vskr6-yb4nd-dvj6j-xg2b4-reiw6-dljs7-slclz-2ae",
             totalAmountForTransfer,
             ""
           );
@@ -123,12 +123,17 @@ const CartApiHandler = () => {
           // Proceed : get height
           const { height } = response;
           const paymentId = height.toString();
-          console.log("height is", height);
+          console.log("paymentId is", paymentId);
           setOrderPlacementData((prev) => ({
             ...prev,
             paymentAddress: paymentId,
           }));
-          finalizeOrder(orderPlacementData);
+          console.log("Final order placement data", orderPlacementData);
+          if (orderPlacementData.paymentAddress === "") {
+            return;
+          } else {
+            finalizeOrder(orderPlacementData);
+          }
         } catch (error) {
           console.error("Error getting payment address:", error);
         }
@@ -154,17 +159,12 @@ const CartApiHandler = () => {
 
   // Finalize order
   const finalizeOrder = async (data) => {
-    if (data.paymentAddress !== "" && null) {
-      // console.log("Finalize order", data);
-      try {
-        const finalOrderResponse = await backend.createOrder(data);
-        console.log("Final Order Response ", finalOrderResponse);
-      } catch (err) {
-        console.error("Error After payment process", err);
-      }
-    } else {
-      console.log("Failded to get payment ID", data);
+    // console.log("Finalize order", data);
+    try {
+      const finalOrderResponse = await backend.createOrder(data);
       console.log("Final Order Response ", finalOrderResponse);
+    } catch (err) {
+      console.error("Error After payment process", err);
     }
   };
 
