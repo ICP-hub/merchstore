@@ -193,14 +193,14 @@ const CartApiHandler = () => {
     // If user not logged in :
     // console.log("principal is ", principal);
     setCheckoutClicked((prev) => prev + 1);
-    if (!principal) {
-      toast.error("You need to login first");
-      return;
-    }
+    // if (!principal) {
+    //   toast.error("You need to login first");
+    //   return;
+    // }
 
     const transformedTotal = Number(totalAmount * 10 ** 8);
     console.log(transformedTotal);
-    setTotalAmountForTransfer(transformedTotal);
+    setTotalAmountForTransfer(Math.round(transformedTotal));
 
     try {
       // const userid = principal;
