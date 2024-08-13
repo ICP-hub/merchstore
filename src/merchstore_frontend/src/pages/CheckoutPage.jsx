@@ -770,7 +770,7 @@ const OrderModalData = ({ setIsOpen, proceed, data, totalPrice }) => {
           <div className="flex space-x-4" key={index}>
             {console.log(item)}
             <img
-              src={item.img1.data}
+              src={item.product.variantColor[0].img1}
               alt={item.product.title}
               className="min-h-24 min-w-24 max-h-24 max-w-24 object-contain"
             />
