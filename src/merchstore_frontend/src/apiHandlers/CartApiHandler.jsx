@@ -123,15 +123,21 @@ const CartApiHandler = () => {
           // Proceed : get height
           const { height } = response;
 
-          setOrderPlacementData((prev) => ({
-            ...prev,
+          // setOrderPlacementData((prev) => ({
+          //   ...prev,
+          //   paymentAddress: String(height?.height),
+          // }));
+          const updatedOrderPlacementData = {
+            ...orderPlacementData,
             paymentAddress: String(height?.height),
-          }));
-          console.log("Final order placement data", orderPlacementData);
-          if (orderPlacementData.paymentAddress === "") {
+          };
+
+          console.log("Final order placement data", updatedOrderPlacementData);
+
+          if (updatedOrderPlacementData.paymentAddress === "") {
             return;
           } else {
-            finalizeOrder(orderPlacementData);
+            finalizeOrder(updatedOrderPlacementData);
           }
         } catch (error) {
           console.error("Error getting payment address:", error);
