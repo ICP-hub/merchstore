@@ -768,9 +768,10 @@ const OrderModalData = ({ setIsOpen, proceed, data, totalPrice }) => {
       <div className="py-6">
         {data.map((item, index) => (
           <div className="flex space-x-4" key={index}>
+            {console.log(item)}
             <img
-              src={demoImg}
-              alt="demoImg"
+              src={item.img1.data}
+              alt={item.product.title}
               className="min-h-24 min-w-24 max-h-24 max-w-24 object-contain"
             />
             <div className="flex w-full flex-col space-y-2">
