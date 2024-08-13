@@ -26,7 +26,8 @@ const CartApiHandler = () => {
   // Init backend
   // const { backend } = useBackend();
   // const { principal } = useConnect();
-  const { principal, identity, backend, refreshCart } = useAuth();
+  const { principal, identity, backend, refreshCart, setOrderPlacementLoad } =
+    useAuth();
   const [isLoading, setIsLoading] = useState(false);
   const [cartItems, setCartItems] = useState(null);
   const [orderList, setOrderList] = useState(null);
@@ -35,7 +36,7 @@ const CartApiHandler = () => {
   const [totalAmountForTransfer, setTotalAmountForTransfer] = useState(null);
   // const paymentAddressForTransfer = usePaymentTransfer(totalAmountForTransfer);
   const [orderPlacementData, setOrderPlacementData] = useState(null);
-  const [orderPlacementLoad, setOrderPlaceMentLoad] = useState(false);
+  // const [orderPlacementLoad, setOrderPlaceMentLoad] = useState(false);
   const { transfer, loading, error } = usePaymentTransfer();
   const [checkOutClicked, setCheckoutClicked] = useState(0);
 
@@ -108,6 +109,7 @@ const CartApiHandler = () => {
     const paymentAddressProcess = async () => {
       console.log("Order placement data ", orderPlacementData);
       if (totalAmountForTransfer !== null) {
+        // setOrderPlaceMentLoad(true);
         try {
           const response = await transfer(
             "7yywi-leri6-n33rr-vskr6-yb4nd-dvj6j-xg2b4-reiw6-dljs7-slclz-2ae",
@@ -134,13 +136,19 @@ const CartApiHandler = () => {
 
           console.log("Final order placement data", updatedOrderPlacementData);
 
-          if (!updatedOrderPlacementData.paymentAddress) {
+          if (
+            !updatedOrderPlacementData.paymentAddress ||
+            updatedOrderPlacementData.paymentAddress === undefined
+          ) {
+            toast.error("Invalid payment ID. Check your wallet!");
             return;
           } else {
             finalizeOrder(updatedOrderPlacementData);
           }
         } catch (error) {
           console.error("Error getting payment address:", error);
+          toast.error("Please login first");
+          setOrderPlacementLoad(false);
         }
       }
     };
@@ -149,6 +157,7 @@ const CartApiHandler = () => {
 
   // console.log("order placementData", orderPlacementData);
   // Get caller cart items
+
   const getCallerCartItems = async () => {
     try {
       setIsLoading(true);
@@ -170,6 +179,9 @@ const CartApiHandler = () => {
       console.log("Final Order Response ", finalOrderResponse);
     } catch (err) {
       console.error("Error After payment process", err);
+      toast.error("Payment failed! Check you wallet");
+    } finally {
+      setOrderPlacementLoad(false);
     }
   };
 
@@ -195,6 +207,7 @@ const CartApiHandler = () => {
     payment,
     shippingCost
   ) => {
+    // setOrderPlaceMentLoad(true);
     // {awb:text; paymentStatus:text; paymentMethod:text; shippingAmount:float64; orderStatus:text; userid:principal; paymentAddress:text; totalAmount:float64; shippingAddress:record {id:text; firstname:text; country:text; city:text; email:text; state:text; address_type:text; phone_number:text; pincode:text; lastname:text; addressline1:text; addressline2:text}; products:vec record {id:nat; color:text; size:text; sale_price:float64; quantity:nat8}; subTotalAmount:float64}) → (variant {ok:record {id:text; awb:text; timeUpdated:int; paymentStatus:text; paymentMethod:text; shippingAmount:float64; orderStatus:text; userid:principal; paymentAddress:text; timeCreated:int; totalAmount:float64; shippingAddress:record {id:text; firstname:text; country:text; city:text; email:text; state:text; address_type:text; phone_number:text; pincode:text; lastname:text; addressline1:text; addressline2:text}; products:vec record {id:nat; color:text; size:text; sale_price:float64; quantity:nat8}; subTotalAmount:float64};
     // If user not logged in :
     // console.log("principal is ", principal);
@@ -268,131 +281,131 @@ const CartApiHandler = () => {
     // );
   };
 
-  const getPaymentCanisterId = (tokenType) => {
-    switch (tokenType) {
-      case "icp":
-        return ids.ICPtokenCan;
-      case "ckbtc":
-        return ids.ckBTCtokenCan;
-      default:
-        return null;
-    }
-  };
+  // const getPaymentCanisterId = (tokenType) => {
+  //   switch (tokenType) {
+  //     case "icp":
+  //       return ids.ICPtokenCan;
+  //     case "ckbtc":
+  //       return ids.ckBTCtokenCan;
+  //     default:
+  //       return null;
+  //   }
+  // };
 
-  const fetchMetadataAndBalance = async (tokenActor, ownerPrincipal) => {
-    console.log(tokenActor, ownerPrincipal.toText());
-    try {
-      const [metadata, balance] = await Promise.all([
-        tokenActor.icrc1_metadata(),
-        tokenActor.icrc1_balance_of({
-          owner: ownerPrincipal,
-          subaccount: [],
-        }),
-      ]);
-      console.log("Fetched metadata:", metadata);
-      return { metadata, balance };
-    } catch (err) {
-      console.error("Error fetching metadata and balance:", err);
-      throw err;
-    }
-  };
+  // const fetchMetadataAndBalance = async (tokenActor, ownerPrincipal) => {
+  //   console.log(tokenActor, ownerPrincipal.toText());
+  //   try {
+  //     const [metadata, balance] = await Promise.all([
+  //       tokenActor.icrc1_metadata(),
+  //       tokenActor.icrc1_balance_of({
+  //         owner: ownerPrincipal,
+  //         subaccount: [],
+  //       }),
+  //     ]);
+  //     console.log("Fetched metadata:", metadata);
+  //     return { metadata, balance };
+  //   } catch (err) {
+  //     console.error("Error fetching metadata and balance:", err);
+  //     throw err;
+  //   }
+  // };
 
-  /**************************** Payment Process ******************/
-  const createTokenActor = async (canisterId) => {
-    console.log("identity in cartApiHandler: ", identity);
-    const agent = new HttpAgent({
-      identity,
-      host,
-    });
-    let tokenActor = Actor.createActor(idlFactory, {
-      agent,
-      canisterId,
-    });
+  // /**************************** Payment Process ******************/
+  // const createTokenActor = async (canisterId) => {
+  //   console.log("identity in cartApiHandler: ", identity);
+  //   const agent = new HttpAgent({
+  //     identity,
+  //     host,
+  //   });
+  //   let tokenActor = Actor.createActor(idlFactory, {
+  //     agent,
+  //     canisterId,
+  //   });
 
-    return tokenActor;
-  };
+  //   return tokenActor;
+  // };
 
-  const formatTokenMetaData = (arr) => {
-    const resultObject = {};
-    arr.forEach((item) => {
-      const key = item[0];
-      const value = item[1][Object.keys(item[1])[0]];
-      resultObject[key] = value;
-    });
-    return resultObject;
-  };
+  // const formatTokenMetaData = (arr) => {
+  //   const resultObject = {};
+  //   arr.forEach((item) => {
+  //     const key = item[0];
+  //     const value = item[1][Object.keys(item[1])[0]];
+  //     resultObject[key] = value;
+  //   });
+  //   return resultObject;
+  // };
 
-  const transferApprove = async (
-    currentBalance,
-    currentMetaData,
-    tokenActor,
-    totalAmount,
-    orderDetails
-  ) => {
-    try {
-      const decimals = parseInt(currentMetaData["icrc1:decimals"], 10);
-      // const sendableAmount = parseInt(
-      //   ((price_share * quantity) / exchange) * Math.pow(10, decimals),
-      //   10
-      // );
-      const sendableAmount = parseInt(totalAmount * Math.pow(10, decimals), 10);
+  // const transferApprove = async (
+  //   currentBalance,
+  //   currentMetaData,
+  //   tokenActor,
+  //   totalAmount,
+  //   orderDetails
+  // ) => {
+  //   try {
+  //     const decimals = parseInt(currentMetaData["icrc1:decimals"], 10);
+  //     // const sendableAmount = parseInt(
+  //     //   ((price_share * quantity) / exchange) * Math.pow(10, decimals),
+  //     //   10
+  //     // );
+  //     const sendableAmount = parseInt(totalAmount * Math.pow(10, decimals), 10);
 
-      console.log("sendable amount console ", sendableAmount);
-      console.log("current balance console ", currentBalance);
-      if (currentBalance > sendableAmount) {
-        let transaction = {
-          from_subaccount: [],
-          spender: {
-            owner: Principal.fromText(ids.backendCan),
-            subaccount: [],
-          },
-          amount: Number(sendableAmount) + Number(currentMetaData["icrc1:fee"]),
-          expected_allowance: [],
-          expires_at: [],
-          fee: [currentMetaData["icrc1:fee"]],
-          memo: [],
-          created_at_time: [],
-        };
-        console.log("transaction ", transaction);
-        // console.log("Token Actor ICRC2 APPROVE", tokenActor.icrc2_approve);
-        const approveRes = await tokenActor.icrc2_approve(transaction);
-        console.log("Payment Approve Response ", approveRes);
-        if (approveRes.Err) {
-          const errorMessage = `Insufficient funds. Balance: ${approveRes.Err.InsufficientFunds.balance}`;
-          toast.error(errorMessage);
-          return;
-        } else {
-          afterPaymentApprove(
-            parseInt(approveRes?.Ok).toString(),
-            sendableAmount,
-            currentBalance
-          );
-          afterPaymentApprove(orderDetails);
-        }
-      } else {
-        console.log("Insufficient Balance to purchase");
-        toast.error(
-          `Insufficient balance. Balance : ${currentBalance / 10 ** 8}`
-        );
-      }
-    } catch (err) {
-      console.error("Error in transfer approve", err);
-    } finally {
-    }
-  };
+  //     console.log("sendable amount console ", sendableAmount);
+  //     console.log("current balance console ", currentBalance);
+  //     if (currentBalance > sendableAmount) {
+  //       let transaction = {
+  //         from_subaccount: [],
+  //         spender: {
+  //           owner: Principal.fromText(ids.backendCan),
+  //           subaccount: [],
+  //         },
+  //         amount: Number(sendableAmount) + Number(currentMetaData["icrc1:fee"]),
+  //         expected_allowance: [],
+  //         expires_at: [],
+  //         fee: [currentMetaData["icrc1:fee"]],
+  //         memo: [],
+  //         created_at_time: [],
+  //       };
+  //       console.log("transaction ", transaction);
+  //       // console.log("Token Actor ICRC2 APPROVE", tokenActor.icrc2_approve);
+  //       const approveRes = await tokenActor.icrc2_approve(transaction);
+  //       console.log("Payment Approve Response ", approveRes);
+  //       if (approveRes.Err) {
+  //         const errorMessage = `Insufficient funds. Balance: ${approveRes.Err.InsufficientFunds.balance}`;
+  //         toast.error(errorMessage);
+  //         return;
+  //       } else {
+  //         afterPaymentApprove(
+  //           parseInt(approveRes?.Ok).toString(),
+  //           sendableAmount,
+  //           currentBalance
+  //         );
+  //         afterPaymentApprove(orderDetails);
+  //       }
+  //     } else {
+  //       console.log("Insufficient Balance to purchase");
+  //       toast.error(
+  //         `Insufficient balance. Balance : ${currentBalance / 10 ** 8}`
+  //       );
+  //     }
+  //   } catch (err) {
+  //     console.error("Error in transfer approve", err);
+  //   } finally {
+  //   }
+  // };
 
-  // After payment approve
-  const afterPaymentApprove = async (orderDetails) => {
-    console.log("Payment Approve done!!");
-    console.log("order confirming..........");
-    try {
-      const response = await backend.place_order(orderDetails);
-      console.log("response after order confirm ", response);
-    } catch (err) {
-      console.error("Failed to get response after order confirm ", err);
-    } finally {
-    }
-  };
+  // // After payment approve
+  // const afterPaymentApprove = async (orderDetails) => {
+  //   console.log("Payment Approve done!!");
+  //   console.log("order confirming..........");
+  //   try {
+  //     const response = await backend.place_order(orderDetails);
+  //     console.log("response after order confirm ", response);
+  //   } catch (err) {
+  //     console.error("Failed to get response after order confirm ", err);
+  //   } finally {
+  //   }
+  // };
 
   // Get Order List
   const getOrderList = async () => {
@@ -475,7 +488,8 @@ const CartApiHandler = () => {
     orderList,
     orderDetails,
     deleteCartItemById,
-    orderPlacementLoad,
+    // orderPlacementLoad,
+    // setOrderPlaceMentLoad,
     shippingAmount,
     getShippingAmount,
     updateCart,

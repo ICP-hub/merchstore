@@ -22,7 +22,7 @@ import ProductApiHandler from "../apiHandlers/ProductApi.jsx";
 import { getCartItemDetails } from "../apiHandlers/cartUtils.js";
 import UserAddressApiHandler from "../apiHandlers/UserAddressApiHandler.jsx";
 import NoImage from "../assets/placeholderImg-Small.jpeg";
-import { TailSpin } from "react-loader-spinner";
+import { InfinitySpin, TailSpin } from "react-loader-spinner";
 import EmptyCart from "../components/ProductComponents/EmptyCart.jsx";
 import toast from "react-hot-toast";
 import { useAuth, useBackend } from "../auth/useClient.jsx";
@@ -31,6 +31,8 @@ import TabChanges from "../components/Tabchanges.jsx";
 import IcpLogo from "../assets/IcpLogo.jsx";
 import LoadingScreen from "../components/common/LoadingScreen.jsx";
 import { useNavigate } from "react-router-dom";
+import PlaceorderModal from "../components/modal/PlaceOrderModal.jsx";
+import demoImg from "../assets/merch-logo2.png";
 
 /* ----------------------------------------------------------------------------------------------------- */
 /*  @ Main checkout Container
@@ -178,8 +180,8 @@ const Checkout = () => {
     }
     const { totalPrice } = totalPriceNQty;
     const products = updateProductsForPlacement(finalCart);
-    console.log("final cart", finalCart);
-    console.log("PRodcuts are  ", products);
+    // console.log("final cart", finalCart);
+    // console.log("PRodcuts are  ", products);
     const shippingAddress = userAddress;
     const totalAmount = (totalPrice + shippingAmount) / exchange;
     const shippingCost = shippingAmount / exchange;
@@ -318,6 +320,7 @@ const Checkout = () => {
                   paymentMethod={paymentMethod}
                   exchange={exchange}
                   currencyLoad={currencyLoad}
+                  finalCart={finalCart}
                 />
               </div>
             </div>
@@ -613,13 +616,18 @@ const BillSection = ({
   paymentMethod,
   exchange,
   currencyLoad,
+  finalCart,
 }) => {
-  const { orderPlacementLoad } = CartApiHandler();
+  // const { orderPlacementLoad } = CartApiHandler();
   // const { backend } = useBackend();
   // const { backend } = useAuth();
   // const [exchange, setExchange] = useState(1);
   // const [currencyLoad, setCurrencyLoad] = useState(true);
   const priceWithShippingAmount = updatedPriceNQty.totalPrice + shippingAmount;
+  const [isOpen, setIsOpen] = useState(false);
+  const { orderPlacementLoad, setOrderPlacementLoad } = useAuth();
+
+  // console.log("Final cart is ", finalCart);
 
   // const getExchangeRate = async () => {
   //   const paymentOpt = { Cryptocurrency: null };
@@ -652,6 +660,14 @@ const BillSection = ({
 
   return (
     <div className="flex flex-col">
+      <PlaceorderModal isOpen={isOpen} setIsOpen={setIsOpen}>
+        <OrderModalData
+          proceed={proceed}
+          data={finalCart}
+          totalPrice={priceWithShippingAmount}
+          setIsOpen={setIsOpen}
+        />
+      </PlaceorderModal>
       <div className="border-b-2 py-6">
         <span className="uppercase font-semibold px-6 text-xl text-slate-500">
           Price details
@@ -720,25 +736,11 @@ const BillSection = ({
       <div className="p-6 flex w-full">
         <Button
           className="p-2 min-w-full min-h-10 text-white border bg-black rounded-full font-medium text-sm relative"
-          onClick={() => proceed()}
+          // onClick={() => proceed()}
+          onClick={() => setIsOpen(true)}
           disabled={orderPlacementLoad}
         >
-          {orderPlacementLoad ? (
-            <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
-              <TailSpin
-                visible={true}
-                height="20"
-                width="20"
-                color="white"
-                ariaLabel="tail-spin-loading"
-                radius="1"
-                wrapperStyle={{}}
-                wrapperclassName=""
-              />
-            </div>
-          ) : (
-            "Place order"
-          )}
+          Place order
         </Button>
       </div>
     </div>
@@ -746,3 +748,75 @@ const BillSection = ({
 };
 
 export default CheckoutPage;
+
+const OrderModalData = ({ setIsOpen, proceed, data, totalPrice }) => {
+  const { orderPlacementLoad, setOrderPlacementLoad } = useAuth();
+
+  const handleConfirm = () => {
+    // console.log("data", data, totalPrice);
+    setOrderPlacementLoad(true);
+    proceed();
+  };
+
+  // console.log("OrderPlacement load is", orderPlacementLoad);
+
+  return (
+    <div className="mx-auto max-w-2xl space-y-4 text-neutral-400">
+      <h2 className="text-4xl font-bold text-neutral-200">
+        Verify your order details
+      </h2>
+      <div className="py-6">
+        {data.map((item, index) => (
+          <div className="flex space-x-4" key={index}>
+            <img
+              src={demoImg}
+              alt="demoImg"
+              className="min-h-24 min-w-24 max-h-24 max-w-24 object-contain"
+            />
+            <div className="flex w-full flex-col space-y-2">
+              <h1 className="text-xl">{item.product.title}</h1>
+              <p className="text-xs">Quantity : {item.quantity}</p>
+              <p className="text-sm font-semibold mt-auto">
+                ICP {item.variantSellPriceBasedOnQty}
+              </p>
+            </div>
+          </div>
+        ))}
+        <div className="h-px bg-neutral-300 my-6"></div>
+        <div className="flex w-full my-6 text-xl font-semibold">
+          <h4 className="w-24">Total</h4>
+          <h4 className="ml-4">ICP {totalPrice} (including shipping amount)</h4>
+        </div>
+        <p className="text-xs font-light my-6">
+          Click 'Confirm' to complete your purchase or 'Go back' to edit."
+        </p>
+        <div className="flex gap-2 my-6">
+          <button
+            onClick={() => setIsOpen(false)}
+            className="bg-transparent hover:bg-white/10 transition-colors text-white font-semibold w-full py-2 rounded"
+          >
+            Nah, go back
+          </button>
+
+          <div className="relative w-full h-10 flex items-center justify-center">
+            {orderPlacementLoad ? (
+              <InfinitySpin
+                visible={true}
+                color="#4fa94d"
+                ariaLabel="infinity-spin-loading"
+                className="w-full h-full flex items-center justify-center"
+              />
+            ) : (
+              <button
+                onClick={handleConfirm}
+                className="bg-white text-gray-600 font-semibold w-full h-full py-2 rounded transition-opacity hover:opacity-90"
+              >
+                Confirm
+              </button>
+            )}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};

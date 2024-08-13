@@ -165,6 +165,7 @@ export const useAuthClient = () => {
   const [backend, setBackend] = useState(null);
   const [identity, setIdentity] = useState(null);
   const [authClient, setAuthClient] = useState(null);
+  const [orderPlacementLoad, setOrderPlacementLoad] = useState(false);
 
   // Refresh login
 
@@ -441,6 +442,8 @@ export const useAuthClient = () => {
     principal,
     backend,
     identity,
+    orderPlacementLoad,
+    setOrderPlacementLoad,
   };
 };
 
