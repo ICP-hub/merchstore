@@ -18,9 +18,11 @@ import { TailSpin } from "react-loader-spinner";
 import toast from "react-hot-toast";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import Invoice from "../invoice";
+import { useAuth } from "../../../auth/useClient";
 const OrderDetail = () => {
   const param = useParams();
   //const [backend] = useCanister("backend");
+  const { backend } = useAuth();
   const [loading, setLoading] = useState(false);
   const [loading2, setLoading2] = useState(true);
   const [order, setOrder] = useState([]);

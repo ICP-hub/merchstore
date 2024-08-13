@@ -13,14 +13,19 @@ import Table, {
 import { CiCirclePlus } from "react-icons/ci";
 import { InfinitySpin } from "react-loader-spinner";
 import ShortText from "./ShortText";
+import { useAuth } from "../../auth/useClient";
 
 const Order = () => {
   //const [backend] = useCanister("backend");
+  const { backend } = useAuth();
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
   const [page, setPage] = useState(0);
+  const [totalPages, setTotalPages] = useState(0);
   const handleNext = () => {
-    setPage(page + 1);
+    if (page < totalPages - 1) {
+      setPage(page + 1);
+    }
   };
 
   const handleprevious = () => {
@@ -61,12 +66,16 @@ const Order = () => {
   useEffect(() => {
     listAllOrders();
   }, [page]);
+  console.log(backend);
 
   const listAllOrders = async () => {
     try {
-      const items = await backend.listallOrders(1, page);
-      console.log(items);
+      console.log("hello");
+
+      const items = await backend.listallOrders(8, page);
+      console.log(items, "orders");
       setOrders(items.data);
+      setTotalPages(parseInt(items.total_pages));
     } catch (error) {
       console.error("Error listing all Orders:", error);
     } finally {
