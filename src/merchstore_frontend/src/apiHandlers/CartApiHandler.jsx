@@ -134,7 +134,7 @@ const CartApiHandler = () => {
 
           console.log("Final order placement data", updatedOrderPlacementData);
 
-          if (updatedOrderPlacementData.paymentAddress === "") {
+          if (!updatedOrderPlacementData.paymentAddress) {
             return;
           } else {
             finalizeOrder(updatedOrderPlacementData);
