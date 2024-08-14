@@ -39,6 +39,7 @@ const CartApiHandler = () => {
   // const [orderPlacementLoad, setOrderPlaceMentLoad] = useState(false);
   const { transfer, loading, error } = usePaymentTransfer();
   const [checkOutClicked, setCheckoutClicked] = useState(0);
+  const navigate = useNavigate();
 
   // const navigate = useNavigate();
 
@@ -122,6 +123,11 @@ const CartApiHandler = () => {
             toast.error("Something went wrong");
             return;
           }
+
+          if (response.err) {
+            toast.error("Failed to make payment");
+            return;
+          }
           // Proceed : get height
           const { height } = response;
 
@@ -177,6 +183,7 @@ const CartApiHandler = () => {
     try {
       const finalOrderResponse = await backend.createOrder(data);
       console.log("Final Order Response ", finalOrderResponse);
+      navigate("/order-confirm");
     } catch (err) {
       console.error("Error After payment process", err);
       toast.error("Payment failed! Check you wallet");

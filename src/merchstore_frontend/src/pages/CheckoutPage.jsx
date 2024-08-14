@@ -53,15 +53,15 @@ const CheckoutPage = () => {
 // Payment methods
 const pMethod = [
   {
-    name: "ICP",
+    name: "Pay with plug",
     value: "icp",
     currency: "icp",
   },
-  {
-    name: "CKBTC",
-    value: "ckbtc",
-    currency: "btc",
-  },
+  // {
+  //   name: "CKBTC",
+  //   value: "ckbtc",
+  //   currency: "btc",
+  // },
   /* {
     name: "Fiat Payment",
     value: "fiat-payment",
@@ -761,14 +761,13 @@ const OrderModalData = ({ setIsOpen, proceed, data, totalPrice }) => {
   // console.log("OrderPlacement load is", orderPlacementLoad);
 
   return (
-    <div className="mx-auto max-w-2xl space-y-4 text-neutral-400">
+    <div className="mx-auto max-w-2xl space-y-4 text-neutral-400 py-4">
       <h2 className="text-4xl font-bold text-neutral-200">
         Verify your order details
       </h2>
       <div className="py-6">
         {data.map((item, index) => (
           <div className="flex space-x-4" key={index}>
-            {console.log(item)}
             <img
               src={item.product.variantColor[0].img1}
               alt={item.product.title}
@@ -793,7 +792,7 @@ const OrderModalData = ({ setIsOpen, proceed, data, totalPrice }) => {
         </p>
         <div className="flex gap-2 my-6">
           <button
-            onClick={() => setIsOpen(false)}
+            onClick={orderPlacementLoad ? null : () => setIsOpen(false)}
             className="bg-transparent hover:bg-white/10 transition-colors text-white font-semibold w-full py-2 rounded"
           >
             Nah, go back

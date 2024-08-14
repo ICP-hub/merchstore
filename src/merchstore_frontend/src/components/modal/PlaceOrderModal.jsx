@@ -7,10 +7,13 @@ import {
 } from "framer-motion";
 import { HiOutlineShoppingCart } from "react-icons/hi2";
 import useMeasure from "react-use-measure";
+import { useAuth } from "../../auth/useClient";
 
 const PlaceorderModal = ({ isOpen, setIsOpen, children }) => {
   const [scope, animate] = useAnimate();
   const [drawerRef, { height }] = useMeasure();
+
+  const { orderPlacementLoad } = useAuth();
 
   const y = useMotionValue(0);
   const controls = useDragControls();
@@ -36,7 +39,7 @@ const PlaceorderModal = ({ isOpen, setIsOpen, children }) => {
           ref={scope}
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          onClick={handleClose}
+          onClick={orderPlacementLoad ? null : handleClose}
           className="fixed inset-0 z-50 bg-neutral-950/70"
         >
           <motion.div
@@ -48,7 +51,7 @@ const PlaceorderModal = ({ isOpen, setIsOpen, children }) => {
             transition={{
               ease: "easeInOut",
             }}
-            className="absolute bottom-0 h-[75vh] w-full overflow-hidden rounded-t-3xl bg-neutral-900"
+            className="absolute bottom-0 h-[75vh] w-full overflow-hidden rounded-t-3xl bg-black"
             style={{ y }}
             drag="y"
             dragControls={controls}
