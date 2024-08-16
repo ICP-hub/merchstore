@@ -1954,20 +1954,58 @@ actor {
     };
 
     // Users can see their orders
+      /// ```motoko include=initialize
+  /// map.put(0, 10);
+  /// map.put(1, 11);
+  /// map.put(2, 12);
+  /// // double all the values in map, only keeping entries that have an even key
+  /// let newMap =
+  ///   TrieMap.mapFilter<Nat, Nat, Nat>(
+  ///     map,
+  ///     Nat.equal,
+  ///     Hash.hash,
+  ///     func(key, value) = if (key % 2 == 0) { ?(value * 2) } else { null }
+  ///   );
+  /// Iter.toArray(newMap.entries())
 
-    // public query (msg) func listUserOrders(chunkSize : Nat , pageNo : Nat) : async [(Types.OrderId, Types.Order)] {
-    //     let caller = msg.caller;
+    
 
-    //     // Filter orders to include only those belonging to `caller`
-    //     let pages = Utils.paginate<(Types.OrderId, Types.Order)>(Iter.toArray(filteredOrders.entries()),chunkSize);
-    //     if (pages.size() < pageNo) {
-    //         throw Error.reject("Page not found");
-    //     };
-    //     if (pages.size() == 0) {
-    //         throw Error.reject("No orders found");
-    //     };
-    //     return pages[pageNo];
-    // };
+    public shared (msg) func listUserOrders(chunkSize : Nat , pageNo : Nat) : async [Types.Order] {
+        let caller = msg.caller;
+
+        var userOrderList = List.nil<Types.Order>();
+        
+        for ((k,v) in orders.entries()) {
+        // Retrieve the order from stable memory
+        let order_blob = await stable_get(v, order_state);
+        let order : ?Types.Order = from_candid(order_blob);
+
+        switch (order) {
+            case null {
+                throw Error.reject("No blob found in stable memory for the caller");
+            };
+            case (?val) {
+                if (val.userid == caller) {
+                    // Add to the list of user orders
+                    userOrderList := List.push(val, userOrderList);
+                };
+            };
+        };
+    };
+
+        // Filter orders to include only those belonging to `caller`
+        let pages = Utils.paginate<Types.Order>(List.toArray(userOrderList),chunkSize);
+        if (pages.size() < pageNo) {
+            throw Error.reject("Page not found");
+        }; 
+        if (pages.size() == 0) {
+
+            throw Error.reject("No orders found");
+        };
+        return pages[pageNo];
+    };
+
+
 
     // get order by id
     public shared func getOrder(orderId : Text) : async Result.Result<Types.Order, Types.OrderError> {
@@ -1990,7 +2028,7 @@ actor {
             };
         };
     };
-   
+
 
 
     public shared (msg) func deleteOrder(id : Types.OrderId) : async Result.Result<(), Types.DeleteOrderError> {
