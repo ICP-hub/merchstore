@@ -71,12 +71,13 @@ const MyOrders = () => {
     getOrderList();
   }, [backend]);
 
-  // console.log(myOrderList);
+  console.log(orderList, "Hello form the myorderpage");
 
   useEffect(() => {
     const updatedMyOrderList = orderList?.map(
-      ([id, { products, timeCreated, totalAmount }]) => {
+      ({ id, products, timeCreated, totalAmount }) => {
         const [{ title, img }] = products;
+        console.log(img);
         return {
           id,
           title,

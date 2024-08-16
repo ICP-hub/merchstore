@@ -314,7 +314,7 @@ const ProductCard = ({ product }) => {
           </button>
           <Link to={`/product/${productInfo.slug}`}>
             <div
-              className="relative overflow-hidden w-90 h-72 rounded-xl cursor-pointer"
+              className="rounded-xl cursor-pointer  lg:object-cover lg:h-72 "
               onMouseEnter={handleMouseEnter}
               onMouseLeave={handleMouseLeave}
             >
@@ -327,7 +327,7 @@ const ProductCard = ({ product }) => {
                     : productInfo.variantInfo.img1
                 }
                 alt="prod name"
-                className="absolute inset-0  h-full object-cover rounded-xl"
+                className="rounded-xl w-full lg:object-cover lg:h-full"
                 onError={handleError}
               />
             </div>

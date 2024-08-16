@@ -418,7 +418,7 @@ const CartApiHandler = () => {
   const getOrderList = async () => {
     try {
       setIsLoading(true);
-      const response = await backend.listUserOrders();
+      const response = await backend.listUserOrders(100, 0);
       console.log("getOrderList response ", response);
       setOrderList(response);
     } catch (err) {
