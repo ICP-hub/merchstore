@@ -422,7 +422,7 @@ const CartApiHandler = () => {
       console.log("getOrderList response ", response);
       setOrderList(response);
     } catch (err) {
-      console.error("Failed to fetch user order list");
+      console.error("Failed to fetch user order list", err);
     } finally {
       setIsLoading(false);
     }
