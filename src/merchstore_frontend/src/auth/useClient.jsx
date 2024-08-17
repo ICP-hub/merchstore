@@ -166,6 +166,7 @@ export const useAuthClient = () => {
   const [identity, setIdentity] = useState(null);
   const [authClient, setAuthClient] = useState(null);
   const [orderPlacementLoad, setOrderPlacementLoad] = useState(false);
+  const [isCartUpdated, setIsCartUpdated] = useState(false);
 
   // Refresh login
 
@@ -435,6 +436,10 @@ export const useAuthClient = () => {
 
   // const disconnect = () => {};
 
+  const refreshCart = () => {
+    setIsCartUpdated((prev) => !prev);
+  };
+
   return {
     isConnected,
     login,
@@ -444,6 +449,7 @@ export const useAuthClient = () => {
     identity,
     orderPlacementLoad,
     setOrderPlacementLoad,
+    refreshCart
   };
 };
 
