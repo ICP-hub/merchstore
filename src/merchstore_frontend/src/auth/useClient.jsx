@@ -449,6 +449,7 @@ export const useAuthClient = () => {
     identity,
     orderPlacementLoad,
     setOrderPlacementLoad,
+    isCartUpdated,
     refreshCart
   };
 };
