@@ -936,17 +936,18 @@ actor {
         // If the post is not found, this will return an error as result.
     };
 
-    public shared func search_by_title(chunksize : Nat , page : Nat , is_active :Bool , Title : Text) : async {data : [Types.Product]; current_page : Nat; total_pages : Nat} {
+     public shared func search_by_title(chunksize : Nat , page : Nat , is_active :Bool , Title : Text) : async {data : [Types.Product]; current_page : Nat; total_pages : Nat} {
         var product_list = List.nil<Types.Product>();
         for ((k,v) in products.entries()) {
             let product_blob = await stable_get(v, product_state);
             let product : ?Types.Product = from_candid(product_blob);
+            let title_lowercase = Text.toLowercase(Title);
             switch(product){
                 case null {
                     throw Error.reject("no blob found in stable memory for the caller");
                 };
                 case(?val){
-                    if (Text.contains(val.title, #text Title) == true and val.active == is_active){
+                    if (Text.contains(Text.toLowercase(val.title), #text title_lowercase) == true and val.active == is_active){
                         product_list := List.push(val, product_list);
                     };
                 };
@@ -967,13 +968,14 @@ actor {
         var product_list = List.nil<Types.Product>();
         for ((k,v) in products.entries()) {
             let product_blob = await stable_get(v, product_state);
+            let _category = Text.toLowercase(category);
             let product : ?Types.Product = from_candid(product_blob);
             switch(product){
                 case null {
                     throw Error.reject("no blob found in stable memory for the caller");
                 };
                 case(?val){
-                    if (val.category == category and val.active == is_active){
+                    if (Text.toLowercase(val.category) == _category and val.active == is_active){
                         product_list := List.push(val, product_list);
                     };
                 };
@@ -989,8 +991,6 @@ actor {
         let pages_data = index_pages[pageNo];
         return { data = pages_data; current_page = pageNo + 1; total_pages = index_pages.size(); };
     };
-
-
 
     // 📍📍📍📍📍
     public shared ({caller}) func listallProducts(chunksize : Nat , pageNo : Nat, is_active : Bool,  ) : async {data : [Types.Product]; current_page : Nat; total_pages : Nat} {
