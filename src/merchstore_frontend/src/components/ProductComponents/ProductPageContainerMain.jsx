@@ -139,7 +139,7 @@ const ProductPageContainerTopSearch = ({
       {/* Search bar component : dynamic value and change handler */}
       <SearchBar
         type="text"
-        placeholder="Search on Merch Store"
+        placeholder="Search Products"
         icon
         value={searchProductInput}
         onChange={(e) => setSearchProductInput(e.target.value)}
@@ -337,7 +337,7 @@ export const ProductPageContainerTop = ({ searchProductByName }) => {
       {/* Search bar component : dynamic value and change handler */}
       <SearchBar
         type="text"
-        placeholder="Search on Merch Store"
+        placeholder="Search Products"
         icon
         value={searchProductInput}
         onChange={(e) => setSearchProductInput(e.target.value)}
