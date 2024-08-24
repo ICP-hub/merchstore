@@ -144,7 +144,7 @@ const CartApiHandler = () => {
 
           if (
             !updatedOrderPlacementData.paymentAddress ||
-            updatedOrderPlacementData.paymentAddress === undefined
+            updatedOrderPlacementData.paymentAddress === "undefined"
           ) {
             toast.error("Invalid payment ID. Check your wallet!");
             return;
