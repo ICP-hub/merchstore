@@ -119,7 +119,7 @@ const CartApiHandler = () => {
           );
           console.log("response ", response);
           // If response undefined return
-          if (response === undefined) {
+          if (response == undefined) {
             toast.error("Something went wrong");
             return;
           }
