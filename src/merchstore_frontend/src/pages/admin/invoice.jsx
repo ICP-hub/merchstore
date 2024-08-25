@@ -50,10 +50,8 @@ const Invoice = ({
         <div
           style={{ flex: 1, borderRight: "1px solid black", padding: "2px" }}
         >
-          <h3 style={{ fontWeight: 700 }}>lorem </h3>
-          <p style={{ fontWeight: 700 }}>GST NO: Contrary to popular belief</p>
-          <p>Contrary to popular belief</p>
-          <p> Contrary to popular belief </p>
+          <h3 style={{ fontWeight: 700 }}>MERCH STORE</h3>
+          <p style={{ fontWeight: 700 }}> </p>
         </div>
         {/* <!-- right --> */}
         <div style={{ flex: 1, padding: "2px" }}>

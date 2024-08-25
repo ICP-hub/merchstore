@@ -45,7 +45,7 @@ const MyOrderDetailContainerMain = () => {
   const [isOpen, setIsOpen] = useState(false);
   const { OrderDetailPageLoader } = LoadingScreen();
 
-  const pathsForTabChanges = ["Home", "my-profile", "my-order", id];
+  const pathsForTabChanges = ["Home", "my-profile", "my-order"];
   // Filter orderList from params
   useEffect(() => {
     getOrderById(id);
@@ -71,6 +71,7 @@ const MyOrderDetailContainerMain = () => {
               shippingAddress={orderDetails.shippingAddress}
               handleOpenInvoice={handleOpenInvoice}
               orderStatus={orderDetails.orderStatus}
+              paymentStatus={orderDetails.paymentStatus}
             />
             <DeliveryStepper orderStatus={orderDetails.orderStatus} />
             <OrderItemComp products={orderDetails.products} />
@@ -104,9 +105,14 @@ const MyOrderDetailContainerMain = () => {
 /* ----------------------------------------------------------------------------------------------------- */
 /*  @  MyOrderDetailPage : MyOrderContainerMain: <DeliveryInfo /> > Left 
 /* ----------------------------------------------------------------------------------------------------- */
-const DeliveryInfo = ({ shippingAddress, handleOpenInvoice, orderStatus }) => {
+const DeliveryInfo = ({
+  shippingAddress,
+  handleOpenInvoice,
+  orderStatus,
+  paymentStatus,
+}) => {
   return (
-    <div className="flex border border-dashed  rounded-2xl border-gray-900 min-w-full max-sm:flex-col">
+    <div className="flex border border-dashed  rounded-2xl border-gray-900 min-w-full max-sm:flex-col overflow-scroll">
       <div className="sm:w-1/2 sm:border-r sm:border-r-gray-900 border-dashed max-sm:border-b max-sm:border-b-gray-900">
         <div className="flex flex-col gap-3 px-2 sm:px-8 py-4">
           <h3 className="font-medium text-lg">Delivery Address</h3>
@@ -118,7 +124,7 @@ const DeliveryInfo = ({ shippingAddress, handleOpenInvoice, orderStatus }) => {
             {shippingAddress?.pincode},{shippingAddress?.state}
           </p>
           <div className="flex gap-2 text-sm">
-            <p className="font-medium">Email</p>
+            <p className="font-medium ">Email</p>
             <p>{shippingAddress?.email}</p>
           </div>
           <div className="flex gap-2 text-sm">
@@ -130,6 +136,7 @@ const DeliveryInfo = ({ shippingAddress, handleOpenInvoice, orderStatus }) => {
       <MoreActions
         handleOpenInvoice={handleOpenInvoice}
         orderStatus={orderStatus}
+        paymentStatus={paymentStatus}
       />
     </div>
   );
@@ -138,18 +145,18 @@ const DeliveryInfo = ({ shippingAddress, handleOpenInvoice, orderStatus }) => {
 /* ----------------------------------------------------------------------------------------------------- */
 /*  @  MyOrderDetailPage : MyOrderContainerMain: <DeliveryInfo /> > Right 
 /* ----------------------------------------------------------------------------------------------------- */
-const MoreActions = ({ handleOpenInvoice, orderStatus }) => {
+const MoreActions = ({ handleOpenInvoice, orderStatus, paymentStatus }) => {
   return (
     <div className="sm:w-1/2 ">
       <div className="flex flex-col gap-3 px-2 sm:px-8 py-4">
         <h3 className="font-medium text-lg">More Actions</h3>
         <div className="flex gap-2 text-sm">
           <p className="font-medium">Payment Status:</p>
-          <p className="font-medium text-green-700">{orderStatus}</p>
+          <p className="font-medium text-green-700">{paymentStatus}</p>
         </div>
         <div className="flex gap-2 text-sm">
           <p className="font-medium">Delivery Status:</p>
-          <p className="font-medium text-gray-700">Pending</p>
+          <p className="font-medium text-gray-700">{orderStatus}</p>
         </div>
         <div className="flex gap-2 text-sm">
           <Button
