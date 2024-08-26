@@ -290,7 +290,8 @@ actor {
         "h7yxq-n6yb2-6js2j-af5hk-h4inj-edrce-oevyj-kbs7a-76kft-vrqrw-nqe"
         ,"x5gb5-ng356-6thlg-xfcjc-pol23-njc4g-zlj3u-xkqvz-3ljz4-f7c3j-zqe"
         ,"tfyvq-6wqn2-cpjj5-3q3qn-jhviz-nrkva-slk4q-if2hz-blylq-xljtq-rae",
-        "kws6j-lg7qz-4hnac-saj7i-l2i7g-i2rnx-zaby7-yvn5r-ggp37-ebev6-aae"
+        "kws6j-lg7qz-4hnac-saj7i-l2i7g-i2rnx-zaby7-yvn5r-ggp37-ebev6-aae",
+        "bv7lm-r66xz-wagad-2g6up-3mryg-mk4mt-mqvod-hjxya-jl47v-wsq6u-uae"
     ];
 
     public func isAdmin(userPrincipal : Principal) : async Bool {
