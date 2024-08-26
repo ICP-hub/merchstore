@@ -27,7 +27,7 @@ const Shipping = () => {
 
   const updateAmount = async () => {
     const parsedAmount = parseFloat(amount);
-    if (isNaN(parsedAmount) || parsedAmount <= 0) {
+    if (amount < 0) {
       toast.error("Shipping Amount must be zero or greater than zero");
       return;
     }
@@ -69,7 +69,7 @@ const Shipping = () => {
                   <IcpLogo size={24} />
                   <input
                     id="title"
-                    type="text"
+                    type="number"
                     value={loading1 ? "loading...." : amount}
                     onChange={(e) => setAmount(e.target.value)}
                     className="pl-2 outline-none border-none w-full rounded-lg"

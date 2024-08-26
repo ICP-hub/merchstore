@@ -35,15 +35,19 @@ const ProductCard = ({ product }) => {
   const [addedToCart, setAddedToCart] = useState(false);
   const [isHovered, setIsHovered] = useState(false); // State for img change on hover
   const [imageError, SetImageError] = useState(false);
+  const [loadCart, setLoadCart] = useState(true);
 
   const listCarts = async () => {
     try {
+      setLoadCart(true);
       const cart = await backend.getCallerCartItems(100, 0);
       setCarts(cart.data);
       console.log(cart, "cart items");
     } catch (error) {
+      setLoadCart(false);
       console.error("Error listing carts:", error);
     } finally {
+      setLoadCart(false);
     }
   };
 
@@ -52,63 +56,67 @@ const ProductCard = ({ product }) => {
   }, [backend, product]);
 
   const AddToCart = async () => {
-    if (isConnected) {
-      try {
-        listCarts();
-        setLoading(true);
-        setAddedToCart(true);
-
-        let cartId;
-        let isProductInCart;
-        let quantity1;
-
-        carts?.some((item) => {
-          if (item?.product_slug === product?.slug) {
-            isProductInCart = true;
-
-            quantity1 = item?.quantity;
-            console.log(quantity1, "befewb");
-            return true; // Stop iterating once the item is found
-          }
-          return false;
-        });
-        quantity1 = quantity1 + 1;
-        console.log(quantity1, "befssfsfwb");
-        if (isProductInCart) {
-          const res = await backend.updateCartItems(
-            product.slug,
-            quantity1,
-            product.variantSize[0].size,
-            product.variantColor[0].color
-          );
-          toast.success("item updated successfully");
-          console.log(res);
-        } else {
-          const res = await backend.addtoCartItems(
-            product.slug,
-            product.variantSize[0].size,
-            product.variantColor[0].color,
-            quantity
-          );
-          console.log(res, "add to cart response");
-          console.log(res?.ok[0]?.userprincipal?.toText(), "principal");
-          refreshCart();
-
-          if ("ok" in res) {
-            toast.success("Item added to cart");
-          } else {
-            // Log an error if the response does not have "ok" property
-            console.error("Unexpected response from backend:", res);
-          }
-        }
-      } catch (error) {
-        // Log the error for debugging
-        console.error("An error occurred adding items to cart:", error);
-      } finally {
-        setLoading(false);
-      }
+    if (loadCart) {
+      toast("Please wait");
     } else {
-      toast.error("Please login first");
+      if (isConnected) {
+        try {
+          listCarts();
+          setLoading(true);
+          setAddedToCart(true);
+
+          let cartId;
+          let isProductInCart;
+          let quantity1;
+
+          carts?.some((item) => {
+            if (item?.product_slug === product?.slug) {
+              isProductInCart = true;
+
+              quantity1 = item?.quantity;
+              console.log(quantity1, "befewb");
+              return true; // Stop iterating once the item is found
+            }
+            return false;
+          });
+          quantity1 = quantity1 + 1;
+          console.log(quantity1, "befssfsfwb");
+          if (isProductInCart) {
+            const res = await backend.updateCartItems(
+              product.slug,
+              quantity1,
+              product.variantSize[0].size,
+              product.variantColor[0].color
+            );
+            toast.success("item updated successfully");
+            console.log(res);
+          } else {
+            const res = await backend.addtoCartItems(
+              product.slug,
+              product.variantSize[0].size,
+              product.variantColor[0].color,
+              quantity
+            );
+            console.log(res, "add to cart response");
+            console.log(res?.ok[0]?.userprincipal?.toText(), "principal");
+            refreshCart();
+
+            if ("ok" in res) {
+              toast.success("Item added to cart");
+            } else {
+              // Log an error if the response does not have "ok" property
+              console.error("Unexpected response from backend:", res);
+            }
+          }
+        } catch (error) {
+          // Log the error for debugging
+          console.error("An error occurred adding items to cart:", error);
+        } finally {
+          setLoading(false);
+        }
+      } else {
+        toast.error("Please login first");
+      }
     }
   };
   const buyNowHandler = async () => {

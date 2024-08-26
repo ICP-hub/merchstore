@@ -1679,9 +1679,7 @@ actor {
         //     return #err(#UserNotAdmin); // We require the user to be admin
         // };
 
-        if (s.shipping_amount == 0.00) {
-            return #err(#EmptyShippingAmount);
-        };
+       
         shippingamount := s;
         return #ok(s);
     };
