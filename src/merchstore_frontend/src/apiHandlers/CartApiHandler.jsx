@@ -239,7 +239,7 @@ const CartApiHandler = () => {
 
       const orderDetails = {
         awb: "testing",
-        paymentStatus: "testing",
+        paymentStatus: "success",
         paymentMethod: payment,
         shippingAmount: {
           shipping_amount: shippingCost,

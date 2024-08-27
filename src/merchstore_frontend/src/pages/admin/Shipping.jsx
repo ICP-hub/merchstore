@@ -27,7 +27,7 @@ const Shipping = () => {
 
   const updateAmount = async () => {
     const parsedAmount = parseFloat(amount);
-    if (amount < 0) {
+    if (parsedAmount < 0) {
       toast.error("Shipping Amount must be zero or greater than zero");
       return;
     }
