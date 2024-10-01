@@ -14,7 +14,7 @@ const canisterID = process.env.CANISTER_ID_MERCHSTORE_BACKEND;
 const whitelist = [process.env.CANISTER_ID_MERCHSTORE_BACKEND];
 
 export const useAuthClient = () => {
-  // const [isConnected, setIsConnected] = useState(false);
+  const [isConnected, setIsConnected] = useState(false);
   // const [principal, setPrincipal] = useState(null);
   // const [backend, setBackend] = useState(null);
   // const [identity, setIdentity] = useState(null);
@@ -37,9 +37,14 @@ export const useAuthClient = () => {
     fetchIcpBalance,
   } = useIdentityKit();
 
-  console.log(user?.principal?.toText());
+  useEffect(() => {
+    if (user) {
+      setIsConnected(true);
+    }
+  }, [user]);
+
   return {
-    isConnected: isUserConnecting,
+    isConnected: isConnected,
     login: connect,
     disconnect,
     principal: user?.principal,
