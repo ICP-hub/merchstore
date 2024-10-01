@@ -55,6 +55,7 @@ import UserDetails from "./pages/admin/UserDetails";
 import Shipping from "./pages/admin/Shipping";
 import "intl-tel-input/build/css/intlTelInput.css";
 import "./components/common/Styles/itelinput.css";
+import { DialogContent, DialogTitle } from "@radix-ui/react-dialog";
 // import { useAuth } from "./auth/useClient";
 
 const router = createBrowserRouter([
@@ -281,6 +282,12 @@ const App = () => {
   useEffect(() => {
     AOS.init();
   }, []);
+
+  // const handleSuccessfullLogin = (res) => {
+  //   document.getElementById("ik-identity-kit-modal").classList.add("ik-hidden");
+  //   console.log("reponse login success", res);
+  // };
+
   return (
     <div className="App">
       <Toaster

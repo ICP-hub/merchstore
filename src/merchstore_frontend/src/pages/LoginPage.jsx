@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useContext, useEffect, useRef, useState } from "react";
 
 import { Navigate, useNavigate } from "react-router-dom";
 import WELCOME from "../assets/welcome.svg";
@@ -11,6 +11,12 @@ import { TiChevronLeftOutline } from "react-icons/ti";
 import { PiWalletBold } from "react-icons/pi";
 import { useAuth } from "../auth/useClient";
 import WalletModal from "../components/common/WalletModal";
+import {
+  ConnectWalletButton,
+  IdentityKitContext,
+  IdentityKitProvider,
+  IdentityKitTheme,
+} from "@nfid/identitykit/react";
 
 export default function LoginPage() {
   // const { open } = useDialog();
@@ -22,6 +28,7 @@ export default function LoginPage() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const handleWalletModalOpen = () => setIsLoggedIn(true);
   const handleWalletModalClose = () => setIsLoggedIn(false);
+  const { toggleModal } = useContext(IdentityKitContext);
 
   useEffect(() => {
     let intervalId;
@@ -66,6 +73,20 @@ export default function LoginPage() {
     toast.success("Logout successfully.");
   };
   // console.log(isConnected);
+  const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
+
+  const toggleLoginModal = () => {
+    setIsLoginModalOpen((prev) => !prev);
+  };
+
+  // useEffect(() => {
+  //   let modal = document.getElementById("ik-identity-kit-modal");
+  //   if (isLoginModalOpen) {
+  //     modal.classList.remove("ik-hidden");
+  //   } else {
+  //     modal.classList.add("ik-hidden");
+  //   }
+  // }, [isLoginModalOpen]);
 
   return (
     <>
@@ -88,7 +109,13 @@ export default function LoginPage() {
                 <p className="text-xs text-gray-700 mb-10 text-center">
                   Select what wallet you want to connect below
                 </p>
-                {!isConnected && (
+
+                <ConnectWalletButton
+                  className="bg-black"
+                  onClick={toggleModal}
+                />
+
+                {/* {!isConnected && (
                   <Button
                     // onClick={handleWalletModalOpen}
                     onClick={login}
@@ -105,7 +132,7 @@ export default function LoginPage() {
                     <PiWalletBold className="w-5 h-5" />
                     Disconnect
                   </Button>
-                )}
+                )} */}
                 <Button
                   onClick={() => navigate("/")}
                   className="w-full rounded-full text-black font-semibold bg-white border border-white px-4 py-2 flex justify-center items-center"
