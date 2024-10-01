@@ -13,7 +13,7 @@ import toast from "react-hot-toast";
 import { TailSpin } from "react-loader-spinner";
 import { useEffect } from "react";
 import placeholderImg from "../../assets/placeholderImg-Small.jpeg";
-import IcpLogo from "../../assets/IcpLogo";
+import IcpLogo from "../../assets/dfinity.svg";
 
 /* ----------------------------------------------------------------------------------------------------- */
 /*  @ Component ProductCard.
@@ -57,7 +57,7 @@ const ProductCard = ({ product }) => {
 
   const AddToCart = async () => {
     if (loadCart) {
-      toast("Please wait");
+      toast("Please wait...");
     } else {
       if (isConnected) {
         try {
@@ -115,6 +115,7 @@ const ProductCard = ({ product }) => {
           setLoading(false);
         }
       } else {
+        navigate("/login");
         toast.error("Please login first");
       }
     }
@@ -145,6 +146,7 @@ const ProductCard = ({ product }) => {
       }
     } else {
       toast.error("Please login first");
+      navigate("/login", { replace: true });
     }
   };
   useEffect(() => {
@@ -198,6 +200,7 @@ const ProductCard = ({ product }) => {
     } else {
       toast.error("You need to login first");
       // open();
+      navigate("/login", { replace: true });
     }
   };
 
@@ -353,7 +356,8 @@ const ProductCard = ({ product }) => {
           <div className="flex items-center justify-between">
             <div className="flex gap-2 items-center">
               <span className="font-medium text-lg flex items-center gap-1">
-                <IcpLogo size={24} />
+                {/* <IcpLogo size={24} /> */}
+                <img src={IcpLogo} alt="icp logo" className="w-4 h-4" />
                 <p>{productInfo.variantInfo.variant_sale_price}</p>
               </span>
               <span className="text-sm line-through font-light flex items-center gap-1">

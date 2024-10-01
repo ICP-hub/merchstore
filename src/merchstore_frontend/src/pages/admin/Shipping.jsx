@@ -4,8 +4,8 @@ import { CiCircleCheck } from "react-icons/ci";
 //import { useCanister } from "@connect2ic/react";
 import { TailSpin } from "react-loader-spinner";
 import toast from "react-hot-toast";
-import IcpLogo from "../../assets/IcpLogo";
 import { useAuth } from "../../auth/useClient";
+import IcpLogo from "../../assets/dfinity.svg";
 
 const Shipping = () => {
   const [amount, setAmount] = useState("");
@@ -66,7 +66,8 @@ const Shipping = () => {
               </h1>
               <div className="my-2">
                 <div className="border-2 p-1 items-center outline-none border-[#F4F2F2] w-full rounded-lg flex">
-                  <IcpLogo size={24} />
+                  {/* <IcpLogo size={24} /> */}
+                  <img src={IcpLogo} alt="icp logo" className="w-4 h-4" />
                   <input
                     id="title"
                     type="number"

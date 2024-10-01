@@ -227,6 +227,7 @@ const ProductDetail = () => {
       }
     } else {
       toast.error("Please login first");
+      navigate("/login", { replace: true });
     }
   };
 
@@ -282,6 +283,7 @@ const ProductDetail = () => {
       }
     } else {
       toast.error("please login first");
+      navigate("/login", { replace: true });
     }
   };
 

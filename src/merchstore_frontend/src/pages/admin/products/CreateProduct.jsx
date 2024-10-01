@@ -9,7 +9,7 @@ import { WithContext as ReactTags } from "react-tag-input";
 import { TiDeleteOutline } from "react-icons/ti";
 import { IoMdAddCircleOutline } from "react-icons/io";
 import toast from "react-hot-toast";
-import IcpLogo from "../../../assets/IcpLogo";
+import IcpLogo from "../../../assets/dfinity.svg";
 const CreateCategory = () => {
   // const { backend } = useBackend();
   const { backend } = useAuth();
@@ -376,7 +376,8 @@ const CreateCategory = () => {
                     disabled={loading}
                   />
                   <div className="mr-2 mb-2 px-1 py-2 md:w-auto border-2 p-2 outline-none border-[#F4F2F2] w-full rounded-lg flex ">
-                    <IcpLogo size={24} />
+                    {/* <IcpLogo size={24} /> */}
+                    <img src={IcpLogo} alt="icp logo" className="w-4 h-4" />
                     <input
                       type="number"
                       value={variant.variant_price}
@@ -389,7 +390,8 @@ const CreateCategory = () => {
                     />
                   </div>
                   <div className="mr-2 mb-2 px-1 py-2 md:w-auto border-2 p-2 outline-none border-[#F4F2F2] w-full rounded-lg flex ">
-                    <IcpLogo size={24} />
+                   {/*  <IcpLogo size={24} /> */}
+                   <img src={IcpLogo} alt="icp logo" className="w-4 h-4" />
                     <input
                       type="number"
                       value={variant.variant_sale_price}

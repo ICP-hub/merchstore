@@ -7,7 +7,7 @@ import {
   CiTrash,
 } from "react-icons/ci";
 import { useReactToPrint } from "react-to-print";
-import IcpLogo from "../../../assets/IcpLogo";
+import IcpLogo from "../../../assets/dfinity.svg";
 
 import ProductCard from "./ProductCard";
 //import { useCanister } from "@connect2ic/react";
@@ -381,7 +381,8 @@ const OrderDetail = () => {
                           <div className="w-[100px] h-[20px] rounded-xl bg-gray-100 animate-pulse"></div>
                         ) : (
                           <span className="flex items-center gap-1">
-                            <IcpLogo size={24} />{" "}
+                            {/* <IcpLogo size={24} /> */}{" "}
+                            <img src={IcpLogo} alt="icp logo" className="w-4 h-4" />
                             {order?.subTotalAmount.toFixed(2)}
                           </span>
                         )}
@@ -396,7 +397,8 @@ const OrderDetail = () => {
                           <div className="w-[100px] h-[20px] rounded-xl bg-gray-100 animate-pulse"></div>
                         ) : (
                           <span className="flex items-center gap-1">
-                            <IcpLogo size={24} />{" "}
+                            {/* <IcpLogo size={24} /> */}{" "}
+                            <img src={IcpLogo} alt="icp logo" className="w-4 h-4" />
                             {order?.shippingAmount.shipping_amount}
                           </span>
                         )}
@@ -413,7 +415,8 @@ const OrderDetail = () => {
                           <div className="w-[100px] h-[20px] rounded-xl bg-gray-100 animate-pulse"></div>
                         ) : (
                           <span className="flex items-center gap-1">
-                            <IcpLogo size={24} />{" "}
+                            {/* <IcpLogo size={24} /> */}{" "}
+                            <img src={IcpLogo} alt="icp logo" className="w-4 h-4" />
                             {order?.totalAmount.toFixed(2)}
                           </span>
                         )}

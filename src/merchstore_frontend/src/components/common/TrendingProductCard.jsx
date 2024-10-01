@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import Product1 from "../../assets/fakeprod.png";
 import { Link } from "react-router-dom";
 import placeholderImg from "../../assets/placeholderImg-Small.jpeg";
-import IcpLogo from "../../assets/IcpLogo";
+import IcpLogo from "../../assets/dfinity.svg"
 
 const TrendingProductCard = ({ product }) => {
   const [errorImage, setErrorImage] = useState(false);
@@ -38,7 +38,8 @@ const TrendingProductCard = ({ product }) => {
           <div className="line-clamp-1 font-semibold text-xl text-gray-900 tracking-wide flex gap-2 items-center">
             <div className="flex items-center">
               <span className="text-lg flex items-center gap-1">
-                <IcpLogo size={18} />
+                {/* <IcpLogo size={18} /> */}
+                <img src={IcpLogo} alt="icp logo" className="w-4 h-4" />
                 {product?.variantColor[0]?.variant_sale_price}{" "}
               </span>
               <span className="line-through text-sm text-gray-700 font-light">

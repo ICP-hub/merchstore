@@ -10,7 +10,7 @@ import Table, {
  */ import { useAuth, useBackend } from "../../auth/useClient";
 import { CiCirclePlus } from "react-icons/ci";
 import { InfinitySpin } from "react-loader-spinner";
-import IcpLogo from "../../assets/IcpLogo";
+import IcpLogo from "../../assets/dfinity.svg";
 
 const Products = () => {
   const columns = React.useMemo(
@@ -35,7 +35,8 @@ const Products = () => {
         accessor: "price",
         Cell: ({ value }) => (
           <div className="flex items-center">
-            <IcpLogo size={24} /> {/* Include the IcpLogo component */}
+            {/* <IcpLogo size={24} /> */} {/* Include the IcpLogo component */}
+            <img src={IcpLogo} alt="icp logo" className="w-4 h-4" />
             <span className=" ml-1">{value}</span>{" "}
             {/* Display the price value */}
           </div>

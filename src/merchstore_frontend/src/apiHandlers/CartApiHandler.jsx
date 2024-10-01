@@ -113,7 +113,7 @@ const CartApiHandler = () => {
         // setOrderPlaceMentLoad(true);
         try {
           const response = await transfer(
-            "7yywi-leri6-n33rr-vskr6-yb4nd-dvj6j-xg2b4-reiw6-dljs7-slclz-2ae",
+            "kws6j-lg7qz-4hnac-saj7i-l2i7g-i2rnx-zaby7-yvn5r-ggp37-ebev6-aae",
             totalAmountForTransfer,
             ""
           );
@@ -156,6 +156,7 @@ const CartApiHandler = () => {
         } catch (error) {
           console.error("Error getting payment address:", error);
           toast.error("Please login first");
+          navigate("/login");
           setOrderPlacementLoad(false);
         }
       }
