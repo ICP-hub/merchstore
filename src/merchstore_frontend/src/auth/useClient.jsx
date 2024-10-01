@@ -40,6 +40,8 @@ export const useAuthClient = () => {
   useEffect(() => {
     if (user) {
       setIsConnected(true);
+    } else {
+      setIsConnected(false);
     }
   }, [user]);
 
