@@ -111,7 +111,7 @@ export default function LoginPage() {
                 </p>
 
                 <ConnectWalletButton
-                  className="bg-black"
+                  className="w-full !rounded-full !text-white !font-semibold !bg-black !border !border-black !px-4 !py-2 !mb-3 !flex !justify-center !items-center gap-1.5 !text-md"
                   onClick={toggleModal}
                 />
 
@@ -135,7 +135,7 @@ export default function LoginPage() {
                 )} */}
                 <Button
                   onClick={() => navigate("/")}
-                  className="w-full rounded-full text-black font-semibold bg-white border border-white px-4 py-2 flex justify-center items-center"
+                  className="w-full rounded-full text-black font-semibold bg-white border border-white px-4 py-2 flex justify-center items-center text-md"
                 >
                   <TiChevronLeftOutline className="w-5 h-5" />
                   Return to Home
