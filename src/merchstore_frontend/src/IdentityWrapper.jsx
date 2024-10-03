@@ -14,41 +14,28 @@ import {
 } from "@nfid/identitykit";
 
 import App from "./App";
-import { HttpAgent } from "@dfinity/agent";
 import { AuthProvider } from "./auth/useClient";
-import { DelegationIdentity } from "@dfinity/identity";
-
+import { HttpAgent } from "@dfinity/agent";
 export default function IdentityWrapper() {
-  const signers = [NFIDW, Plug, InternetIdentity, Stoic];
-  const [customAgent, setCustomAgent] = useState();
-
+  const signers = [NFIDW, Plug];
   const canisterID = process.env.CANISTER_ID_MERCHSTORE_BACKEND;
-  const {
-    agent,
-    isInitializing,
-    user,
-    isUserConnecting,
-    authType,
-    icpBalance,
-    identity,
-    signer,
-    delegationType,
-    accounts,
-    connect,
-    disconnect,
-    fetchIcpBalance,
-  } = useIdentityKit();
+  const { identity } = useIdentityKit();
+  const [customAgent, setCustomAgent] = useState(null);
 
   useEffect(() => {
-    HttpAgent.create().then(setCustomAgent);
-  }, []);
+    if (identity) {
+      HttpAgent.create({ identity, host: "https://icp-api.io/" }).then(
+        setCustomAgent
+      );
+    }
+  }, [identity]);
 
   return (
     <IdentityKitProvider
       signers={signers}
       theme={IdentityKitTheme.SYSTEM}
-      agent={customAgent}
       authType={IdentityKitAuthType.DELEGATION}
+      agent={customAgent}
       signerClientOptions={{
         targets: [canisterID],
       }}

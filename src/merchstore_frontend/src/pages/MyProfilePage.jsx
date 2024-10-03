@@ -60,7 +60,7 @@ const MyProAccount = () => {
   const [lastName, setLastName] = useState(""); // Add state for LastName
   const [user, setUser] = useState([]); // Add  state user
   const [inputsDisabled, setInputsDisabled] = useState(true);
-  const { identity } = useIdentityKit();
+  const { identity, icpBalance } = useIdentityKit();
   const [isCopied, setCopied] = useClipboard(principal, {
     successDuration: 1000,
   });
@@ -227,6 +227,10 @@ const MyProAccount = () => {
                 <RiFileCopyLine className="w-5 h-5 text-gray-400" />
               )}
             </button>
+          </div>
+          <div className="flex flex-col w-full">
+            <div className="text-xs">Account Balance</div>
+            <div className="rounded-full flex">{icpBalance}</div>
           </div>
           {/* <CommonInput
             label="Wallet Amount"

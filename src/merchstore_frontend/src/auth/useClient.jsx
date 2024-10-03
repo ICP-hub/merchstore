@@ -40,7 +40,6 @@ export const useAuthClient = () => {
   useEffect(() => {
     if (user) {
       setIsConnected(true);
-      console.log("deligation type", agent);
     } else {
       setIsConnected(false);
     }
