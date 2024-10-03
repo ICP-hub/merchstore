@@ -56,6 +56,7 @@ import Shipping from "./pages/admin/Shipping";
 import "intl-tel-input/build/css/intlTelInput.css";
 import "./components/common/Styles/itelinput.css";
 import { DialogContent, DialogTitle } from "@radix-ui/react-dialog";
+import { useIdentityKit } from "@nfid/identitykit/react";
 // import { useAuth } from "./auth/useClient";
 
 const router = createBrowserRouter([
@@ -287,6 +288,29 @@ const App = () => {
   //   document.getElementById("ik-identity-kit-modal").classList.add("ik-hidden");
   //   console.log("reponse login success", res);
   // };
+  const {
+    agent,
+    isInitializing,
+    user,
+    isUserConnecting,
+    icpBalance,
+    identity,
+    signer,
+    delegationType,
+    accounts,
+    connect,
+    disconnect,
+    fetchIcpBalance,
+  } = useIdentityKit();
+
+  useEffect(() => {
+    console.log("agent", agent);
+    console.log("user", user);
+
+    console.log("icp balance", icpBalance);
+
+    console.log("identity is ", identity);
+  }, [user]);
 
   return (
     <div className="App">

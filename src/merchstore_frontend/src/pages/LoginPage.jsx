@@ -12,23 +12,26 @@ import { PiWalletBold } from "react-icons/pi";
 import { useAuth } from "../auth/useClient";
 import WalletModal from "../components/common/WalletModal";
 import {
+  ConnectedWalletButton,
+  ConnectWallet,
   ConnectWalletButton,
+  ConnectWalletDropdownMenu,
   IdentityKitContext,
   IdentityKitProvider,
   IdentityKitTheme,
+  useIdentityKit,
 } from "@nfid/identitykit/react";
 
 export default function LoginPage() {
   // const { open } = useDialog();
   // const { isConnected, disconnect } = useConnect()
-  const { isConnected, disconnect, login } = useAuth();
+  const { isConnected } = useAuth();
   const [vantaEffect, setVantaEffect] = useState(null);
   const myRef = useRef(null);
   const navigate = useNavigate();
   const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const handleWalletModalOpen = () => setIsLoggedIn(true);
-  const handleWalletModalClose = () => setIsLoggedIn(false);
-  const { toggleModal } = useContext(IdentityKitContext);
+  // const handleWalletModalOpen = () => setIsLoggedIn(true);
+  // const handleWalletModalClose = () => setIsLoggedIn(false);
 
   useEffect(() => {
     let intervalId;
@@ -76,7 +79,7 @@ export default function LoginPage() {
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
 
   const toggleLoginModal = () => {
-    setIsLoginModalOpen((prev) => !prev);
+    // setIsLoginModalOpen((prev) => !prev);
   };
 
   // useEffect(() => {
@@ -110,9 +113,9 @@ export default function LoginPage() {
                   Select what wallet you want to connect below
                 </p>
 
-                <ConnectWalletButton
-                  className="w-full !rounded-full !text-white !font-semibold !bg-black !border !border-black !px-4 !py-2 !mb-3 !flex !justify-center !items-center gap-1.5 !text-md"
-                  onClick={toggleModal}
+                <ConnectWallet
+                  connectButtonComponent={ConnectBtn}
+                  className="rounded-full bg-black"
                 />
 
                 {/* {!isConnected && (
@@ -151,6 +154,21 @@ export default function LoginPage() {
     </>
   );
 }
+
+const ConnectBtn = ({ onClick, ...props }) => {
+  const navigate = useNavigate();
+  const processClick = () => {
+    onClick();
+  };
+  return (
+    <Button
+      onClick={processClick}
+      className="w-full rounded-full text-white font-semibold bg-black border border-black px-4 py-2 mb-3 flex justify-center items-center gap-1.5"
+    >
+      <PiWalletBold className="w-5 h-5" /> Connect Your Wallet
+    </Button>
+  );
+};
 
 const getRandomColor = () => {
   const minDarkness = 20; // Minimum darkness level (0-255)

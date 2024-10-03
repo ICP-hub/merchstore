@@ -16,6 +16,7 @@ import useClipboard from "react-use-clipboard";
 import { TailSpin } from "react-loader-spinner";
 import { CommonInput } from "../components/common/InputFields";
 import { useAuth } from "../auth/useClient";
+import { useIdentityKit } from "@nfid/identitykit/react";
 
 /* ----------------------------------------------------------------------------------------------------- */
 /*  @ Base Components: MyProfilePage.
@@ -59,6 +60,7 @@ const MyProAccount = () => {
   const [lastName, setLastName] = useState(""); // Add state for LastName
   const [user, setUser] = useState([]); // Add  state user
   const [inputsDisabled, setInputsDisabled] = useState(true);
+  const { identity } = useIdentityKit();
   const [isCopied, setCopied] = useClipboard(principal, {
     successDuration: 1000,
   });
@@ -99,7 +101,7 @@ const MyProAccount = () => {
       setLoading2(false);
     }
   };
-  console.log(user, "user");
+  console.log(user?.id?.toText(), "user");
 
   useEffect(() => {
     const timeoutId = setTimeout(() => {

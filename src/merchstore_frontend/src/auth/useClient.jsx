@@ -28,8 +28,8 @@ export const useAuthClient = () => {
     user,
     isUserConnecting,
     icpBalance,
-    signer,
     identity,
+    signer,
     delegationType,
     accounts,
     connect,
@@ -40,6 +40,7 @@ export const useAuthClient = () => {
   useEffect(() => {
     if (user) {
       setIsConnected(true);
+      console.log("deligation type", agent);
     } else {
       setIsConnected(false);
     }
@@ -50,7 +51,9 @@ export const useAuthClient = () => {
     login: connect,
     disconnect,
     principal: user?.principal,
-    backend: createActor(canisterID),
+    backend: createActor(canisterID, {
+      agentOptions: { identity, verifyQuerySignatures: false },
+    }),
     identity,
   };
 };
