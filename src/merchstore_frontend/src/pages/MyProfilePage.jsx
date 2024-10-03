@@ -176,7 +176,7 @@ const MyProAccount = () => {
           </h4>
         </div>
         <div className="w-full md:w-3/4 flex flex-col gap-3">
-          <div className="flex gap-4">
+          <div className="grid grid-cols-2">
             <CommonInput
               type="text"
               label="first name"
@@ -229,8 +229,13 @@ const MyProAccount = () => {
             </button>
           </div>
           <div className="flex flex-col w-full">
-            <div className="text-xs">Account Balance</div>
-            <div className="rounded-full flex">{icpBalance}</div>
+            <div className="text-xs px-3 uppercase font-medium">
+              Account Balance
+            </div>
+            <div className="rounded-full flex border border-gray-300 max-w-fit overflow-hidden items-center  font-semibold">
+              <div className="bg-black px-4 py-2 text-white">ICP</div>
+              <div className="px-2 py-2">{icpBalance}</div>
+            </div>
           </div>
           {/* <CommonInput
             label="Wallet Amount"
