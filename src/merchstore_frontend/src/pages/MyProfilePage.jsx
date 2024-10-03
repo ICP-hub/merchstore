@@ -176,7 +176,7 @@ const MyProAccount = () => {
           </h4>
         </div>
         <div className="w-full md:w-3/4 flex flex-col gap-3">
-          <div className="grid grid-cols-2">
+          <div className="grid md:grid-cols-2 gap-4">
             <CommonInput
               type="text"
               label="first name"
