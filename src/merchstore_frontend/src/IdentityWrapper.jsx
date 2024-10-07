@@ -22,18 +22,18 @@ export default function IdentityWrapper() {
   const canisterID = process.env.CANISTER_ID_MERCHSTORE_BACKEND;
   const { identity } = useIdentityKit();
   const [customAgent, setCustomAgent] = useState(null);
-  const [mount, setMount] = useState(false);
+  // const [mount, setMount] = useState(false);
   // https://dev.nfid.one/rpc
   // const nfidw = { ...NFIDW, providerUrl: "https://dev.nfid.one/rpc" };
   const signers = [NFIDW, Plug];
 
-  useEffect(() => {
-    HttpAgent.create({ host: "https://icp-api.io/" }).then(setCustomAgent);
-  }, []);
+  // useEffect(() => {
+  //   HttpAgent.create({ host: "https://icp-api.io/" }).then(setCustomAgent);
+  // }, []);
 
-  useState(() => {
-    setMount(true);
-  }, []);
+  // useState(() => {
+  //   setMount(true);
+  // }, []);
 
   return (
     <IdentityKitProvider
