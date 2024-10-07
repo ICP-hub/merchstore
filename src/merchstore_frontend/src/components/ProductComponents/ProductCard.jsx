@@ -86,7 +86,7 @@ const ProductCard = ({ product }) => {
               product.slug,
               quantity1,
               product.variantSize[0].size,
-              product.variantColor[0].color
+              product?.variantColor[0].color
             );
             toast.success("item updated successfully");
             console.log(res);
@@ -94,7 +94,7 @@ const ProductCard = ({ product }) => {
             const res = await backend.addtoCartItems(
               product.slug,
               product.variantSize[0].size,
-              product.variantColor[0].color,
+              product?.variantColor[0].color,
               quantity
             );
             console.log(res, "add to cart response");
@@ -131,7 +131,7 @@ const ProductCard = ({ product }) => {
           const res = await backend.addtoCartItems(
             product.slug,
             product.variantSize[0].size,
-            product.variantColor[0].color,
+            product?.variantColor[0].color,
             quantity
           );
         } else {
@@ -181,7 +181,7 @@ const ProductCard = ({ product }) => {
         const res = await backend.addtoWishlist(
           product.slug,
           product.variantSize[0].size,
-          product.variantColor[0].color
+          product?.variantColor[0].color
         );
         setProductInLocalWishlist(true);
 
@@ -211,7 +211,7 @@ const ProductCard = ({ product }) => {
       const res = await backend.deleteWishlistItems(
         product.slug,
         product.variantSize[0].size,
-        product.variantColor[0].color
+        product?.variantColor[0].color
       );
       console.log(res);
       if ("ok" in res) {
@@ -247,24 +247,20 @@ const ProductCard = ({ product }) => {
   const extractProductInfo = (product) => {
     const { title, category, description, variantColor, variantSize, slug } =
       product;
-    const { color, img1, img2, img3, variant_price, variant_sale_price } =
-      variantColor[0];
-    const { size } = variantSize[0];
-
     return {
       title,
       slug,
       category,
       description,
       variantInfo: {
-        color,
-        img1,
-        img2,
-        img3,
-        variant_price,
-        variant_sale_price,
+        color: variantColor[0].color,
+        img1: variantColor[0].img1,
+        img2: variantColor[0].img2,
+        img3: variantColor[0].img3,
+        variant_price: variantColor[0].variant_price,
+        variant_sale_price: variantColor[0].variant_sale_price,
       },
-      size,
+      size: variantSize[0].size,
     };
   };
   const productInfo = extractProductInfo(product);

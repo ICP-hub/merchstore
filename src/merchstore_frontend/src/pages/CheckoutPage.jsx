@@ -57,6 +57,11 @@ const pMethod = [
     value: "icp",
     currency: "icp",
   },
+  {
+    name: "Pay with NFID",
+    value: "icp",
+    currency: "icp",
+  },
   // {
   //   name: "CKBTC",
   //   value: "ckbtc",
@@ -187,6 +192,14 @@ const Checkout = () => {
     const shippingCost = shippingAmount / exchange;
     const subTotal = totalPrice / exchange;
     const payment = paymentMethod.value;
+    console.log(
+      products,
+      shippingAddress,
+      totalAmount,
+      subTotal,
+      payment,
+      shippingCost
+    );
     orderPlacement(
       products,
       shippingAddress,
@@ -684,7 +697,7 @@ const BillSection = ({
           </p>
           <span className="font-bold flex items-center gap-2">
             {/* <IcpLogo /> */}
-            <span>{paymentMethod.name}</span>
+            {/* <span>{paymentMethod.name}</span> */}
             {currencyLoad ? (
               <span className="animate-pulse bg-gray-300 text-gray-300 rounded-md">
                 00.0000
@@ -703,7 +716,7 @@ const BillSection = ({
               ) : (
                 <span className="flex items-center gap-2">
                   {/* <IcpLogo /> */}
-                  <span>{paymentMethod.name}</span>
+                  {/* <span>{paymentMethod.name}</span> */}
                   {currencyLoad ? (
                     <span className="animate-pulse bg-gray-300 text-gray-300 rounded-md">
                       00.0000
@@ -722,7 +735,7 @@ const BillSection = ({
           <p className="capitalize">Total Payable</p>
           <span className="flex items-center gap-2">
             {/* <IcpLogo /> */}
-            <span>{paymentMethod.name}</span>
+            {/* <span>{paymentMethod.name}</span> */}
             {currencyLoad ? (
               <span className="animate-pulse bg-gray-300 text-gray-300 rounded-md">
                 00.0000
@@ -738,7 +751,7 @@ const BillSection = ({
           className="p-2 min-w-full min-h-10 text-white border bg-black rounded-full font-medium text-sm relative"
           // onClick={() => proceed()}
           onClick={() => setIsOpen(true)}
-          disabled={orderPlacementLoad}
+          // disabled={orderPlacementLoad}
         >
           Place order
         </Button>
@@ -754,6 +767,7 @@ const OrderModalData = ({ setIsOpen, proceed, data, totalPrice }) => {
 
   const handleConfirm = () => {
     // console.log("data", data, totalPrice);
+    // console.log(orderPlacementLoad);
     setOrderPlacementLoad(true);
     proceed();
   };

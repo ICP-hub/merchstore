@@ -66,8 +66,8 @@ const NewArrival = ({ newArrivalProd, isLoading }) => {
 
   const { title, description, variantColor, slug } = newArrivalProd;
   const discount =
-    ((variantColor[0].variant_price - variantColor[0].variant_sale_price) /
-      variantColor[0].variant_price) *
+    ((variantColor[0]?.variant_price - variantColor[0].variant_sale_price) /
+      variantColor[0]?.variant_price) *
     100;
 
   return (
@@ -92,7 +92,7 @@ const NewArrival = ({ newArrivalProd, isLoading }) => {
                       {variantColor[0].variant_sale_price}
                     </p>
                     <p className="line-through text-sm text-gray-600">
-                      {variantColor[0].variant_price}
+                      {variantColor[0]?.variant_price}
                     </p>
                   </span>
                   <span className="bg-green-600 text-white text-xs font-medium rounded-md px-2 py-1 max-w-max flex items-center">

@@ -19,7 +19,7 @@ export const useAuthClient = () => {
   // const [backend, setBackend] = useState(null);
   // const [identity, setIdentity] = useState(null);
   // const [authClient, setAuthClient] = useState(null);
-  // const [orderPlacementLoad, setOrderPlacementLoad] = useState(false);
+  const [orderPlacementLoad, setOrderPlacementLoad] = useState(false);
   // const [isCartUpdated, setIsCartUpdated] = useState(false);
 
   const {
@@ -54,6 +54,8 @@ export const useAuthClient = () => {
       agentOptions: { identity, verifyQuerySignatures: false },
     }),
     identity,
+    orderPlacementLoad,
+    setOrderPlacementLoad,
   };
 };
 

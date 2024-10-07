@@ -8,6 +8,9 @@ import { useAuth } from "../auth/useClient";
 import { idlFactory } from "../wallet/ledger.did";
 import { host, ids } from "../DevConfig";
 import usePaymentTransfer from "../auth/usePaymentTransfer";
+import { AccountIdentifier } from "@dfinity/ledger-icp";
+import { useIdentityKit } from "@nfid/identitykit/react";
+import { fromHexString } from "@dfinity/candid";
 
 // Custom hook : initialize the backend Canister
 
@@ -33,13 +36,57 @@ const CartApiHandler = () => {
   const [orderList, setOrderList] = useState(null);
   const [orderDetails, setOrderDetails] = useState(null);
   const [shippingAmount, setShippingAmount] = useState(null);
-  const [totalAmountForTransfer, setTotalAmountForTransfer] = useState(null);
+  // const [totalAmountForTransfer, setTotalAmountForTransfer] = useState(null);
   // const paymentAddressForTransfer = usePaymentTransfer(totalAmountForTransfer);
   const [orderPlacementData, setOrderPlacementData] = useState(null);
   // const [orderPlacementLoad, setOrderPlaceMentLoad] = useState(false);
   const { transfer, loading, error } = usePaymentTransfer();
   const [checkOutClicked, setCheckoutClicked] = useState(0);
   const navigate = useNavigate();
+  const { agent } = useIdentityKit();
+
+  useEffect(() => {
+    const paymentProcess = async () => {
+      const actor = Actor.createActor(idlFactory, {
+        agent,
+        canisterId: "ryjl3-tyaaa-aaaaa-aaaba-cai",
+      });
+      const destinationPrincipal =
+        "l5yk2-7stgd-323wb-cjj7k-7sceo-t7szo-4uexa-wwzc5-vlsyw-isehy-3qe";
+      const address = AccountIdentifier.fromPrincipal({
+        principal: Principal.fromText(destinationPrincipal),
+      }).toHex();
+
+      const transferArgs = {
+        to: fromHexString(address),
+        fee: { e8s: BigInt(10000) },
+        memo: BigInt(0),
+        from_subaccount: [],
+        created_at_time: [],
+        amount: { e8s: BigInt(orderPlacementData.totalAmount) },
+      };
+      try {
+        const response = await actor.transfer(transferArgs);
+        console.log("transfer success response", response);
+        try {
+          if (response) finalizeOrder(orderPlacementData);
+          else {
+            console.error("Payment failed", response);
+            toast.error("Payment failed");
+          }
+        } catch (err) {
+          console.error("Transaction failed", err);
+          toast.error("Transaction failed");
+        }
+      } catch (err) {
+        console.error("transfer failed response", err);
+        toast.error("Transaction failed", err);
+      } finally {
+        setOrderPlacementLoad(false);
+      }
+    };
+    if (orderPlacementData) paymentProcess();
+  }, [orderPlacementData]);
 
   // const navigate = useNavigate();
 
@@ -106,63 +153,63 @@ const CartApiHandler = () => {
   //   }
   // }, [orderPlacementData]);
 
-  useEffect(() => {
-    const paymentAddressProcess = async () => {
-      console.log("Order placement data ", orderPlacementData);
-      if (totalAmountForTransfer !== null) {
-        // setOrderPlaceMentLoad(true);
-        try {
-          const response = await transfer(
-            "kws6j-lg7qz-4hnac-saj7i-l2i7g-i2rnx-zaby7-yvn5r-ggp37-ebev6-aae",
-            totalAmountForTransfer,
-            ""
-          );
-          console.log("response ", response);
-          // If response undefined return
-          if (response == undefined) {
-            toast.error("Something went wrong");
-            return;
-          }
+  // useEffect(() => {
+  //   const paymentAddressProcess = async () => {
+  //     console.log("Order placement data ", orderPlacementData);
+  //     if (totalAmountForTransfer !== null) {
+  //       // setOrderPlaceMentLoad(true);
+  //       try {
+  //         const response = await transfer(
+  //           "kws6j-lg7qz-4hnac-saj7i-l2i7g-i2rnx-zaby7-yvn5r-ggp37-ebev6-aae",
+  //           totalAmountForTransfer,
+  //           ""
+  //         );
+  //         console.log("response ", response);
+  //         // If response undefined return
+  //         if (response == undefined) {
+  //           toast.error("Something went wrong");
+  //           return;
+  //         }
 
-          if (response.err) {
-            toast.error("Failed to make payment");
-            return;
-          }
-          // Proceed : get height
-          const { height } = response;
+  //         if (response.err) {
+  //           toast.error("Failed to make payment");
+  //           return;
+  //         }
+  //         // Proceed : get height
+  //         const { height } = response;
 
-          // setOrderPlacementData((prev) => ({
-          //   ...prev,
-          //   paymentAddress: String(height?.height),
-          // }));
-          const updatedOrderPlacementData = {
-            ...orderPlacementData,
-            paymentAddress: String(height?.height),
-          };
+  //         // setOrderPlacementData((prev) => ({
+  //         //   ...prev,
+  //         //   paymentAddress: String(height?.height),
+  //         // }));
+  //         const updatedOrderPlacementData = {
+  //           ...orderPlacementData,
+  //           paymentAddress: String(height?.height),
+  //         };
 
-          console.log("Final order placement data", updatedOrderPlacementData);
+  //         console.log("Final order placement data", updatedOrderPlacementData);
 
-          if (
-            !updatedOrderPlacementData.paymentAddress ||
-            updatedOrderPlacementData.paymentAddress === "undefined"
-          ) {
-            toast.error("Invalid payment ID. Check your wallet!");
-            navigate("/cart");
+  //         if (
+  //           !updatedOrderPlacementData.paymentAddress ||
+  //           updatedOrderPlacementData.paymentAddress === "undefined"
+  //         ) {
+  //           toast.error("Invalid payment ID. Check your wallet!");
+  //           navigate("/cart");
 
-            return;
-          } else {
-            finalizeOrder(updatedOrderPlacementData);
-          }
-        } catch (error) {
-          console.error("Error getting payment address:", error);
-          toast.error("Please login first");
-          navigate("/login");
-          setOrderPlacementLoad(false);
-        }
-      }
-    };
-    paymentAddressProcess();
-  }, [totalAmountForTransfer, checkOutClicked]);
+  //           return;
+  //         } else {
+  //           finalizeOrder(updatedOrderPlacementData);
+  //         }
+  //       } catch (error) {
+  //         console.error("Error getting payment address:", error);
+  //         toast.error("Please login first");
+  //         navigate("/login");
+  //         setOrderPlacementLoad(false);
+  //       }
+  //     }
+  //   };
+  //   paymentAddressProcess();
+  // }, [totalAmountForTransfer, checkOutClicked]);
 
   // console.log("order placementData", orderPlacementData);
   // Get caller cart items
@@ -227,9 +274,9 @@ const CartApiHandler = () => {
     //   return;
     // }
 
-    const transformedTotal = Number(totalAmount * 10 ** 8);
-    console.log(transformedTotal);
-    setTotalAmountForTransfer(Math.round(transformedTotal));
+    // const transformedTotal = Number(totalAmount * 10 ** 8);
+    // console.log(transformedTotal);
+    // setTotalAmountForTransfer(Math.round(transformedTotal));
 
     try {
       // const userid = principal;
@@ -239,7 +286,7 @@ const CartApiHandler = () => {
       };
 
       const orderDetails = {
-        awb: "testing",
+        awb: "awb_static",
         paymentStatus: "success",
         paymentMethod: payment,
         shippingAmount: {
@@ -256,7 +303,6 @@ const CartApiHandler = () => {
         // From , To ,
         // principal,
         // To?
-        totalAmount,
         paymentOption,
       };
       setOrderPlacementData(orderDetails);
