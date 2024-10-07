@@ -7,7 +7,7 @@ import { CreateActor } from "ic-auth";
 import { idlFactory } from "../../../../.dfx/local/canisters/merchstore_backend/merchstore_backend.did.js";
 import { NFID } from "@nfid/embed";
 import { useIdentityKit } from "@nfid/identitykit/react";
-import { Actor } from "@dfinity/agent";
+import { Actor, HttpAgent } from "@dfinity/agent";
 
 const AuthContext = createContext();
 
@@ -25,6 +25,9 @@ export const useAuthClient = () => {
   // const [authClient, setAuthClient] = useState(null);
   // const [orderPlacementLoad, setOrderPlacementLoad] = useState(false);
   // const [isCartUpdated, setIsCartUpdated] = useState(false);
+  const [authTargetAgent, setAuthTargetAgent] = useState(null);
+  const [authenticatedNonTargetAgent, setAuthenticatedNonTargetAgent] =
+    useState(undefined);
 
   const {
     agent,
@@ -41,7 +44,7 @@ export const useAuthClient = () => {
     fetchIcpBalance,
   } = useIdentityKit();
 
-  const [nfid, setNfid] = useState(null);
+  // console.log("acc", identity);
 
   useEffect(() => {
     setIsConnected(!!user);
@@ -56,13 +59,18 @@ export const useAuthClient = () => {
     }
   }, [user]);
 
-  useEffect(async () => {
+  useEffect(() => {
     // const NFID_IDENTITY = await NFID._authClient.getIdentity();
     // setNfid(NFID_IDENTITY);
-    const backendActor = createActor(canisterID, {
-      agentOptions: { identity, verifyQuerySignatures: false },
+    const backendActor = Actor.createActor(idlFactory, {
+      agent,
+      canisterId: canisterID,
     });
-  }, []);
+
+    // console.log(agent);
+
+    setBackendActor(backendActor);
+  }, [agent]);
 
   return {
     isConnected,

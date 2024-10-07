@@ -19,9 +19,6 @@ import { HttpAgent } from "@dfinity/agent";
 // import { HttpAgent } from "@dfinity/agent";
 
 export default function IdentityWrapper() {
-  const canisterID = process.env.CANISTER_ID_MERCHSTORE_BACKEND;
-  const { identity } = useIdentityKit();
-  const [customAgent, setCustomAgent] = useState(null);
   // const [mount, setMount] = useState(false);
   // https://dev.nfid.one/rpc
   // const nfidw = { ...NFIDW, providerUrl: "https://dev.nfid.one/rpc" };
@@ -40,9 +37,8 @@ export default function IdentityWrapper() {
       signers={signers}
       theme={IdentityKitTheme.SYSTEM}
       authType={IdentityKitAuthType.ACCOUNTS}
-      agent={customAgent}
       signerClientOptions={{
-        targets: [canisterID],
+        derivationOrigin: "https://ez3it-6qaaa-aaaak-akwyq-cai.icp0.io/",
       }}
       onConnectFailure={(e) => {
         toast.error(
