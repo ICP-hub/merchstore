@@ -7,6 +7,7 @@ import { CreateActor } from "ic-auth";
 import { idlFactory } from "../../../../.dfx/local/canisters/merchstore_backend/merchstore_backend.did.js";
 import { NFID } from "@nfid/embed";
 import { useIdentityKit } from "@nfid/identitykit/react";
+import { Actor } from "@dfinity/agent";
 
 const AuthContext = createContext();
 
@@ -45,13 +46,16 @@ export const useAuthClient = () => {
     }
   }, [user]);
 
+  useEffect(() => {}, []);
+
   return {
     isConnected: isConnected,
     login: connect,
     disconnect,
     principal: user?.principal,
-    backend: createActor(canisterID, {
-      agentOptions: { identity, verifyQuerySignatures: false },
+    backend: Actor.createActor(idlFactory, {
+      agent,
+      canisterId: canisterID,
     }),
     identity,
     orderPlacementLoad,

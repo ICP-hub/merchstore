@@ -18,13 +18,16 @@ import { AuthProvider } from "./auth/useClient";
 // import { HttpAgent } from "@dfinity/agent";
 
 export default function IdentityWrapper() {
-  const signers = [NFIDW, Plug];
   const canisterID = process.env.CANISTER_ID_MERCHSTORE_BACKEND;
   const { identity } = useIdentityKit();
   const [customAgent, setCustomAgent] = useState(null);
+  // https://dev.nfid.one/rpc
+  const nfidw = { ...NFIDW, providerUrl: "https://dev.nfid.one/rpc" };
+  const signers = [nfidw, Plug];
 
   useEffect(() => {
     if (identity) {
+      console.log("identity", identity);
       HttpAgent.create({ identity, host: "https://icp-api.io/" }).then(
         setCustomAgent
       );
@@ -40,14 +43,16 @@ export default function IdentityWrapper() {
       signerClientOptions={{
         targets: [canisterID],
       }}
-      // onConnectFailure={(e) => {
-      //   toast.error(
-      //     e.message === "Not supported"
-      //       ? "Internet Identity doesn’t support accounts. Switch to delegation."
-      //       : e.message
-      //   );
-      // }}
-      // onConnectSuccess={() => {}}
+      onConnectFailure={(e) => {
+        toast.error(
+          e.message === "Not supported"
+            ? "Internet Identity doesn’t support accounts. Switch to delegation."
+            : e.message
+        );
+      }}
+      onConnectSuccess={() => {
+        // localStorage.setItem("authType", authType);
+      }}
     >
       <AuthProvider>
         <App />
