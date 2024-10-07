@@ -59,18 +59,18 @@ export const useAuthClient = () => {
     }
   }, [user]);
 
-  useEffect(() => {
-    // const NFID_IDENTITY = await NFID._authClient.getIdentity();
-    // setNfid(NFID_IDENTITY);
-    const backendActor = Actor.createActor(idlFactory, {
-      agent,
-      canisterId: canisterID,
-    });
+  // useEffect(() => {
+  //   // const NFID_IDENTITY = await NFID._authClient.getIdentity();
+  //   // setNfid(NFID_IDENTITY);
+  //   const backendActor = Actor.createActor(idlFactory, {
+  //     agent,
+  //     canisterId: canisterID,
+  //   });
 
-    // console.log(agent);
+  //   // console.log(agent);
 
-    setBackendActor(backendActor);
-  }, [agent]);
+  //   setBackendActor(backendActor);
+  // }, [agent]);
 
   return {
     isConnected,
