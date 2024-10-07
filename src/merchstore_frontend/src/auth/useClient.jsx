@@ -16,11 +16,14 @@ const whitelist = [process.env.CANISTER_ID_MERCHSTORE_BACKEND];
 
 export const useAuthClient = () => {
   const [isConnected, setIsConnected] = useState(false);
+  const [principal, setPrincipal] = useState(null);
+  const [backendActor, setBackendActor] = useState(createActor(canisterID));
+  const [orderPlacementLoad, setOrderPlacementLoad] = useState(false);
   // const [principal, setPrincipal] = useState(null);
   // const [backend, setBackend] = useState(null);
   // const [identity, setIdentity] = useState(null);
   // const [authClient, setAuthClient] = useState(null);
-  const [orderPlacementLoad, setOrderPlacementLoad] = useState(false);
+  // const [orderPlacementLoad, setOrderPlacementLoad] = useState(false);
   // const [isCartUpdated, setIsCartUpdated] = useState(false);
 
   const {
@@ -38,25 +41,35 @@ export const useAuthClient = () => {
     fetchIcpBalance,
   } = useIdentityKit();
 
+  const [nfid, setNfid] = useState(null);
+
   useEffect(() => {
+    setIsConnected(!!user);
     if (user) {
-      setIsConnected(true);
+      // Assuming user.principal is a promise
+      (async () => {
+        const userPrincipal = await user.principal;
+        setPrincipal(userPrincipal);
+      })();
     } else {
-      setIsConnected(false);
+      setPrincipal(null);
     }
   }, [user]);
 
-  useEffect(() => {}, []);
+  useEffect(async () => {
+    // const NFID_IDENTITY = await NFID._authClient.getIdentity();
+    // setNfid(NFID_IDENTITY);
+    const backendActor = createActor(canisterID, {
+      agentOptions: { identity, verifyQuerySignatures: false },
+    });
+  }, []);
 
   return {
-    isConnected: isConnected,
+    isConnected,
     login: connect,
     disconnect,
-    principal: user?.principal,
-    backend: Actor.createActor(idlFactory, {
-      agent,
-      canisterId: canisterID,
-    }),
+    principal,
+    backend: backendActor,
     identity,
     orderPlacementLoad,
     setOrderPlacementLoad,

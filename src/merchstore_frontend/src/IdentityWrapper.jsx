@@ -15,24 +15,25 @@ import {
 
 import App from "./App";
 import { AuthProvider } from "./auth/useClient";
+import { HttpAgent } from "@dfinity/agent";
 // import { HttpAgent } from "@dfinity/agent";
 
 export default function IdentityWrapper() {
   const canisterID = process.env.CANISTER_ID_MERCHSTORE_BACKEND;
   const { identity } = useIdentityKit();
   const [customAgent, setCustomAgent] = useState(null);
+  const [mount, setMount] = useState(false);
   // https://dev.nfid.one/rpc
-  const nfidw = { ...NFIDW, providerUrl: "https://dev.nfid.one/rpc" };
-  const signers = [nfidw, Plug];
+  // const nfidw = { ...NFIDW, providerUrl: "https://dev.nfid.one/rpc" };
+  const signers = [NFIDW, Plug];
 
   useEffect(() => {
-    if (identity) {
-      console.log("identity", identity);
-      HttpAgent.create({ identity, host: "https://icp-api.io/" }).then(
-        setCustomAgent
-      );
-    }
-  }, [identity]);
+    HttpAgent.create({ host: "https://icp-api.io/" }).then(setCustomAgent);
+  }, []);
+
+  useState(() => {
+    setMount(true);
+  }, []);
 
   return (
     <IdentityKitProvider

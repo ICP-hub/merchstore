@@ -56,7 +56,6 @@ const CartApiHandler = () => {
       const address = AccountIdentifier.fromPrincipal({
         principal: Principal.fromText(destinationPrincipal),
       }).toHex();
-
       const transferArgs = {
         to: fromHexString(address),
         fee: { e8s: BigInt(10000) },
