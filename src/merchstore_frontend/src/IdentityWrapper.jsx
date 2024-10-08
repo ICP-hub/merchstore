@@ -36,7 +36,7 @@ export default function IdentityWrapper() {
     <IdentityKitProvider
       signers={signers}
       theme={IdentityKitTheme.SYSTEM}
-      authType={IdentityKitAuthType.ACCOUNTS}
+      authType={IdentityKitAuthType.DELEGATION}
       signerClientOptions={{
         derivationOrigin: "https://ez3it-6qaaa-aaaak-akwyq-cai.icp0.io/",
       }}

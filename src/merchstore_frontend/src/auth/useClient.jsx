@@ -59,6 +59,15 @@ export const useAuthClient = () => {
     }
   }, [user]);
 
+  useEffect(() => {
+    if (identity) {
+      const backend = createActor(canisterID, {
+        agentOptions: { identity, verifyQuerySignatures: false },
+      });
+      setBackendActor(backend);
+    }
+  }, [identity]);
+
   // useEffect(() => {
   //   // const NFID_IDENTITY = await NFID._authClient.getIdentity();
   //   // setNfid(NFID_IDENTITY);
