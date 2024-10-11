@@ -145,7 +145,7 @@ export default function LoginPage() {
                 </Button>
               </div>
               <div className="bg-black p-10 rounded-xl flex items-center justify-center hidden md:block overflow-hidden">
-                <img src={WELCOME} alt={"Welcome"} className="h-full" />
+                <img src={WELCOME} alt={"Welcome"} className="" />
               </div>
             </div>
           </div>
