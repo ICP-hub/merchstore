@@ -1,3 +1,4 @@
+/// Plug login sys
 import React, { createContext, useContext, useEffect, useState } from "react";
 import { PlugLogin, StoicLogin, NFIDLogin, IdentityLogin } from "ic-auth";
 import { createActor } from "../../../../.dfx/local/canisters/merchstore_backend";
@@ -6,8 +7,6 @@ import { AuthClient } from "@dfinity/auth-client";
 import { CreateActor } from "ic-auth";
 import { idlFactory } from "../../../../.dfx/local/canisters/merchstore_backend/merchstore_backend.did.js";
 import { NFID } from "@nfid/embed";
-import { useIdentityKit } from "@nfid/identitykit/react";
-import { Actor, HttpAgent } from "@dfinity/agent";
 
 const AuthContext = createContext();
 
@@ -17,79 +16,91 @@ const whitelist = [process.env.CANISTER_ID_MERCHSTORE_BACKEND];
 export const useAuthClient = () => {
   const [isConnected, setIsConnected] = useState(false);
   const [principal, setPrincipal] = useState(null);
-  const [backendActor, setBackendActor] = useState(createActor(canisterID));
+  const [backend, setBackend] = useState(null);
+  const [identity, setIdentity] = useState(null);
+  const [authClient, setAuthClient] = useState(null);
   const [orderPlacementLoad, setOrderPlacementLoad] = useState(false);
-  // const [principal, setPrincipal] = useState(null);
-  // const [backend, setBackend] = useState(null);
-  // const [identity, setIdentity] = useState(null);
-  // const [authClient, setAuthClient] = useState(null);
-  // const [orderPlacementLoad, setOrderPlacementLoad] = useState(false);
-  // const [isCartUpdated, setIsCartUpdated] = useState(false);
-  const [authTargetAgent, setAuthTargetAgent] = useState(null);
-  const [authenticatedNonTargetAgent, setAuthenticatedNonTargetAgent] =
-    useState(undefined);
+  const [isCartUpdated, setIsCartUpdated] = useState(false);
 
-  const {
-    agent,
-    isInitializing,
-    user,
-    isUserConnecting,
-    icpBalance,
-    identity,
-    signer,
-    delegationType,
-    accounts,
-    connect,
-    disconnect,
-    fetchIcpBalance,
-  } = useIdentityKit();
-
-  // console.log("acc", identity);
+  // Refresh login
 
   useEffect(() => {
-    setIsConnected(!!user);
-    if (user) {
-      // Assuming user.principal is a promise
-      (async () => {
-        const userPrincipal = await user.principal;
-        setPrincipal(userPrincipal);
-      })();
-    } else {
+    const isLoggedIn = sessionStorage.getItem("loginStatus");
+    const checkLoginStatus = async () => {
+      const client = await AuthClient.create();
+      setAuthClient(client);
+      try {
+        if (isLoggedIn) {
+          const loginData = await PlugLogin(whitelist);
+          const agent = loginData.agent;
+          const principal = Principal.fromText(loginData.principal);
+          console.log("Principal is ", principal);
+          const actor = await CreateActor(agent, idlFactory, canisterID);
+          // await client.login({ agent });
+          // const actor = await createActor(canisterID, {
+          //   agentOptions: { agent },
+          // });
+          setBackend(actor);
+          setIsConnected(true);
+          setPrincipal(principal);
+        } else {
+          setBackend(createActor(canisterID));
+        }
+      } catch (err) {
+        console.error("Failed to fetch login details ", err);
+      }
+    };
+    checkLoginStatus();
+  }, []);
+
+  const login = async () => {
+    const client = await AuthClient.create();
+    setAuthClient(client);
+    try {
+      const loginData = await PlugLogin(whitelist);
+      const agent = loginData.agent;
+      const principal = Principal.fromText(loginData.principal);
+      const actor = await CreateActor(agent, idlFactory, canisterID);
+      // await client.login({ agent });
+      // const actor = await createActor(canisterID, {
+      //   agentOptions: { agent },
+      // });
+      setBackend(actor);
+      setIsConnected(true);
+      setPrincipal(principal);
+      if (loginData) sessionStorage.setItem("loginStatus", "true");
+    } catch (err) {
+      console.error("Login Failed ", err);
+    }
+  };
+
+  const disconnect = async () => {
+    try {
+      await authClient.logout();
+      setIsConnected(false);
       setPrincipal(null);
+      setIdentity(null);
+      sessionStorage.removeItem("loginStatus");
+    } catch (err) {
+      console.error("Failed to disconnect ", err);
     }
-  }, [user]);
+  };
 
-  useEffect(() => {
-    if (identity) {
-      const backend = createActor(canisterID, {
-        agentOptions: { identity, verifyQuerySignatures: false },
-      });
-      setBackendActor(backend);
-    }
-  }, [identity]);
-
-  // useEffect(() => {
-  //   // const NFID_IDENTITY = await NFID._authClient.getIdentity();
-  //   // setNfid(NFID_IDENTITY);
-  //   const backendActor = Actor.createActor(idlFactory, {
-  //     agent,
-  //     canisterId: canisterID,
-  //   });
-
-  //   // console.log(agent);
-
-  //   setBackendActor(backendActor);
-  // }, [agent]);
+  const refreshCart = () => {
+    setIsCartUpdated((prev) => !prev);
+  };
 
   return {
     isConnected,
-    login: connect,
+    login,
     disconnect,
     principal,
-    backend: backendActor,
+    backend,
     identity,
     orderPlacementLoad,
     setOrderPlacementLoad,
+    isCartUpdated,
+    refreshCart,
   };
 };
 
@@ -102,6 +113,105 @@ export const AuthProvider = ({ children }) => {
 export const useBackend = () => {};
 
 export const useAuth = () => useContext(AuthContext);
+// Identity kit
+// import React, { createContext, useContext, useEffect, useState } from "react";
+// import { PlugLogin, StoicLogin, NFIDLogin, IdentityLogin } from "ic-auth";
+// import { Principal } from "@dfinity/principal";
+// import { AuthClient } from "@dfinity/auth-client";
+// import { CreateActor } from "ic-auth";
+// import { NFID } from "@nfid/embed";
+// import { useIdentityKit } from "@nfid/identitykit/react";
+// import { Actor, HttpAgent } from "@dfinity/agent";
+// import {
+//   createActor,
+//   idlFactory,
+// } from "../../../declarations/merchstore_backend/index.js";
+
+// const AuthContext = createContext();
+
+// const canisterID = process.env.CANISTER_ID_MERCHSTORE_BACKEND;
+// const whitelist = [process.env.CANISTER_ID_MERCHSTORE_BACKEND];
+
+// export const useAuthClient = () => {
+//   const [isConnected, setIsConnected] = useState(false);
+//   const [principal, setPrincipal] = useState(null);
+//   const [backendActor, setBackendActor] = useState(createActor(canisterID));
+//   const [orderPlacementLoad, setOrderPlacementLoad] = useState(false);
+//   // const [principal, setPrincipal] = useState(null);
+//   // const [backend, setBackend] = useState(null);
+//   // const [identity, setIdentity] = useState(null);
+//   // const [authClient, setAuthClient] = useState(null);
+//   // const [orderPlacementLoad, setOrderPlacementLoad] = useState(false);
+//   // const [isCartUpdated, setIsCartUpdated] = useState(false);
+//   // const [authTargetAgent, setAuthTargetAgent] = useState(null);
+//   // const [authenticatedNonTargetAgent, setAuthenticatedNonTargetAgent] =
+//   //   useState(undefined);
+//   // const [nfid, setNfid] = useState(null);
+
+//   const {
+//     agent,
+//     isInitializing,
+//     user,
+//     isUserConnecting,
+//     icpBalance,
+//     identity,
+//     signer,
+//     delegationType,
+//     accounts,
+//     connect,
+//     disconnect,
+//     fetchIcpBalance,
+//   } = useIdentityKit();
+
+//   useEffect(() => {
+//     setIsConnected(!!user);
+//     if (user) {
+//       // Assuming user.principal is a promise
+//       (async () => {
+//         const userPrincipal = await user.principal;
+//         setPrincipal(userPrincipal);
+//       })();
+//     } else {
+//       setPrincipal(null);
+//     }
+//   }, [user]);
+
+//   useEffect(() => {
+//     const genCanister = async () => {
+//       const backend = Actor.createActor(idlFactory, {
+//         agent: agent,
+//         canisterId: canisterID,
+//       });
+//       setBackendActor(backend);
+//     };
+//     genCanister();
+//   }, [agent]);
+
+//   console.log("agent is", agent);
+
+//   return {
+//     isConnected,
+//     login: connect,
+//     disconnect,
+//     principal,
+//     backend: backendActor,
+//     identity,
+//     orderPlacementLoad,
+//     setOrderPlacementLoad,
+//   };
+// };
+
+// export const AuthProvider = ({ children }) => {
+//   const auth = useAuthClient();
+//   console.log("Auth is ", auth);
+//   return <AuthContext.Provider value={auth}>{children}</AuthContext.Provider>;
+// };
+
+// export const useBackend = () => {};
+
+// export const useAuth = () => useContext(AuthContext);
+
+/**** iC AUTH */
 
 // import React, { createContext, useContext, useEffect, useState } from "react";
 // import { AuthClient } from "@dfinity/auth-client";

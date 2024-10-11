@@ -16,44 +16,41 @@ import {
 import App from "./App";
 import { AuthProvider } from "./auth/useClient";
 import { HttpAgent } from "@dfinity/agent";
+import toast from "react-hot-toast";
 // import { HttpAgent } from "@dfinity/agent";
 
 export default function IdentityWrapper() {
   // const [mount, setMount] = useState(false);
-  // https://dev.nfid.one/rpc
-  // const nfidw = { ...NFIDW, providerUrl: "https://dev.nfid.one/rpc" };
-  const signers = [NFIDW, Plug];
-
-  // useEffect(() => {
-  //   HttpAgent.create({ host: "https://icp-api.io/" }).then(setCustomAgent);
-  // }, []);
+  // //https://dev.nfid.one/rpc
+  // const signers = [NFIDW, Plug];
+  // // const [customAgent, setCustomAgent] = useState(null);
 
   // useState(() => {
   //   setMount(true);
   // }, []);
 
+  // const targetCanister = process.env.CANISTER_ID_MERCHSTORE_BACKEND;
+
   return (
-    <IdentityKitProvider
-      signers={signers}
-      theme={IdentityKitTheme.SYSTEM}
-      authType={IdentityKitAuthType.DELEGATION}
-      signerClientOptions={{
-        derivationOrigin: "https://ez3it-6qaaa-aaaak-akwyq-cai.icp0.io/",
-      }}
-      onConnectFailure={(e) => {
-        toast.error(
-          e.message === "Not supported"
-            ? "Internet Identity doesn’t support accounts. Switch to delegation."
-            : e.message
-        );
-      }}
-      onConnectSuccess={() => {
-        // localStorage.setItem("authType", authType);
-      }}
-    >
-      <AuthProvider>
-        <App />
-      </AuthProvider>
-    </IdentityKitProvider>
+    // <IdentityKitProvider
+    //   signers={signers}
+    //   theme={IdentityKitTheme.SYSTEM}
+    //   authType={IdentityKitAuthType.DELEGATION}
+    //   signerClientOptions={{
+    //     targets: [targetCanister],
+    //   }}
+    //   onConnectSuccess={() => console.log("connected")}
+    //   onConnectFailure={(e) => {
+    //     toast.error(
+    //       e.message === "Not supported"
+    //         ? "Internet Identity doesn’t support accounts. Switch to delegation."
+    //         : e.message
+    //     );
+    //   }}
+    // >
+    <AuthProvider>
+      <App />
+    </AuthProvider>
+    // </IdentityKitProvider>
   );
 }

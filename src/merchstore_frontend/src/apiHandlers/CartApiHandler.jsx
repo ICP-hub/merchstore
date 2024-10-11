@@ -8,9 +8,6 @@ import { useAuth } from "../auth/useClient";
 import { idlFactory } from "../wallet/ledger.did";
 import { host, ids } from "../DevConfig";
 import usePaymentTransfer from "../auth/usePaymentTransfer";
-import { AccountIdentifier } from "@dfinity/ledger-icp";
-import { useIdentityKit } from "@nfid/identitykit/react";
-import { fromHexString } from "@dfinity/candid";
 
 // Custom hook : initialize the backend Canister
 
@@ -36,56 +33,13 @@ const CartApiHandler = () => {
   const [orderList, setOrderList] = useState(null);
   const [orderDetails, setOrderDetails] = useState(null);
   const [shippingAmount, setShippingAmount] = useState(null);
-  // const [totalAmountForTransfer, setTotalAmountForTransfer] = useState(null);
+  const [totalAmountForTransfer, setTotalAmountForTransfer] = useState(null);
   // const paymentAddressForTransfer = usePaymentTransfer(totalAmountForTransfer);
   const [orderPlacementData, setOrderPlacementData] = useState(null);
   // const [orderPlacementLoad, setOrderPlaceMentLoad] = useState(false);
   const { transfer, loading, error } = usePaymentTransfer();
   const [checkOutClicked, setCheckoutClicked] = useState(0);
   const navigate = useNavigate();
-  const { agent } = useIdentityKit();
-
-  useEffect(() => {
-    const paymentProcess = async () => {
-      const actor = Actor.createActor(idlFactory, {
-        agent,
-        canisterId: "ryjl3-tyaaa-aaaaa-aaaba-cai",
-      });
-      const destinationPrincipal =
-        "l5yk2-7stgd-323wb-cjj7k-7sceo-t7szo-4uexa-wwzc5-vlsyw-isehy-3qe";
-      const address = AccountIdentifier.fromPrincipal({
-        principal: Principal.fromText(destinationPrincipal),
-      }).toHex();
-      const transferArgs = {
-        to: fromHexString(address),
-        fee: { e8s: BigInt(10000) },
-        memo: BigInt(0),
-        from_subaccount: [],
-        created_at_time: [],
-        amount: { e8s: BigInt(orderPlacementData.totalAmount) },
-      };
-      try {
-        const response = await actor.transfer(transferArgs);
-        console.log("transfer success response", response);
-        try {
-          if (response) finalizeOrder(orderPlacementData);
-          else {
-            console.error("Payment failed", response);
-            toast.error("Payment failed");
-          }
-        } catch (err) {
-          console.error("Transaction failed", err);
-          toast.error("Transaction failed");
-        }
-      } catch (err) {
-        console.error("transfer failed response", err);
-        toast.error("Transaction failed", err);
-      } finally {
-        setOrderPlacementLoad(false);
-      }
-    };
-    if (orderPlacementData) paymentProcess();
-  }, [orderPlacementData]);
 
   // const navigate = useNavigate();
 
@@ -152,63 +106,63 @@ const CartApiHandler = () => {
   //   }
   // }, [orderPlacementData]);
 
-  // useEffect(() => {
-  //   const paymentAddressProcess = async () => {
-  //     console.log("Order placement data ", orderPlacementData);
-  //     if (totalAmountForTransfer !== null) {
-  //       // setOrderPlaceMentLoad(true);
-  //       try {
-  //         const response = await transfer(
-  //           "kws6j-lg7qz-4hnac-saj7i-l2i7g-i2rnx-zaby7-yvn5r-ggp37-ebev6-aae",
-  //           totalAmountForTransfer,
-  //           ""
-  //         );
-  //         console.log("response ", response);
-  //         // If response undefined return
-  //         if (response == undefined) {
-  //           toast.error("Something went wrong");
-  //           return;
-  //         }
+  useEffect(() => {
+    const paymentAddressProcess = async () => {
+      console.log("Order placement data ", orderPlacementData);
+      if (totalAmountForTransfer !== null) {
+        // setOrderPlaceMentLoad(true);
+        try {
+          const response = await transfer(
+            "kws6j-lg7qz-4hnac-saj7i-l2i7g-i2rnx-zaby7-yvn5r-ggp37-ebev6-aae",
+            totalAmountForTransfer,
+            ""
+          );
+          console.log("response ", response);
+          // If response undefined return
+          if (response == undefined) {
+            toast.error("Something went wrong");
+            return;
+          }
 
-  //         if (response.err) {
-  //           toast.error("Failed to make payment");
-  //           return;
-  //         }
-  //         // Proceed : get height
-  //         const { height } = response;
+          if (response.err) {
+            toast.error("Failed to make payment");
+            return;
+          }
+          // Proceed : get height
+          const { height } = response;
 
-  //         // setOrderPlacementData((prev) => ({
-  //         //   ...prev,
-  //         //   paymentAddress: String(height?.height),
-  //         // }));
-  //         const updatedOrderPlacementData = {
-  //           ...orderPlacementData,
-  //           paymentAddress: String(height?.height),
-  //         };
+          // setOrderPlacementData((prev) => ({
+          //   ...prev,
+          //   paymentAddress: String(height?.height),
+          // }));
+          const updatedOrderPlacementData = {
+            ...orderPlacementData,
+            paymentAddress: String(height?.height),
+          };
 
-  //         console.log("Final order placement data", updatedOrderPlacementData);
+          console.log("Final order placement data", updatedOrderPlacementData);
 
-  //         if (
-  //           !updatedOrderPlacementData.paymentAddress ||
-  //           updatedOrderPlacementData.paymentAddress === "undefined"
-  //         ) {
-  //           toast.error("Invalid payment ID. Check your wallet!");
-  //           navigate("/cart");
+          if (
+            !updatedOrderPlacementData.paymentAddress ||
+            updatedOrderPlacementData.paymentAddress === "undefined"
+          ) {
+            toast.error("Invalid payment ID. Check your wallet!");
+            navigate("/cart");
 
-  //           return;
-  //         } else {
-  //           finalizeOrder(updatedOrderPlacementData);
-  //         }
-  //       } catch (error) {
-  //         console.error("Error getting payment address:", error);
-  //         toast.error("Please login first");
-  //         navigate("/login");
-  //         setOrderPlacementLoad(false);
-  //       }
-  //     }
-  //   };
-  //   paymentAddressProcess();
-  // }, [totalAmountForTransfer, checkOutClicked]);
+            return;
+          } else {
+            finalizeOrder(updatedOrderPlacementData);
+          }
+        } catch (error) {
+          console.error("Error getting payment address:", error);
+          toast.error("Please login first");
+          navigate("/login");
+          setOrderPlacementLoad(false);
+        }
+      }
+    };
+    paymentAddressProcess();
+  }, [totalAmountForTransfer, checkOutClicked]);
 
   // console.log("order placementData", orderPlacementData);
   // Get caller cart items
@@ -273,9 +227,9 @@ const CartApiHandler = () => {
     //   return;
     // }
 
-    // const transformedTotal = Number(totalAmount * 10 ** 8);
-    // console.log(transformedTotal);
-    // setTotalAmountForTransfer(Math.round(transformedTotal));
+    const transformedTotal = Number(totalAmount * 10 ** 8);
+    console.log(transformedTotal);
+    setTotalAmountForTransfer(Math.round(transformedTotal));
 
     try {
       // const userid = principal;
@@ -285,7 +239,7 @@ const CartApiHandler = () => {
       };
 
       const orderDetails = {
-        awb: "awb_static",
+        awb: "testing",
         paymentStatus: "success",
         paymentMethod: payment,
         shippingAmount: {
@@ -302,6 +256,7 @@ const CartApiHandler = () => {
         // From , To ,
         // principal,
         // To?
+        totalAmount,
         paymentOption,
       };
       setOrderPlacementData(orderDetails);
@@ -552,3 +507,266 @@ const CartApiHandler = () => {
 };
 
 export default CartApiHandler;
+
+// Idnetity kit
+// // import { useCanister, useConnect, useTransfer } from "@connect2ic/react";
+// import { Principal } from "@dfinity/principal";
+// import { Actor, HttpAgent } from "@dfinity/agent";
+// import { useEffect, useState } from "react";
+// import toast from "react-hot-toast";
+// import { useNavigate } from "react-router-dom";
+// import { useAuth } from "../auth/useClient";
+// import { idlFactory } from "../wallet/ledger.did";
+// import { host, ids } from "../DevConfig";
+// import usePaymentTransfer from "../auth/usePaymentTransfer";
+// import { AccountIdentifier } from "@dfinity/ledger-icp";
+// import { useIdentityKit } from "@nfid/identitykit/react";
+// import { fromHexString } from "@dfinity/candid";
+
+// // Custom hook : initialize the backend Canister
+
+// // Payment Address
+// // const usePaymentTransfer = (totalAmount) => {
+// //   // Receiver address will be in .env file : for now dev id
+// //   const [transfer] = useTransfer({
+// //     to: "uktss-xp5gu-uwif5-hfpwu-rujms-foroa-4zdkd-ofspf-uqqre-wxqyj-cqe",
+// //     amount: Number(totalAmount),
+// //   });
+// //   return transfer;
+// // };
+
+// // CartApiHandler : main
+// const CartApiHandler = () => {
+//   // Init backend
+//   // const { backend } = useBackend();
+//   // const { principal } = useConnect();
+//   const { principal, identity, backend, refreshCart, setOrderPlacementLoad } =
+//     useAuth();
+//   const [isLoading, setIsLoading] = useState(false);
+//   const [cartItems, setCartItems] = useState(null);
+//   const [orderList, setOrderList] = useState(null);
+//   const [orderDetails, setOrderDetails] = useState(null);
+//   const [shippingAmount, setShippingAmount] = useState(null);
+//   // const [totalAmountForTransfer, setTotalAmountForTransfer] = useState(null);
+//   // const paymentAddressForTransfer = usePaymentTransfer(totalAmountForTransfer);
+//   const [orderPlacementData, setOrderPlacementData] = useState(null);
+//   // const [orderPlacementLoad, setOrderPlaceMentLoad] = useState(false);
+//   const { transfer, loading, error } = usePaymentTransfer();
+//   const [checkOutClicked, setCheckoutClicked] = useState(0);
+//   const navigate = useNavigate();
+//   const { agent } = useIdentityKit();
+
+//   useEffect(() => {
+//     const paymentProcess = async () => {
+//       const actor = Actor.createActor(idlFactory, {
+//         agent,
+//         canisterId: "ryjl3-tyaaa-aaaaa-aaaba-cai",
+//       });
+//       const destinationPrincipal =
+//         "l5yk2-7stgd-323wb-cjj7k-7sceo-t7szo-4uexa-wwzc5-vlsyw-isehy-3qe";
+//       const address = AccountIdentifier.fromPrincipal({
+//         principal: Principal.fromText(destinationPrincipal),
+//       }).toHex();
+//       const transferArgs = {
+//         to: fromHexString(address),
+//         fee: { e8s: BigInt(10000) },
+//         memo: BigInt(0),
+//         from_subaccount: [],
+//         created_at_time: [],
+//         amount: { e8s: BigInt(orderPlacementData.totalAmount) },
+//       };
+//       try {
+//         const response = await actor.transfer(transferArgs);
+//         console.log("transfer success response", response);
+//         try {
+//           if (response) finalizeOrder(orderPlacementData);
+//           else {
+//             console.error("Payment failed", response);
+//             toast.error("Payment failed");
+//           }
+//         } catch (err) {
+//           console.error("Transaction failed", err);
+//           toast.error("Transaction failed");
+//         }
+//       } catch (err) {
+//         console.error("transfer failed response", err);
+//         toast.error("Transaction failed", err);
+//       } finally {
+//         setOrderPlacementLoad(false);
+//       }
+//     };
+//     if (orderPlacementData) paymentProcess();
+//   }, [orderPlacementData]);
+
+//   const getCallerCartItems = async () => {
+//     try {
+//       setIsLoading(true);
+//       const response = await backend.getCallerCartItems(100, 0);
+//       console.log("getCallerCartItems response ", response);
+//       setCartItems(response.data);
+//     } catch (err) {
+//       console.error("Error Fetching Cart", err);
+//     } finally {
+//       setIsLoading(false);
+//     }
+//   };
+
+//   // Finalize order
+//   const finalizeOrder = async (data) => {
+//     // console.log("Finalize order", data);
+//     try {
+//       const finalOrderResponse = await backend.createOrder(data);
+//       console.log("Final Order Response ", finalOrderResponse);
+//       navigate("/order-confirm");
+//     } catch (err) {
+//       console.error("Error After payment process", err);
+//       toast.error("Payment failed! Check you wallet");
+//     } finally {
+//       setOrderPlacementLoad(false);
+//     }
+//   };
+
+//   // GetShipping Amount
+//   const getShippingAmount = async () => {
+//     try {
+//       setIsLoading(true);
+//       const response = await backend.getshippingamount();
+//       setShippingAmount(response.shipping_amount);
+//     } catch (err) {
+//       console.log("Shipping Amount error ", err);
+//     } finally {
+//       setIsLoading(false);
+//     }
+//   };
+
+//   // Gether order placement data for proceed
+//   const orderPlacement = async (
+//     products,
+//     shippingAddress,
+//     totalAmount,
+//     subTotal,
+//     payment,
+//     shippingCost
+//   ) => {
+//     setCheckoutClicked((prev) => prev + 1);
+
+//     try {
+//       const paymentOption = {
+//         [payment]: null,
+//       };
+
+//       const orderDetails = {
+//         awb: "awb_static",
+//         paymentStatus: "success",
+//         paymentMethod: payment,
+//         shippingAmount: {
+//           shipping_amount: shippingCost,
+//         },
+//         orderStatus: "confirmed",
+//         userid: principal,
+//         // Payment address is backend canister id? Or icp || ckbtc canister id?
+//         paymentAddress: "",
+//         totalAmount: totalAmount,
+//         shippingAddress: shippingAddress,
+//         products: products,
+//         subTotalAmount: subTotal,
+//         // From , To ,
+//         // principal,
+//         // To?
+//         paymentOption,
+//       };
+//       setOrderPlacementData(orderDetails);
+//     } catch (err) {
+//       console.error("Error while transfering amount ", err);
+//     }
+
+//   // Get Order List
+//   const getOrderList = async () => {
+//     try {
+//       setIsLoading(true);
+//       const response = await backend.listUserOrders(100, 0);
+//       console.log("getOrderList response ", response);
+//       setOrderList(response);
+//     } catch (err) {
+//       console.error("Failed to fetch user order list", err);
+//     } finally {
+//       setIsLoading(false);
+//     }
+//   };
+
+//   // Get individual Order
+//   const getOrderById = async (id) => {
+//     try {
+//       setIsLoading(true);
+//       const response = await backend.getOrder(id);
+//       console.log("getOrderById response ", response);
+//       setOrderDetails(response.ok);
+//     } catch (err) {
+//       console.error("Error fetching order", err);
+//     } finally {
+//       setIsLoading(false);
+//     }
+//   };
+
+//   // Delte Cart Item
+//   const deleteCartItemById = async (
+//     id,
+//     size,
+//     color,
+//     setDeleteLoad,
+//     setSuccessDelete,
+//     closeModel
+//   ) => {
+//     try {
+//       setDeleteLoad(true);
+//       const response = await backend.deleteCartItems(id, size, color);
+//       console.log("Delete cart item response ", response);
+//       toast.success("Item removed successfully");
+//     } catch (err) {
+//       toast.error("Failed to remove item");
+//       console.error(err);
+//     } finally {
+//       setDeleteLoad(false);
+//       setSuccessDelete(false);
+//       refreshCart();
+//       closeModel();
+//     }
+//   };
+
+//   // Update cart
+//   const updateCart = async (id, quantity, color, size) => {
+//     try {
+//       setIsLoading(true);
+//       await backend.updateCartItems(id, quantity, size, color);
+//     } catch (err) {
+//       console.error("error updating cart ", err);
+//     } finally {
+//       setIsLoading(false);
+//     }
+//   };
+
+//   // Effects
+//   // useEffect(() => {
+//   //   getExchangeRate();
+//   // }, [backend]);
+
+//   // Returns
+//   return {
+//     getCallerCartItems,
+//     orderPlacement,
+//     getOrderList,
+//     getOrderById,
+//     isLoading,
+//     cartItems,
+//     orderList,
+//     orderDetails,
+//     deleteCartItemById,
+//     // orderPlacementLoad,
+//     // setOrderPlaceMentLoad,
+//     shippingAmount,
+//     getShippingAmount,
+//     updateCart,
+//   };
+// };
+
+// export default CartApiHandler;
