@@ -2323,20 +2323,40 @@ actor {
     };
 
     public type Icrc28TrustedOriginsResponse = {
-            trusted_origins : [Text];
-        };
+        trusted_origins : [Text];
+    };
 
+    // Equivalent to the Rust function that returns the record type
     public func icrc28_trusted_origins() : async Icrc28TrustedOriginsResponse {
-    let trusted_origins = [ 
+        let trusted_origins = [   
         "http://localhost:3000", 
+        "http://localhost:3000/login",
         "http://bd3sg-teaaa-aaaaa-qaaba-cai.localhost:4943", 
         "http://127.0.0.1:4943/?canisterId=bd3sg-teaaa-aaaaa-qaaba-cai", 
         "http://127.0.0.1:4943/?canisterId=bkyz2-fmaaa-aaaaa-qaaaq-cai", 
-        "http://127.0.0.1:4943", 
-        "http://localhost:4200"];
+        "https://nfid.one",
+        "https://dev.nfid.one"];
 
-    return {
-        trusted_origins = trusted_origins;
-         };
+        return {
+            trusted_origins = trusted_origins;
+        };
     };
+
+    // public type Icrc28TrustedOriginsResponse = {
+    //         trusted_origins : [Text];
+    //     };
+
+    // public func icrc28_trusted_origins() : async Icrc28TrustedOriginsResponse {
+    // let trusted_origins = [ 
+    //     "http://localhost:3000", 
+    //     "http://bd3sg-teaaa-aaaaa-qaaba-cai.localhost:4943", 
+    //     "http://127.0.0.1:4943/?canisterId=bd3sg-teaaa-aaaaa-qaaba-cai", 
+    //     "http://127.0.0.1:4943/?canisterId=bkyz2-fmaaa-aaaaa-qaaaq-cai", 
+    //     "http://127.0.0.1:4943", 
+    //     "http://localhost:4200"];
+
+    // return {
+    //     trusted_origins = trusted_origins;
+    //      };
+    // };
 };

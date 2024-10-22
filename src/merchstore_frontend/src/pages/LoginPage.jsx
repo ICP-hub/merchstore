@@ -113,12 +113,12 @@ export default function LoginPage() {
                   Select what wallet you want to connect below
                 </p>
 
-                {/* <ConnectWallet
+                <ConnectWallet
                   connectButtonComponent={ConnectBtn}
                   className="rounded-full bg-black"
-                /> */}
+                />
 
-                {!isConnected && (
+                {/* {!isConnected && (
                   <Button
                     // onClick={handleWalletModalOpen}
                     onClick={login}
@@ -135,7 +135,7 @@ export default function LoginPage() {
                     <PiWalletBold className="w-5 h-5" />
                     Disconnect
                   </Button>
-                )}
+                )} */}
                 <Button
                   onClick={() => navigate("/")}
                   className="w-full rounded-full text-black font-semibold bg-white border border-white px-4 py-2 flex justify-center items-center text-md"
@@ -160,6 +160,7 @@ const ConnectBtn = ({ onClick, ...props }) => {
   const processClick = () => {
     onClick();
   };
+
   return (
     <Button
       onClick={processClick}
