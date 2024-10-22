@@ -32,26 +32,27 @@ export default function IdentityWrapper() {
 
   const targetCanister = process.env.CANISTER_ID_MERCHSTORE_BACKEND;
 
-  return (
-    <IdentityKitProvider
-      signers={signers}
-      theme={IdentityKitTheme.SYSTEM}
-      authType={IdentityKitAuthType.DELEGATION}
-      signerClientOptions={{
-        targets: ["bkyz2-fmaaa-aaaaa-qaaaq-cai"],
-      }}
-      // onConnectSuccess={() => console.log("connected")}
-      // onConnectFailure={(e) => {
-      //   toast.error(
-      //     e.message === "Not supported"
-      //       ? "Internet Identity doesn’t support accounts. Switch to delegation."
-      //       : e.message
-      //   );
-      // }}
-    >
-      <AuthProvider>
-        <App />
-      </AuthProvider>
-    </IdentityKitProvider>
-  );
+  if (mount)
+    return (
+      <IdentityKitProvider
+        signers={signers}
+        theme={IdentityKitTheme.SYSTEM}
+        authType={IdentityKitAuthType.DELEGATION}
+        signerClientOptions={{
+          targets: [targetCanister],
+        }}
+        // onConnectSuccess={() => console.log("connected")}
+        // onConnectFailure={(e)=> {
+        //   toast.error(
+        //     e.message === "Not supported"
+        //       ? "Internet Identity doesn’t support accounts. Switch to delegation."
+        //       : e.message
+        //   );
+        // }}
+      >
+        <AuthProvider>
+          <App />
+        </AuthProvider>
+      </IdentityKitProvider>
+    );
 }
