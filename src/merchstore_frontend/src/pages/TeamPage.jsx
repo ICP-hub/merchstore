@@ -57,9 +57,10 @@ const dataList = [
 
 const TeamPage = () => {
   return (
-    <AnimationView>
-      <ScrollToTop />
-      <Header title={"AboutUs"} />
+    <>
+      {/* <AnimationView>
+       <ScrollToTop />
+     <Header title={"AboutUs"} /> */}
       <div className="container mx-auto mt-4 px-6 flex gap-2 items-center md:items-start justify-between flex-col  ">
         <div className="flex  flex-col xl:flex-row gap-2 my-6">
           <img src={img1} alt="" className="rounded-xl w-96 h-96" />
@@ -102,8 +103,9 @@ const TeamPage = () => {
 
         {/* <Carousel /> */}
       </div>
-      <Footer></Footer>
-    </AnimationView>
+      {/* <Footer></Footer>
+    </AnimationView> */}
+    </>
   );
 };
 

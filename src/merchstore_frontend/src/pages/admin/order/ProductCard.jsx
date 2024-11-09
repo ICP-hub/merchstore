@@ -70,7 +70,7 @@ const ProductCard = ({ loading, product }) => {
               <div className="w-[100px] h-[20px] rounded-xl bg-gray-100 animate-pulse"></div>
             ) : (
               <span className="flex items-center gap-1">
-                <IcpLogo size={16} /> {product?.sale_price?.toFixed(2)}
+                <IcpLogo size={16} /> {product?.sale_price?.toFixed(4)}
               </span>
             )}
           </h6>
@@ -109,7 +109,7 @@ const ProductCard = ({ loading, product }) => {
               ) : (
                 <span className="flex items-center gap-1">
                   <IcpLogo size={16} />{" "}
-                  {(product?.sale_price * product?.quantity).toFixed(2)}{" "}
+                  {(product?.sale_price * product?.quantity).toFixed(4)}{" "}
                 </span>
               )}
             </h6>

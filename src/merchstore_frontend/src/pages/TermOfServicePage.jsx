@@ -99,9 +99,10 @@ const TermOfServicesList = [
 
 const TermOfServicePage = () => {
   return (
-    <AnimationView>
-      <ScrollToTop />
-      <Header title={"Term and Service"} />
+    // <AnimationView>
+    //   <ScrollToTop />
+    //   <Header title={"Term and Service"} />
+    <>
       <div className="container mx-auto mt-4 px-6 flex gap-2 items-center md:items-start justify-between flex-col">
         <h2 className="text-xl font-bold mb-2">1. Terms</h2>
         <p className="mb-4">
@@ -204,8 +205,9 @@ const TermOfServicePage = () => {
           laws of af without regards to its conflict of law provisions.
         </p>
       </div>
-      <Footer></Footer>
-    </AnimationView>
+      {/* <Footer></Footer>
+    </AnimationView> */}
+    </>
   );
 };
 

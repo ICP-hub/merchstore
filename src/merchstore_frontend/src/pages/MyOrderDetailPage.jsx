@@ -27,12 +27,12 @@ import LoadingScreen from "../components/common/LoadingScreen";
 /* ----------------------------------------------------------------------------------------------------- */
 const MyOrderDetailPage = () => {
   return (
-    <AnimationView>
-      <ScrollToTop />
-      <Header title={"OrderDetails"}></Header>
-      <MyOrderDetailContainerMain />
-      <Footer></Footer>
-    </AnimationView>
+    // <AnimationView>
+    //   <ScrollToTop />
+    //   <Header title={"OrderDetails"}></Header>
+    <MyOrderDetailContainerMain />
+    //   <Footer></Footer>
+    // </AnimationView>
   );
 };
 

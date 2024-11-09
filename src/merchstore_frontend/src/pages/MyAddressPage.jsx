@@ -18,12 +18,12 @@ import LoadingScreen from "../components/common/LoadingScreen";
 /* ----------------------------------------------------------------------------------------------------- */
 const MyAddressPage = () => {
   return (
-    <AnimationView>
-      <ScrollToTop />
-      <Header title={"Address"}></Header>
-      <MyAddressContainerMain />
-      <Footer></Footer>
-    </AnimationView>
+    // <AnimationView>
+    //   <ScrollToTop />
+    //   <Header title={"Address"}></Header>
+    <MyAddressContainerMain />
+    //   <Footer></Footer>
+    // </AnimationView>
   );
 };
 

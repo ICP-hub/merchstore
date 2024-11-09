@@ -99,9 +99,10 @@ const shippingList = [
 
 const ShippingPolicyPage = () => {
   return (
-    <AnimationView>
-      <ScrollToTop />
-      <Header title={"SHIPPING POLICY"} />
+    <>
+      {/* <AnimationView>
+       <ScrollToTop />
+      <Header title={"SHIPPING POLICY"} /> */}
       <div className="container mx-auto px-6 mt-4">
         <p className="mb-4">
           Merch store is committed to excellence, and the full satisfaction of
@@ -166,8 +167,9 @@ const ShippingPolicyPage = () => {
         <h2 className="text-xl font-bold mb-2">CONTACT </h2>
         <p className="mb-4">Email - merchstore@gmail.com</p>
       </div>
-      <Footer></Footer>
-    </AnimationView>
+      {/* <Footer></Footer>
+    </AnimationView> */}
+    </>
   );
 };
 

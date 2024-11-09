@@ -305,12 +305,12 @@ import { useAuth } from "../auth/useClient";
 
 const MyProfilePage = () => {
   return (
-    <AnimationView>
-      <ScrollToTop />
-      <Header title={"AccountInfo"}></Header>
-      <MyProfilePageContainerMain />
-      <Footer></Footer>
-    </AnimationView>
+    // <AnimationView>
+    //   <ScrollToTop />
+    //   <Header title={"AccountInfo"}></Header>
+    <MyProfilePageContainerMain />
+    //   <Footer></Footer>
+    // </AnimationView>
   );
 };
 
@@ -381,15 +381,11 @@ const MyProAccount = () => {
       setLoading2(false);
     }
   };
-  console.log(user, "user");
+  // console.log(user, "user");
 
   useEffect(() => {
-    const timeoutId = setTimeout(() => {
-      getUser();
-    }, 2000);
-
-    return () => clearTimeout(timeoutId);
-  }, [backend]);
+    getUser();
+  }, []);
 
   const updateProfileHandler = async () => {
     try {
@@ -397,12 +393,9 @@ const MyProAccount = () => {
         return;
       }
       setLoading(true);
-
       // Log input values for debugging
       //console.log("Updating profile with:", email, firstName, lastName)
-
       const res = await backend.updateUser(email, firstName, lastName);
-
       // Log the entire response for debugging
       console.log("Response from backend:", res);
 

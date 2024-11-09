@@ -15,13 +15,13 @@ import Button from "../components/common/Button";
 
 const FaqPage = () => {
   return (
-    <AnimationView>
-      <ScrollToTop />
-      <Header title={"FAQ"}></Header>
-      <FaqPageContainerMain />
-      <Contact></Contact>
-      <Footer></Footer>
-    </AnimationView>
+    // <AnimationView>
+    //   <ScrollToTop />
+    //   <Header title={"FAQ"}></Header>
+    <FaqPageContainerMain />
+    //   <Contact></Contact>
+    //   <Footer></Footer>
+    // </AnimationView>
   );
 };
 

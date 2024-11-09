@@ -27,6 +27,10 @@ module {
             #EmptyLastName;
         };
 
+        public type AdminStatusError = {
+            #UserNotAdmin;
+        };
+
     public type UpdateUserError = {
         #UserNotAuthenticated;
         #UserNotFound;

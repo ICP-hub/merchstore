@@ -11,7 +11,7 @@ import ProductApiHandler from "../../apiHandlers/ProductApiHandler";
 import { useAuth } from "../../auth/useClient";
 
 const TrendingProducts = () => {
-  const { backend } = useAuth();
+  // const { backend } = useAuth();
   const { scrollYProgress } = useScroll();
   const x = useTransform(scrollYProgress, [0, 1], [0, 800]); // Adjust the range as needed
   const { isLoading, productList, getProductList } = ProductApiHandler(0);
@@ -25,7 +25,7 @@ const TrendingProducts = () => {
 
   useEffect(() => {
     getProductList();
-  }, [backend]);
+  }, []);
 
   const maxInitialDisplay = 6;
 

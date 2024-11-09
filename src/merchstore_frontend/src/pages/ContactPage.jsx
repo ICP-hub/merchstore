@@ -14,13 +14,13 @@ import ContactPageContainerMain from "../components/ContactPageComponents/Contac
 /* ----------------------------------------------------------------------------------------------------- */
 const ContactPage = () => {
   return (
-    <AnimationView>
-      <ScrollToTop />
-      <Header title={"ContactUs"}></Header>
-      <ContactPageContainerMain />
-      <Contact></Contact>
-      <Footer></Footer>
-    </AnimationView>
+    // <AnimationView>
+    //   <ScrollToTop />
+    //   <Header title={"ContactUs"}></Header>
+    <ContactPageContainerMain />
+    // <Contact></Contact>
+    // <Footer></Footer>
+    // </AnimationView>
   );
 };
 

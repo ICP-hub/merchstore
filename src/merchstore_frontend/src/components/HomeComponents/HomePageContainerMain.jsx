@@ -21,7 +21,7 @@ import { useAuth } from "../../auth/useClient";
 /* ----------------------------------------------------------------------------------------------------- */
 
 const HomePageContainerMain = () => {
-  const { backend } = useAuth();
+  // const { backend } = useAuth();
   const {
     productList,
     getProductList,
@@ -33,7 +33,7 @@ const HomePageContainerMain = () => {
 
   useEffect(() => {
     getProductList();
-  }, [backend]);
+  }, []);
 
   return (
     <div>

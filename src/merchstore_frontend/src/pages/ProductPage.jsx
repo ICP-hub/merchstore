@@ -12,13 +12,13 @@ import ProductPageContainerMain from "../components/ProductComponents/ProductPag
 /* ----------------------------------------------------------------------------------------------------- */
 const ProductPage = () => {
   return (
-    <AnimationView>
-      <ScrollToTop />
-      <Header title={"Products"}></Header>
-      <ProductPageContainerMain />
-      <Contact></Contact>
-      <Footer></Footer>
-    </AnimationView>
+    // <AnimationView>
+    //   <ScrollToTop />
+    //   <Header title={"Products"}></Header>
+    <ProductPageContainerMain />
+    //   <Contact></Contact>
+    //   <Footer></Footer>
+    // </AnimationView>
   );
 };
 

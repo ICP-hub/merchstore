@@ -45,32 +45,33 @@ actor {
     private stable var nextProduct : Types.ProductId = 1;
 
     //private stable var payment_address : Principal = Principal.fromText("aewlj-xenv5-gnrhk-y3di4-gojd3-xl63e-6ritn-ehvzi-pl2zw-2sbbb-wae");
-    private stable var payment_address : Principal = Principal.fromText("7yywi-leri6-n33rr-vskr6-yb4nd-dvj6j-xg2b4-reiw6-dljs7-slclz-2ae");
+    private stable var payment_address : Principal = Principal.fromText("kws6j-lg7qz-4hnac-saj7i-l2i7g-i2rnx-zaby7-yvn5r-ggp37-ebev6-aae");
     
+
     
     stable let icpLedger = "ryjl3-tyaaa-aaaaa-aaaba-cai";
     stable let ckbtcLedger = "mxzaz-hqaaa-aaaar-qaada-cai";
     stable let exchange_rate_canister = "uf6dk-hyaaa-aaaaq-qaaaq-cai";
 
-    private var Users = TrieMap.TrieMap<Principal, Index>(Principal.equal, Principal.hash);
-    private stable var stableUsers : [(Principal, Index)] = [];
+    private var Users = TrieMap.TrieMap<Principal, Types.User>(Principal.equal, Principal.hash);
+    private stable var stableUsers : [(Principal, Types.User)] = [];
 
-    stable var user_state = {
-        bytes = Region.new();
-        var bytes_count : Nat64 = 0;
-        elems = Region.new ();
-        var elems_count : Nat64 = 0;
-    };
+    // stable var user_state = {
+    //     bytes = Region.new();
+    //     var bytes_count : Nat64 = 0;
+    //     elems = Region.new ();
+    //     var elems_count : Nat64 = 0;
+    // };
 
-    private var products = TrieMap.TrieMap<Types.SlugId, Index>(Text.equal, Text.hash);
-    private stable var stableproducts : [(Types.SlugId, Index)] = [];
+    private var products = TrieMap.TrieMap<Types.SlugId, Types.Product>(Text.equal, Text.hash);
+    private stable var stableproducts : [(Types.SlugId, Types.Product)] = [];
 
-    stable var product_state = {
-        bytes = Region.new();
-        var bytes_count : Nat64 = 0;
-        elems = Region.new();
-        var elems_count : Nat64 = 0;
-    };
+    // stable var product_state = {
+    //     bytes = Region.new();
+    //     var bytes_count : Nat64 = 0;
+    //     elems = Region.new();
+    //     var elems_count : Nat64 = 0;
+    // };
 
 
     private stable var shippingamount : Types.ShippingAmount = {
@@ -85,48 +86,48 @@ actor {
     // private var color = Map.HashMap<Types.SlugId, Types.Color>(0, Text.equal, Text.hash);
     // private stable var stablecolors : [(Types.SlugId, Types.Color)] = [];
 
-    private var variants = TrieMap.TrieMap<Types.SlugId, Index>( Text.equal, Text.hash); //! Here Variant Slug will be the key
-    private stable var stablevariants : [(Types.SlugId, Index)] = [];
+    private var variants = TrieMap.TrieMap<Types.SlugId, Types.Variants>( Text.equal, Text.hash); //! Here Variant Slug will be the key
+    private stable var stablevariants : [(Types.SlugId, Types.Variants)] = [];
 
-    stable var variant_state = {
-        bytes = Region.new();
-        var bytes_count : Nat64 = 0;
-        elems = Region.new ();
-        var elems_count : Nat64 = 0;
-    };
+    // stable var variant_state = {
+    //     bytes = Region.new();
+    //     var bytes_count : Nat64 = 0;
+    //     elems = Region.new ();
+    //     var elems_count : Nat64 = 0;
+    // };
 
 
-    private var usersaddresslist = TrieMap.TrieMap<Principal, Index>(Principal.equal, Principal.hash);
+    private var usersaddresslist = TrieMap.TrieMap<Principal, Types.addressobject>(Principal.equal, Principal.hash);
 
-    private stable var stableusersaddresslist : [(Principal, Index)] = [];
+    private stable var stableusersaddresslist : [(Principal, Types.addressobject)] = [];
 
-    stable var address_state = {
-        bytes = Region.new();
-        var bytes_count : Nat64 = 0;
-        elems = Region.new ();
-        var elems_count : Nat64 = 0;
-    };
+    // stable var address_state = {
+    //     bytes = Region.new();
+    //     var bytes_count : Nat64 = 0;
+    //     elems = Region.new ();
+    //     var elems_count : Nat64 = 0;
+    // };
 
     // --------------------------------------------------------------------------------------------------------------------------
-    private var categories = TrieMap.TrieMap<Types.SlugId, Index>( Text.equal, Text.hash);
-    private stable var stablecategories : [(Types.SlugId, Index)] = [];
+    private var categories = TrieMap.TrieMap<Types.SlugId, Types.Category>( Text.equal, Text.hash);
+    private stable var stablecategories : [(Types.SlugId, Types.Category)] = [];
 
-    stable var category_state = {
-        bytes = Region.new();
-        var bytes_count : Nat64 = 0;
-        elems = Region.new ();
-        var elems_count : Nat64 = 0;
-    };
+    // stable var category_state = {
+    //     bytes = Region.new();
+    //     var bytes_count : Nat64 = 0;
+    //     elems = Region.new ();
+    //     var elems_count : Nat64 = 0;
+    // };
 
-    private var orders = TrieMap.TrieMap<Types.OrderId, Index>(Text.equal, Text.hash);
-    private stable var stableorders : [(Types.OrderId, Index)] = [];
+    private var orders = TrieMap.TrieMap<Types.OrderId, Types.Order>(Text.equal, Text.hash);
+    private stable var stableorders : [(Types.OrderId, Types.Order)] = [];
 
-    stable var order_state = {
-        bytes = Region.new();
-        var bytes_count : Nat64 = 0;
-        elems = Region.new ();
-        var elems_count : Nat64 = 0;
-    };
+    // stable var order_state = {
+    //     bytes = Region.new();
+    //     var bytes_count : Nat64 = 0;
+    //     elems = Region.new ();
+    //     var elems_count : Nat64 = 0;
+    // };
 
     private var addressToOrder = TrieMap.TrieMap<Text, Text>( Text.equal, Text.hash);
     private stable var stableaddresstoorder : [(Text, Text)] = [];
@@ -148,36 +149,36 @@ actor {
 
     // private var imgSize : Map.HashMap<Types.ImgId, Nat> = Map.fromIter(stableimgSize.vals(), 0, Text.equal, Text.hash);
 
-    private var wishlistItems = TrieMap.TrieMap<Principal, Index>( Principal.equal, Principal.hash);
-    private stable var stablewishlistItems : [(Principal, Index)] = [];
+    private var wishlistItems = TrieMap.TrieMap<Principal, Types.wishlistItemobject>( Principal.equal, Principal.hash);
+    private stable var stablewishlistItems : [(Principal, Types.wishlistItemobject)] = [];
 
-    stable var wishlist_state = {
-        bytes = Region.new();
-        var bytes_count : Nat64 = 0;
-        elems = Region.new ();
-        var elems_count : Nat64 = 0;
-    };
+    // stable var wishlist_state = {
+    //     bytes = Region.new();
+    //     var bytes_count : Nat64 = 0;
+    //     elems = Region.new ();
+    //     var elems_count : Nat64 = 0;
+    // };
 
     
-    private var cartItems = TrieMap.TrieMap<Principal, Index>(Principal.equal, Principal.hash);
-    private stable var stablecartItems : [(Principal, Index)] = [];
+    private var cartItems = TrieMap.TrieMap<Principal, Types.cartItemobject >(Principal.equal, Principal.hash);
+    private stable var stablecartItems : [(Principal, Types.cartItemobject)] = [];
 
-    stable var cart_state = {
-        bytes = Region.new();
-        var bytes_count : Nat64 = 0;
-        elems = Region.new ();
-        var elems_count : Nat64 = 0;
-    };
+    // stable var cart_state = {
+    //     bytes = Region.new();
+    //     var bytes_count : Nat64 = 0;
+    //     elems = Region.new ();
+    //     var elems_count : Nat64 = 0;
+    // };
     // Contact us
-    private var contacts = TrieMap.TrieMap<Types.ContactId, Index>(Text.equal, Text.hash);
-    private stable var stablecontacts : [(Types.ContactId, Index)] = [];
+    private var contacts = TrieMap.TrieMap<Types.ContactId, Types.Contact>(Text.equal, Text.hash);
+    private stable var stablecontacts : [(Types.ContactId, Types.Contact)] = [];
 
-    stable var contact_state = {
-        bytes = Region.new();
-        var bytes_count : Nat64 = 0;
-        elems = Region.new ();
-        var elems_count : Nat64 = 0;
-    };
+    // stable var contact_state = {
+    //     bytes = Region.new();
+    //     var bytes_count : Nat64 = 0;
+    //     elems = Region.new ();
+    //     var elems_count : Nat64 = 0;
+    // };
 
         // -------------------------- Stablising functions to store data --------------------------------------------------------------
 
@@ -274,24 +275,8 @@ actor {
     //
     private let adminPrincipals : [Text] = [
         "7yywi-leri6-n33rr-vskr6-yb4nd-dvj6j-xg2b4-reiw6-dljs7-slclz-2ae",
-        "jkssc-r7bft-rhxnv-xskty-gwy2y-nabjd-asvau-ijwcf-nyvbq-dcazp-zae",
-        "ze4vy-q7dc7-tevo4-gi5h4-lqr4b-af3x6-vmiyl-3ya53-dbmc4-qbc6e-yqe",
-        "uktss-xp5gu-uwif5-hfpwu-rujms-foroa-4zdkd-ofspf-uqqre-wxqyj-cqe",
-        "mmi6f-vbi3x-r3ytg-dath5-qfi5s-rbq3r-75avw-q3ele-ajsft-llzwc-dae",
-        "5gojq-7zyol-kqpfn-vett2-e6at4-2wmg5-wyshc-ptyz3-t7pos-okakd-7qe",
-        "smvf5-lswfz-4usiy-h4u2e-e56bp-ai2f2-kuxmr-62gd4-7ezqk-ueb4f-sqe",
-        "qlmrg-xxhxr-2kxys-5kax6-ijfvm-odhit-xdlbv-sab73-b5hy2-rby5u-wae",
-        "t6cm6-7mjqg-f5mca-2ez4n-rwefv-4knid-uo2dl-sz7lj-yczc7-edrhr-yae",
-        "5rb3s-gzs5u-44taw-infir-l6yk7-tgmp4-34ufs-rgqx6-vwnir-os4ex-xae",
-        "lkum4-lq5h6-xakur-f2d56-iuiz5-cmqv4-btmqz-y36ma-rhacf-ycxjr-wae",
-        "fzfww-hzqif-jwsdw-jyy7c-6dfgs-7ned2-7vpat-tfimf-nko44-sqvyk-gae",
-        "45hqj-gmqer-h4p6j-7suuw-nztam-u3xaj-yg2og-ppjkr-o3zb2-e6riu-lqe",
-        "xohej-sjhhi-3orms-nnoqw-5i6ln-xrr4x-j5oa7-ealxd-ltohd-jsw3t-5ae",
-        "h7yxq-n6yb2-6js2j-af5hk-h4inj-edrce-oevyj-kbs7a-76kft-vrqrw-nqe"
-        ,"x5gb5-ng356-6thlg-xfcjc-pol23-njc4g-zlj3u-xkqvz-3ljz4-f7c3j-zqe"
-        ,"tfyvq-6wqn2-cpjj5-3q3qn-jhviz-nrkva-slk4q-if2hz-blylq-xljtq-rae",
         "kws6j-lg7qz-4hnac-saj7i-l2i7g-i2rnx-zaby7-yvn5r-ggp37-ebev6-aae",
-        "bv7lm-r66xz-wagad-2g6up-3mryg-mk4mt-mqvod-hjxya-jl47v-wsq6u-uae"
+        "oavgn-aq63y-4ppgd-ws735-bqrrn-xdhtc-m3azu-6qga7-i4phr-c7nie-wqe"
     ];
 
     public func isAdmin(userPrincipal : Principal) : async Bool {
@@ -307,10 +292,28 @@ actor {
             case (?v) { return true };
         };
     };
+    // ==========================payment_address=====================
+
+    public shared ({caller}) func get_payment_address() : async Result.Result<Principal,Types.AdminStatusError> {
+        let adminstatus = await isAdmin(caller);
+        if (adminstatus == false) {
+            return #err(#UserNotAdmin); // We require the user to be admin
+        };
+        return #ok(payment_address);
+    };
+
+    public shared ({caller}) func set_payment_address (Address : Principal) : async Result.Result<Principal,Types.AdminStatusError> {
+        let adminstatus = await isAdmin(caller);
+        if (adminstatus == false) {
+            return #err(#UserNotAdmin); // We require the user to be admin
+        };
+        payment_address := Address;
+        return #ok(payment_address);
+    };
 
     //  ------------------------   Users_Functions -------------------------
 
-    public shared ({ caller }) func updateUser(email : Text, firstName : Text, lastName : Text) : async Result.Result<(Types.User, Index), Types.UpdateUserError> {
+    public shared ({ caller }) func updateUser(email : Text, firstName : Text, lastName : Text) : async Result.Result<Types.User, Types.UpdateUserError> {
         /*  if (Principal.isAnonymous(msg.caller)) {
       return #err(#UserNotAuthenticated); // We require the user to be authenticated,
     }; */
@@ -328,16 +331,17 @@ actor {
         switch(Users.get(caller)){
 
             case null {
-                let user_blob = to_candid(user);
-                Debug.print(debug_show(user_blob));
-                let user_index = await stable_add(user_blob, user_state);
-                Users.put(caller, user_index);
-                return #ok(user, user_index);
+                // let user_blob = to_candid(user);
+                // Debug.print(debug_show(user_blob));
+                // let user_index = await stable_add(user_blob, user_state);
+                Users.put(caller, user);
+                return #ok(user);
             };
             case (?v){
-                let user_blob = to_candid(user);
-                let user_index = await update_stable(v, user_blob, user_state);
-                return #ok(user, user_index);
+                // let user_blob = to_candid(user);
+                // let user_index = await update_stable(v, user_blob, user_state);
+                let new_user = Users.put(caller, user);
+                return #ok(user);
             };
 
         };
@@ -351,18 +355,11 @@ actor {
             };
 
             case (?val){
-                let user_blob = await stable_get(val, user_state);
-                Debug.print("The blob for the " # debug_show(caller) # " is: " # debug_show(user_blob));
-                let user : ?Types.User = from_candid(user_blob);
-                Debug.print("The user data for the " # debug_show(caller) # " is: " # debug_show(user));
-                switch(user){
-                    case null {
-                        throw Error.reject("no blob found in stable memory for the caller");
-                    };
-                    case(?v){
-                        return #ok(v);
-                    };
-                };
+                // let user_blob = await stable_get(val, user_state);
+                // Debug.print("The blob for the " # debug_show(caller) # " is: " # debug_show(user_blob));
+                // let user : ?Types.User = from_candid(user_blob);
+                // Debug.print("The user data for the " # debug_show(caller) # " is: " # debug_show(val));
+                return #ok(val);
             };
         };
     };
@@ -375,18 +372,19 @@ actor {
             };
 
             case (?val){
-                let user_blob = await stable_get(val, user_state);
-                Debug.print("The blob for the " # debug_show(id) # " is: " # debug_show(user_blob));
-                let user : ?Types.User = from_candid(user_blob);
-                Debug.print("The user data for the " # debug_show(id) # " is: " # debug_show(user));
-                switch(user){
-                    case null {
-                        throw Error.reject("no blob found in stable memory for the caller");
-                    };
-                    case(?v){
-                        return #ok(v);
-                    };
-                };
+                // let user_blob = await stable_get(val, user_state);
+                // Debug.print("The blob for the " # debug_show(id) # " is: " # debug_show(user_blob));
+                // let user : ?Types.User = from_candid(user_blob);
+                // Debug.print("The user data for the " # debug_show(id) # " is: " # debug_show(user));
+                // switch(user){
+                //     case null {
+                //         throw Error.reject("no blob found in stable memory for the caller");
+                //     };
+                //     case(?v){
+                //         return #ok(v);
+                //     };
+                // };
+                return #ok(val);
             };
         };
         
@@ -394,7 +392,7 @@ actor {
 
     // 📍📍📍📍📍
     public shared func listUsers(chunkSize : Nat , PageNo : Nat) : async{data : [Types.User]; current_page : Nat; total_pages : Nat} {
-        let index_pages =  Utils.paginate<(Principal , Index)>(Iter.toArray(Users.entries()), chunkSize);
+        let index_pages =  Utils.paginate<(Principal , Types.User)>(Iter.toArray(Users.entries()), chunkSize);
         if (index_pages.size() < PageNo) {
             throw Error.reject("Page not found");
         };
@@ -407,16 +405,16 @@ actor {
         var user_list = List.nil<Types.User>();
         for ((k,v) in pages_data.vals()) {
             
-            let user_blob = await stable_get(v, user_state);
-            let user : ?Types.User = from_candid(user_blob);
-            switch(user){
-                case null {
-                    throw Error.reject("no blob found in stable memory for the caller");
-                };
-                case(?val){
-                    user_list := List.push(val, user_list);
-                };
-            };
+            // let user_blob = await stable_get(v, user_state);
+            // let user : ?Types.User = from_candid(user_blob);
+            // switch(user){
+            //     case null {
+            //         throw Error.reject("no blob found in stable memory for the caller");
+            //     };
+            //     case(?val){
+                    user_list := List.push(v, user_list);
+                // };
+            // };
         };
 
         return { data = List.toArray(user_list); current_page = PageNo + 1; total_pages = index_pages.size(); };
@@ -425,7 +423,7 @@ actor {
     //  ***************************************** Users Address CRUD Operations *****************************************************
     public shared ({ caller }) func createAddress(
         userAddress : Types.UserAddress
-    ) : async Result.Result<(Types.Address , Index), Types.CreateAddressError> {
+    ) : async Result.Result<(Types.Address), Types.CreateAddressError> {
         // if (Principal.isAnonymous(msg.caller)) {
         //     return #err(#UserNotAuthenticated); // We require the user to be authenticated,
         // };
@@ -456,21 +454,21 @@ actor {
                     userprincipal = userP;
                     addresslist = List.push(address,addressitems);
                 };
-                let addressblob = to_candid(address_object);
-                let address_index = await stable_add(addressblob, address_state);
-                usersaddresslist.put(userP, address_index);
-                return #ok(address , address_index);
+                // let addressblob = to_candid(address_object);
+                // let address_index = await stable_add(addressblob, address_state);
+                usersaddresslist.put(userP,address_object);
+                return #ok(address);
             };
             case (?v) {
                 Debug.print("Some Addresses found for the user");
-                let wishlist_blob = await stable_get(v, address_state);
-                let address_object : ?Types.addressobject = from_candid(wishlist_blob);
-                switch(address_object){
-                    case null {
-                        throw Error.reject("no blob found in stable memory for the caller");
-                    };
-                    case(?val){
-                        let addresslist = val.addresslist;
+                // let wishlist_blob = await stable_get(v, address_state);
+                // let address_object : ?Types.addressobject = from_candid(wishlist_blob);
+                // switch(address_object){
+                //     case null {
+                //         throw Error.reject("no blob found in stable memory for the caller");
+                //     };
+                //     case(?val){
+                        let addresslist = v.addresslist;
                         let templist = List.find<Types.Address>(
                             addresslist,
                             func(a : Types.Address) : Bool {
@@ -484,14 +482,14 @@ actor {
                                 userprincipal = userP;
                                 addresslist = newaddresslist;
                             };
-                            let newaddressblob = to_candid(newaddressobject);
-                            let newaddress_index = await update_stable(v, newaddressblob, address_state);
-                            return #ok(address, newaddress_index);
+                            // let newaddressblob = to_candid(newaddressobject);
+                            // let newaddress_index = await update_stable(v, newaddressblob, address_state);
+                            return #ok(address);
                         };
                         case (?value){
                             return #err(#AddressAlreadyExists);
-                        };
-                    };
+                        // };
+                    // };
                 };
             };
         };
@@ -510,14 +508,14 @@ actor {
                 throw Error.reject("No addresses found");
             };
             case (?existingAddresses) {
-                let address_blob = await stable_get(existingAddresses, address_state);
-                let addresses : ?Types.addressobject = from_candid(address_blob);
-                switch(addresses){
-                    case null {
-                        throw Error.reject("no blob found in stable memory for the caller");
-                    };
-                    case(?val){
-                    let tempaddresslist = val.addresslist;
+                // let address_blob = await stable_get(existingAddresses, address_state);
+                // let addresses : ?Types.addressobject = from_candid(address_blob);
+                // switch(addresses){
+                //     case null {
+                //         throw Error.reject("no blob found in stable memory for the caller");
+                //     };
+                //     case(?val){
+                    let tempaddresslist = existingAddresses.addresslist;
                     var oldaddress = List.find<Types.Address>(
                     tempaddresslist,
                     func(a : Types.Address) : Bool {
@@ -556,11 +554,12 @@ actor {
                             userprincipal = userP;
                             addresslist = newAddresses;
                         };
-                        let newaddressblob = to_candid(newaddressobject);
-                        ignore await update_stable(existingAddresses, newaddressblob, address_state);
+                        // let newaddressblob = to_candid(newaddressobject);
+                        // ignore await update_stable(existingAddresses, newaddressblob, address_state);
+                        usersaddresslist.put(userP,newaddressobject);
                         return #ok(newaddress);
-                    };
-                };
+                    // };
+                // };
             };
         };
         };
@@ -575,14 +574,14 @@ actor {
                 throw Error.reject("No addresses found");
             };
             case (?existingAddresses) {
-                let address_blob = await stable_get(existingAddresses, address_state);
-                let addresses : ?Types.addressobject = from_candid(address_blob);
-                switch (addresses) {
-                    case null {
-                        throw Error.reject("no blob found in stable memory for the caller");
-                    };
-                    case (?val) {
-                    let tempaddresslist = val.addresslist;
+                // let address_blob = await stable_get(existingAddresses, address_state);
+                // let addresses : ?Types.addressobject = from_candid(address_blob);
+                // switch (addresses) {
+                //     case null {
+                //         throw Error.reject("no blob found in stable memory for the caller");
+                //     };
+                //     case (?val) {
+                    let tempaddresslist = existingAddresses.addresslist;
                     var address = List.find<Types.Address>(
                     tempaddresslist,
                     func(a : Types.Address) : Bool {
@@ -596,8 +595,8 @@ actor {
                     case (?a) {
                         return #ok(a);
                     };
-                };
-            };
+                // };
+            // };
         };
             };
         };
@@ -614,14 +613,14 @@ actor {
                 throw Error.reject("No addresses found");
             };
             case (?existingAddresses) {
-                let address_blob = await stable_get(existingAddresses, address_state);
-                let addresses : ?Types.addressobject= from_candid(address_blob);
-                switch (addresses) {
-                    case null {
-                        throw Error.reject("no blob found in stable memory for the caller");
-                    };
-                    case (?val) {
-                let tempaddresslist = val.addresslist;
+                // let address_blob = await stable_get(existingAddresses, address_state);
+                // let addresses : ?Types.addressobject= from_candid(address_blob);
+                // switch (addresses) {
+                //     case null {
+                //         throw Error.reject("no blob found in stable memory for the caller");
+                //     };
+                //     case (?val) {
+                let tempaddresslist = existingAddresses.addresslist;
                 let updatedAddresses = List.filter<Types.Address>(
                     tempaddresslist,
                     func(a : Types.Address) : Bool {
@@ -632,12 +631,13 @@ actor {
                     userprincipal = userP;
                     addresslist = updatedAddresses;
                 };
-                let newaddressblob = to_candid(newobj);
-                ignore await update_stable(existingAddresses, newaddressblob, address_state);
+                // let newaddressblob = to_candid(newobj);
+                // ignore await update_stable(existingAddresses, newaddressblob, address_state);
+                usersaddresslist.put(userP,newobj);
                 return #ok(());
             };
-                };
-            };
+                // };
+            // };
         };
     };
 
@@ -651,16 +651,16 @@ actor {
                 throw Error.reject("No addresses found");
             };
             case (?existingAddresses) {
-                let address_blob = await stable_get(existingAddresses, address_state);
-                let addresses : ?Types.addressobject = from_candid(address_blob);
-                switch (addresses) {
-                    case null {
-                        throw Error.reject("no blob found in stable memory for the caller");
-                    };
-                    case (?val) {
-                        return List.toArray(val.addresslist);
-                    };
-                };
+                // let address_blob = await stable_get(existingAddresses, address_state);
+                // let addresses : ?Types.addressobject = from_candid(address_blob);
+                // switch (addresses) {
+                //     case null {
+                //         throw Error.reject("no blob found in stable memory for the caller");
+                //     };
+                    // case (?val) {
+                        return List.toArray(existingAddresses.addresslist);
+                    // };
+                // };
             };
         };
     };
@@ -702,10 +702,10 @@ actor {
             variant_sale_price = variant_sale_price;
             inventory = inventory;
         };
-        let variant_blob = to_candid(variant);
-        let variant_index = await stable_add(variant_blob, variant_state);
+        // let variant_blob = to_candid(variant);
+        // let variant_index = await stable_add(variant_blob, variant_state);
 
-        variants.put(variantId, variant_index);
+        variants.put(variantId, variant);
         return #ok(variant);
     };
 
@@ -744,16 +744,16 @@ actor {
                 return #err(#VariantNotFound);
             };
             case (?v) {
-                let old_blob = await stable_get(v, variant_state);
-                let old_variant : ?Types.Variants = from_candid(old_blob);
-                switch (old_variant) {
-                    case null {
-                        throw Error.reject("no blob found in stable memory for the caller");
-                    };
-                    case (?val) {
+                // let old_blob = await stable_get(v, variant_state);
+                // let old_variant : ?Types.Variants = from_candid(old_blob);
+                // switch (old_variant) {
+                    // case null {
+                    //     throw Error.reject("no blob found in stable memory for the caller");
+                    // };
+                    // case (?val) {
                 let variant : Types.Variants = {
-                    variant_slug = val.variant_slug;
-                    product_slug = val.product_slug;
+                    variant_slug = v.variant_slug;
+                    product_slug = v.product_slug;
                     size = size;
                     color = color;
                     variant_price = variant_price;
@@ -761,12 +761,12 @@ actor {
                     inventory = inventory;
                 };
 
-                let variant_blob = to_candid(variant);
-                let index =  await update_stable(v, variant_blob, variant_state);
-                variants.put(variant_slug, index);
+                // let variant_blob = to_candid(variant);
+                // let index =  await update_stable(v, variant_blob, variant_state);
+                variants.put(variant_slug, variant);
                 return #ok(variant);
-            };
-            };
+            // };
+            // };
             };
         };
     };
@@ -778,16 +778,16 @@ actor {
                 return #err(#VariantNotFound);
             };
             case (?v) {
-                let variant_blob = await stable_get(v, variant_state);
-                let variant : ?Types.Variants = from_candid(variant_blob);
-                switch (variant) {
-                    case null {
-                        throw Error.reject("no blob found in stable memory for the caller");
-                    };
-                    case (?val) {
-                        return #ok(val);
-                    };
-                };
+                // let variant_blob = await stable_get(v, variant_state);
+                // let variant : ?Types.Variants = from_candid(variant_blob);
+                // switch (variant) {
+                //     case null {
+                //         throw Error.reject("no blob found in stable memory for the caller");
+                //     };
+                //     case (?val) {
+                        return #ok(v);
+                    // };
+                // };
             };
         };
     };
@@ -837,9 +837,9 @@ actor {
             time_updated = Time.now();
         };
 
-        let product_blob = to_candid(product);
-        let product_index = await stable_add(product_blob, product_state);
-        products.put(newSlug, product_index);
+        // let product_blob = to_candid(product);
+        // let product_index = await stable_add(product_blob, product_state);
+        products.put(newSlug, product);
         return #ok(product);
     };
 
@@ -849,7 +849,7 @@ actor {
         vs : [Types.VariantSize],
         vc : [Types.VariantColor],
         //img : Text,
-    ) : async Result.Result<(Types.Product,Index), Types.UpdateProductError> {
+    ) : async Result.Result<Types.Product, Types.UpdateProductError> {
       // let adminstatus = await isAdmin(msg.caller);
         // if (adminstatus == false) {
         //     return #err(#UserNotAdmin); // We require the user to be admin
@@ -867,16 +867,16 @@ actor {
             };
             case (?v) {
                 //If the product was found, we try to update it.
-                let product_blob = await stable_get(v, product_state);
-                let product : ?Types.Product = from_candid(product_blob);
-                switch (product) {
-                    case null {
-                        throw Error.reject("no blob found in stable memory for the caller");
-                    };
-                    case (?val) {
+                // let product_blob = await stable_get(v, product_state);
+                // let product : ?Types.Product = from_candid(product_blob);
+                // switch (product) {
+                //     case null {
+                //         throw Error.reject("no blob found in stable memory for the caller");
+                //     };
+                //     case (?val) {
                     let product : Types.Product = {
                         title = p.title;
-                        id = val.id;
+                        id = v.id;
                         //price = p.price;
                         //sellingPrice = p.sellingPrice;
                         category = p.category;
@@ -888,17 +888,18 @@ actor {
                         variantColor = vc;
                         //img = img;
                         // keep persistent URLS
-                        slug = val.slug;
-                        time_created = val.time_created;
+                        slug = v.slug;
+                        time_created = v.time_created;
                         // only update time_updated
                         time_updated = Time.now();
                     };
-                    let product_blob = to_candid(product);
-                    let index = await update_stable(v, product_blob, product_state);
+                    // let product_blob = to_candid(product);
+                    // let index = await update_stable(v, product_blob, product_state);
+                    products.put(id,product);
 
-                return #ok(product,index);
-            };
-                };
+                return #ok(product);
+            // };
+                // };
             };
         };
     };
@@ -919,17 +920,17 @@ actor {
         let product = products.get(id);
         switch (product) {
             case (?v) {
-                let product_blob = await stable_get(v, product_state);
-                let product : ?Types.Product = from_candid(product_blob);
-                switch (product) {
-                    case null {
-                        throw Error.reject("no blob found in stable memory for the caller");
+                // let product_blob = await stable_get(v, product_state);
+                // let product : ?Types.Product = from_candid(product_blob);
+                // switch (product) {
+                    // case null {
+                        // throw Error.reject("no blob found in stable memory for the caller");
+                    // };
+                    // case (?val) {
+                        return #ok(v);
                     };
-                    case (?val) {
-                        return #ok(val);
-                    };
-                };
-            };
+                // };
+            // };
             case null {
                 return #err(#ProductNotFound);
             };
@@ -940,19 +941,19 @@ actor {
      public shared func search_by_title(chunksize : Nat , page : Nat , is_active :Bool , Title : Text) : async {data : [Types.Product]; current_page : Nat; total_pages : Nat} {
         var product_list = List.nil<Types.Product>();
         for ((k,v) in products.entries()) {
-            let product_blob = await stable_get(v, product_state);
-            let product : ?Types.Product = from_candid(product_blob);
+            // let product_blob = await stable_get(v, product_state);
+            // let product : ?Types.Product = from_candid(product_blob);
             let title_lowercase = Text.toLowercase(Title);
-            switch(product){
-                case null {
-                    throw Error.reject("no blob found in stable memory for the caller");
-                };
-                case(?val){
-                    if (Text.contains(Text.toLowercase(val.title), #text title_lowercase) == true and val.active == is_active){
-                        product_list := List.push(val, product_list);
+            // switch(product){
+                // case null {
+                //     throw Error.reject("no blob found in stable memory for the caller");
+                // };
+                // case(?val){
+                    if (Text.contains(Text.toLowercase(v.title), #text title_lowercase) == true and v.active == is_active){
+                        product_list := List.push(v, product_list);
                     };
-                };
-            };
+                // };
+            // };
         };
         let index_pages = Utils.paginate<(Types.Product)>(List.toArray(product_list),chunksize);
         if (index_pages.size() < page) {
@@ -968,19 +969,19 @@ actor {
     public shared ({caller}) func search_by_category(chunksize : Nat , pageNo : Nat, is_active : Bool, category : Text) : async {data : [Types.Product]; current_page : Nat; total_pages : Nat} {
         var product_list = List.nil<Types.Product>();
         for ((k,v) in products.entries()) {
-            let product_blob = await stable_get(v, product_state);
+            // let product_blob = await stable_get(v, product_state);
             let _category = Text.toLowercase(category);
-            let product : ?Types.Product = from_candid(product_blob);
-            switch(product){
-                case null {
-                    throw Error.reject("no blob found in stable memory for the caller");
-                };
-                case(?val){
-                    if (Text.toLowercase(val.category) == _category and val.active == is_active){
-                        product_list := List.push(val, product_list);
+            // let product : ?Types.Product = from_candid(product_blob);
+            // switch(product){
+            //     case null {
+            //         throw Error.reject("no blob found in stable memory for the caller");
+            //     };
+            //     case(?val){
+                    if (Text.toLowercase(v.category) == _category and v.active == is_active){
+                        product_list := List.push(v, product_list);
                     };
-                };
-            };
+                // };
+            // };
         };
         let index_pages = Utils.paginate<(Types.Product)>(List.toArray(product_list),chunksize);
         if (index_pages.size() < pageNo) {
@@ -998,7 +999,7 @@ actor {
         let adminstatus = await isAdmin(caller);
         if (adminstatus == true){
         
-        let index_pages = Utils.paginate<(Types.SlugId,Index)>(Iter.toArray(products.entries()),chunksize);
+        let index_pages = Utils.paginate<(Types.SlugId,Types.Product)>(Iter.toArray(products.entries()),chunksize);
     
         if (index_pages.size() < pageNo) {
             throw Error.reject("Page not found");
@@ -1009,32 +1010,32 @@ actor {
         let pages_data = index_pages[pageNo];
         var product_list = List.nil<Types.Product>();
         for ((k,v) in pages_data.vals()) {
-            let product_blob = await stable_get(v, product_state);
-            let product : ?Types.Product = from_candid(product_blob);
-            switch(product){
-                case null {
-                    throw Error.reject("no blob found in stable memory for the caller"); 
-           };
-                case(?val){
-                    product_list := List.push(val, product_list);
+        //     let product_blob = await stable_get(v, product_state);
+        //     let product : ?Types.Product = from_candid(product_blob);
+        //     switch(product){
+        //         case null {
+        //             throw Error.reject("no blob found in stable memory for the caller"); 
+        //    };
+        //         case(?val){
+                    product_list := List.push(v, product_list);
                 };
-            };
-        };
+            // };
+        // };
         return { data = List.toArray(product_list); current_page = pageNo + 1; total_pages = index_pages.size(); };
         } else{
             var product_list = List.nil<Types.Product>();
             for ((k,v) in products.entries()) {
-                let product_blob = await stable_get(v, product_state);
-                let product : ?Types.Product = from_candid(product_blob);
-                switch(product){
-                    case null {
-                        throw Error.reject("no blob found in stable memory for the caller"); 
+                // let product_blob = await stable_get(v, product_state);
+                // let product : ?Types.Product = from_candid(product_blob);
+                // switch(product){
+                //     case null {
+                //         throw Error.reject("no blob found in stable memory for the caller"); 
+                //     };
+                //     case(?val){
+                    product_list := List.push(v, product_list);
                     };
-                    case(?val){
-                    product_list := List.push(val, product_list);
-                    };
-                };
-            };
+                // };
+            // };
             let active_products = List.filter<Types.Product>(
                 product_list,
                 func(p : Types.Product) : Bool {
@@ -1107,7 +1108,7 @@ actor {
 
     // ------------------------------------  CATEGORY_FUNCTIONS  ---------------------------------------------
 
-    public shared (msg) func createCategory(name : Text, cat_img : Text, featured : Bool, active : Bool) : async Result.Result<(Types.Category, Index), Types.CreateCategoryError> {
+    public shared (msg) func createCategory(name : Text, cat_img : Text, featured : Bool, active : Bool) : async Result.Result<(Types.Category), Types.CreateCategoryError> {
       // let adminstatus = await isAdmin(msg.caller);
         // if (adminstatus == false) {
         //     return #err(#UserNotAdmin); // We require the user to be admin
@@ -1124,11 +1125,11 @@ actor {
                     featured = featured;
                     active = active;
                 };
-                let category_blob = to_candid(category);
-                let category_index = await stable_add(category_blob, category_state);
+                // let category_blob = to_candid(category);
+                // let category_index = await stable_add(category_blob, category_state);
 
-                categories.put(new_slug, category_index);
-                return #ok(category, category_index);
+                categories.put(new_slug, category);
+                return #ok(category);
             };
             case (?v) {
                 // We want category to exist only once
@@ -1143,7 +1144,7 @@ actor {
         cat_img : Text,
         feaured : Bool,
         active : Bool,
-    ) : async Result.Result<(Types.Category, Index), Types.UpdateCategoryError> {
+    ) : async Result.Result<Types.Category, Types.UpdateCategoryError> {
       // let adminstatus = await isAdmin(msg.caller);
         // if (adminstatus == false) {
         //     return #err(#UserNotAdmin); // We require the user to be admin
@@ -1160,28 +1161,28 @@ actor {
                 return #err(#CategoryNotFound);
             };
             case (?v) {
-                let category_blob = await stable_get(v, category_state);
-                let category : ?Types.Category = from_candid(category_blob);
-                switch (category) {
-                    case null {
-                        throw Error.reject("no blob found in stable memory for the caller");
-                    };
-                    case (?val) {
+                // let category_blob = await stable_get(v, category_state);
+                // let category : ?Types.Category = from_candid(category_blob);
+                // switch (category) {
+                    // case null {
+                        // throw Error.reject("no blob found in stable memory for the caller");
+                    // };
+                    // case (?val) {
                 let category : Types.Category = {
                     name = name;
-                    slug = val.slug;
+                    slug = v.slug;
                     category_img = cat_img;
                     featured = feaured;
                     active = active;
 
                 };
-                let category_blob = to_candid(category);
-                let index = await update_stable(v, category_blob, category_state);
+                // let category_blob = to_candid(category);
+                // let index = await update_stable(v, category_blob, category_state);
 
-                categories.put(id, index);
-                return #ok(category,index);
-            };
-        };
+                categories.put(id, category);
+                return #ok(category);
+            // };
+        // };
         };
         };
     };
@@ -1190,16 +1191,16 @@ actor {
         let category = categories.get(id);
         switch (category) {
             case (?v) {
-                let category_blob = await stable_get(v, category_state);
-                let category : ?Types.Category = from_candid(category_blob);
-                switch (category) {
-                    case null {
-                        throw Error.reject("no blob found in stable memory for the caller");
-                    };
-                    case (?val) {
-                        return #ok(val);
-                    };
-                };
+                // let category_blob = await stable_get(v, category_state);
+                // let category : ?Types.Category = from_candid(category_blob);
+                // switch (category) {
+                //     case null {
+                //         throw Error.reject("no blob found in stable memory for the caller");
+                //     };
+                //     case (?val) {
+                        return #ok(v);
+                    // };
+                // };
             };
             case null {
                 return #err(#CategoryNotFound);
@@ -1219,7 +1220,7 @@ actor {
 
     // 📍📍📍📍📍
     public shared func listCategories(chunkSize : Nat , pageNo : Nat) : async {data :[Types.Category]; current_page : Nat; total_pages : Nat} {
-        let index_pages = Utils.paginate<(Types.SlugId, Index)>(Iter.toArray(categories.entries()),chunkSize);
+        let index_pages = Utils.paginate<(Types.SlugId, Types.Category)>(Iter.toArray(categories.entries()),chunkSize);
         if (index_pages.size() < pageNo) {
             throw Error.reject("Page not found");
         };
@@ -1229,16 +1230,16 @@ actor {
         var pages_data = index_pages[pageNo];
         var category_list = List.nil<Types.Category>();
         for ((k,v) in pages_data.vals()) {
-            let category_blob = await stable_get(v, category_state);
-            let category : ?Types.Category = from_candid(category_blob);
-            switch(category){
-                case null {
-                    throw Error.reject("no blob found in stable memory for the caller");
-                };
-                case(?val){
-                    category_list := List.push(val, category_list);
-                };
-            };
+            // let category_blob = await stable_get(v, category_state);
+            // let category : ?Types.Category = from_candid(category_blob);
+            // switch(category){
+                // case null {
+            //         throw Error.reject("no blob found in stable memory for the caller");
+            //     };
+                // case(?val){
+                    category_list := List.push(v, category_list);
+                // };
+            // };
         };
         return { data = List.toArray(category_list); current_page = pageNo + 1; total_pages = index_pages.size(); };
         
@@ -1258,7 +1259,7 @@ actor {
 
     //  -----------------------------------   Wishlist_Functions ---------------------------------------------------------------------------------------------------------
 
-    public shared (msg) func addtoWishlist(product_slug : Text, size : Text , color : Text) : async Result.Result<(Types.wishlistItemobject, Index), Types.CreateWishlistItemError> {
+    public shared (msg) func addtoWishlist(product_slug : Text, size : Text , color : Text) : async Result.Result<Types.wishlistItemobject, Types.CreateWishlistItemError> {
 
         // if (Principal.isAnonymous(msg.caller)) {
         //     return #err(#UserNotAuthenticated); // We require the user to be authenticated,
@@ -1282,22 +1283,22 @@ actor {
                     userprincipal = userP;
                     wishlistItem = List.push(wishlistItem, wishlistitems);
                 }; 
-                let wishlist_blob = to_candid(wishlistitemobject);
-                let wishlist_index = await stable_add(wishlist_blob, wishlist_state);
-                wishlistItems.put(userP, wishlist_index);
-                return #ok(wishlistitemobject, wishlist_index);
+                // let wishlist_blob = to_candid(wishlistitemobject);
+                // let wishlist_index = await stable_add(wishlist_blob, wishlist_state);
+                wishlistItems.put(userP, wishlistitemobject);
+                return #ok(wishlistitemobject);
             };
             case (?v) {
                 Debug.print("wishlist items found for the user so we are adding the new one to the existing list !!!!");
-                let wishlist_blob = await stable_get(v, wishlist_state);
-                let wishlistitems : ?Types.wishlistItemobject = from_candid(wishlist_blob);
-                switch (wishlistitems) { 
-                    case null {
-                        throw Error.reject("no blob found in stable memory for the caller");
-                    };
-                    case (?val) {
-                        Debug.print("items are " # debug_show(val));
-                        var newWishlistItems = val.wishlistItem;
+                // let wishlist_blob = await stable_get(v, wishlist_state);
+                // let wishlistitems : ?Types.wishlistItemobject = from_candid(wishlist_blob);
+                // switch (wishlistitems) { 
+                    // case null {
+                        // throw Error.reject("no blob found in stable memory for the caller");
+                    // };
+                    // case (?val) {
+                        Debug.print("items are " # debug_show(v));
+                        var newWishlistItems = v.wishlistItem;
 
                         Debug.print("cartlist before adding the new item is: " # debug_show(newWishlistItems));
 
@@ -1307,11 +1308,12 @@ actor {
                             userprincipal = userP;
                             wishlistItem = updatedWishlistItems;
                         };
-                        let newWishlistBlob = to_candid(newobject);
-                        let index = await update_stable(v, newWishlistBlob, wishlist_state);
-                        return #ok(newobject, index);
-                    };
-                };
+                        // let newWishlistBlob = to_candid(newobject);
+                        // let index = await update_stable(v, newWishlistBlob, wishlist_state);
+                        wishlistItems.put(userP, newobject);
+                        return #ok(newobject);
+                    // };
+                // };
             };
         };
     };
@@ -1355,14 +1357,14 @@ actor {
                return #err(#listisempty);
            };
            case (?v) {
-               let wishlist_blob = await stable_get(v, wishlist_state);
-               let wishlistitems : ?Types.wishlistItemobject = from_candid(wishlist_blob);
-               switch (wishlistitems) {
-                   case null {
-                       throw Error.reject("no blob found in stable memory for the caller");
-                   };
-                   case (?val) {
-                       let newWishlistItems = val.wishlistItem;
+            //    let wishlist_blob = await stable_get(v, wishlist_state);
+            //    let wishlistitems : ?Types.wishlistItemobject = from_candid(wishlist_blob);
+            //    switch (wishlistitems) {
+                //    case null {
+                    //    throw Error.reject("no blob found in stable memory for the caller");
+                //    };
+                //    case (?val) {
+                       let newWishlistItems = v.wishlistItem;
                        Debug.print("newWishlistItems are " # debug_show(newWishlistItems));
                        let result = List.find<Types.WishlistItem>(
                            newWishlistItems,
@@ -1393,11 +1395,12 @@ actor {
                                     wishlistItem = updatedWishlistItems;
                                 };
 
-                                let newWishlistBlob = to_candid(newobject);
-                                ignore await update_stable(v, newWishlistBlob, wishlist_state);
+                                // let newWishlistBlob = to_candid(newobject);
+                                // ignore await update_stable(v, newWishlistBlob, wishlist_state);
+                                wishlistItems.put(msg.caller, newobject);
                                 return #ok(newobject);
-                            };
-                        };
+                            // };
+                        // };
                     };
                 };
             };
@@ -1412,16 +1415,16 @@ actor {
                 throw Error.reject("No wishlist items found");
             };
             case (?v) {
-                let items_blob = await stable_get(v, wishlist_state);
-                Debug.print("items_blob is " # debug_show(items_blob));
-                let items_data : ?Types.wishlistItemobject = from_candid(items_blob);
-                switch (items_data) {
-                    case null {
-                        throw Error.reject("no blob found in stable memory for the caller");
-                    };
-                    case (?val) {
-                        Debug.print("items are " # debug_show(val));
-                        let pages = Utils.paginate<Types.WishlistItem>(List.toArray(val.wishlistItem),chunkSize);
+                // let items_blob = await stable_get(v, wishlist_state);
+                // Debug.print("items_blob is " # debug_show(items_blob));
+                // let items_data : ?Types.wishlistItemobject = from_candid(items_blob);
+                // switch (items_data) {
+                //     case null {
+                //         throw Error.reject("no blob found in stable memory for the caller");
+                //     };
+                //     case (?val) {
+                        Debug.print("items are " # debug_show(v));
+                        let pages = Utils.paginate<Types.WishlistItem>(List.toArray(v.wishlistItem),chunkSize);
         
                         if (pages.size() < pageNo) {
                             throw Error.reject("Page not found");
@@ -1432,8 +1435,8 @@ actor {
                         
                         Debug.print("pages are " # debug_show(pages));
                     return { data = pages[pageNo]; current_page = pageNo + 1; total_pages = pages.size();   
-                    };
-                };
+                    // };
+                // };
             };  
             };
         };
@@ -1441,7 +1444,7 @@ actor {
 
     //  -----------------------------------   Cart_Functions -----------------------------------------------------------------------------------------------------------------
 
-    public shared (msg) func addtoCartItems(product_slug : Text, size : Text, color : Text, qty : Nat8) : async Result.Result<(Types.cartItemobject , Index), Types.CreateCartItemsError> {
+    public shared (msg) func addtoCartItems(product_slug : Text, size : Text, color : Text, qty : Nat8) : async Result.Result<Types.cartItemobject , Types.CreateCartItemsError> {
 
         // if (Principal.isAnonymous(msg.caller)) {
         //     return #err(#UserNotAuthenticated);
@@ -1465,23 +1468,23 @@ actor {
                 Debug.print("No cart items found for the user so we are adding the first one !!!!");
                 var cartlist : List.List<Types.CartItem> = List.nil<Types.CartItem>();
                 var cartobject : Types.cartItemobject = {userprincipal = userP ;cartItemlist = List.push(cartItem, cartlist)};
-                let cart_blob = to_candid(cartobject);
-                let cart_index = await stable_add(cart_blob, cart_state);
-                cartItems.put(userP, cart_index);   
-                return #ok(cartobject, cart_index);
+                // let cart_blob = to_candid(cartobject);
+                // let cart_index = await stable_add(cart_blob, cart_state);
+                cartItems.put(userP, cartobject);   
+                return #ok(cartobject);
             };
             case (?v) {
                 Debug.print("Cart items found for the user so we are adding the new one to the existing list !!!!");
-                let cart_blob = await stable_get(v, cart_state);
-                Debug.print("cart_blob is " # debug_show(cart_blob));
-                var cartitemsobject : ?Types.cartItemobject = from_candid(cart_blob);
-                switch (cartitemsobject) {
-                    case null {
-                        throw Error.reject("No items forund in the stable memory for this one ");
-                    };
-                    case (?val) {
-                        Debug.print("items are " # debug_show(val));
-                            var cartlist = val.cartItemlist;
+                // let cart_blob = await stable_get(v, cart_state);
+                // Debug.print("cart_blob is " # debug_show(cart_blob));
+                // var cartitemsobject : ?Types.cartItemobject = from_candid(cart_blob);
+                // switch (cartitemsobject) {
+                    // case null {
+                        // throw Error.reject("No items forund in the stable memory for this one ");
+                    // };
+                    // case (?val) {
+                        // Debug.print("items are " # debug_show(val));
+                            var cartlist = v.cartItemlist;
                             Debug.print("cartlist before adding the new item is: " # debug_show(cartlist));
                             let newlist =  List.push(cartItem, cartlist);
                             Debug.print("cartlist after adding new item is " # debug_show(newlist));
@@ -1490,16 +1493,16 @@ actor {
 
                             Debug.print("new cart object after update is : " # debug_show(newcartobject));
 
-                            let newCartBlob = to_candid(newcartobject);
+                            // let newCartBlob = to_candid(newcartobject);
 
-                            let index = await update_stable(v, newCartBlob, cart_state);
-
-                            return #ok(newcartobject, index);
-                            };
-                            case (_) {
-                                return #err(#CartItemAlreadyExists);
-                            };
-                        };
+                            // let index = await update_stable(v, newCartBlob, cart_state);
+                            cartItems.put(msg.caller,newcartobject);
+                            return #ok(newcartobject);
+                            // };
+                            // case (_) {
+                            //     return #err(#CartItemAlreadyExists);
+                            // };
+                        // };
                     };
                 };
             };
@@ -1522,21 +1525,21 @@ actor {
                 return #err(#CartisEmpty);
             };
             case (?v) {
-                let cart_blob = await stable_get(v, cart_state);
-                let cartitems : ?Types.cartItemobject = from_candid(cart_blob);
-                switch (cartitems) {
-                    case null {
-                        throw Error.reject("no blob found in stable memory for the caller");
-                    };
-                    case (?val) {
-                        let cartitemslist = val.cartItemlist;
-                        var cartItems = List.find<Types.CartItem>(
+                // let cart_blob = await stable_get(v, cart_state);
+                // let cartitems : ?Types.cartItemobject = from_candid(cart_blob);
+                // switch (cartitems) {
+                    // case null {
+                        // throw Error.reject("no blob found in stable memory for the caller");
+                    // };
+                    // case (?val) {
+                        let cartitemslist = v.cartItemlist;
+                        var _cartItems = List.find<Types.CartItem>(
                             cartitemslist,
                             func(a : Types.CartItem) : Bool {
                                 return a.product_slug == slug;
                             },
                         );
-                        switch (cartItems) {
+                        switch (_cartItems) {
                             case (null) {
                                 throw Error.reject("no item found in the cart");
                             };
@@ -1557,11 +1560,12 @@ actor {
                                 );
                                 let newlist = List.push(cartItem, previouslist);
                                 let newcartobject : Types.cartItemobject = {userprincipal = msg.caller; cartItemlist = newlist};
-                                let cart_blob = to_candid(newcartobject);
-                                ignore await update_stable(v, cart_blob, cart_state);
+                                // let cart_blob = to_candid(newcartobject);
+                                // ignore await update_stable(v, cart_blob, cart_state);
+                                cartItems.put(msg.caller,newcartobject);
                                 return #ok(cartItem);
-                            };
-                        };
+                            // };
+                        // };
                     };
                 };
             };
@@ -1579,14 +1583,14 @@ actor {
                     return #err(#CartisEmpty);
                 };
                 case (?v) {
-                    let cart_blob = await stable_get(v, cart_state);
-                    var cartitemsobject : ?Types.cartItemobject = from_candid(cart_blob);
-                    switch (cartitemsobject) {
-                        case null {
-                            throw Error.reject("no blob found in stable memory for the caller");
-                        };
-                        case (?val) {
-                            var newCartItemslist = val.cartItemlist;
+                    // let cart_blob = await stable_get(v, cart_state);
+                    // var cartitemsobject : ?Types.cartItemobject = from_candid(cart_blob);
+                    // switch (cartitemsobject) {
+                        // case null {
+                            // throw Error.reject("no blob found in stable memory for the caller");
+                        // };
+                        // case (?val) {
+                            var newCartItemslist = v.cartItemlist;
                             Debug.print("items before deletion are " # " ---------> " #  debug_show(newCartItemslist));
                             let result = List.find<Types.CartItem>(
                                 newCartItemslist,
@@ -1615,11 +1619,12 @@ actor {
                                         });
 
                                         let newcartitemsobject : Types.cartItemobject = {userprincipal = msg.caller ;cartItemlist = after_deletion_list};
-                                        let newCartBlob = to_candid(newcartitemsobject);
-                                        ignore await update_stable(v, newCartBlob, cart_state);
+                                        // let newCartBlob = to_candid(newcartitemsobject);
+                                        // ignore await update_stable(v, newCartBlob, cart_state);
+                                        cartItems.put(msg.caller,newcartitemsobject);
                                         return #ok(());
-                            };
-                        };
+                            // };
+                        // };
                     };
                 };
             };
@@ -1637,13 +1642,13 @@ actor {
                 throw Error.reject("No cart items found");
             };
             case (?v) {
-                let cart_blob = await stable_get(v, cart_state);
-                Debug.print("cart_blob is " # debug_show(cart_blob));
-                let cartitems : ?Types.cartItemobject = from_candid(cart_blob);
-                switch (cartitems) {
-                    case (?val) {
-                        Debug.print("items are " # debug_show(val));
-                        let pages = Utils.paginate<Types.CartItem>(List.toArray(val.cartItemlist),chunkSize);
+                // let cart_blob = await stable_get(v, cart_state);
+                // Debug.print("cart_blob is " # debug_show(cart_blob));
+                // let cartitems : ?Types.cartItemobject = from_candid(cart_blob);
+                // switch (cartitems) {
+                    // case (?val) {
+                        // Debug.print("items are " # debug_show(val));
+                        let pages = Utils.paginate<Types.CartItem>(List.toArray(v.cartItemlist),chunkSize);
                         if (pages.size() < pageNo) {
                             throw Error.reject("Page not found");
                         };
@@ -1652,11 +1657,11 @@ actor {
                         };
                         Debug.print("pages are " # debug_show(pages));
                         return { data = pages[pageNo]; current_page = pageNo + 1; total_pages = pages.size(); 
-                    };
-                };
-                case (_){
-                    throw Error.reject("no blob found in stable memory for the caller");
-                };
+                    // };
+                // };
+                // case (_){
+                //     throw Error.reject("no blob found in stable memory for the caller");
+                // };
             };
         };
     };
@@ -1689,7 +1694,7 @@ actor {
         return shippingamount;
     };
 
-    public shared (msg)func createOrder(order : Types.NewOrder ) : async Result.Result<Types.Order, Types.OrderError> {
+    func createOrder(order : Types.NewOrder ) : async Result.Result<Types.Order, Types.OrderError> {
         // if (Principal.isAnonymous(msg.caller)) {
         //     return #err(#UserNotAuthenticated); // We require the user to be authenticated,
         // };
@@ -1715,96 +1720,99 @@ actor {
                     timeCreated = Time.now();
                     timeUpdated = Time.now();
                 };
-                let order_blob = to_candid(newOrder);
-                let order_index = await stable_add(order_blob, order_state);
-                orders.put(orderId, order_index);
-
+                // let order_blob = to_candid(newOrder);
+                // let order_index = await stable_add(order_blob, order_state);
+                orders.put(orderId, newOrder);
                 addressToOrder.put(newOrder.paymentAddress, newOrder.id );
                 return #ok(newOrder);
             };
         };
     };
 
-    // public shared (msg) func place_order(neworder : Types.NewOrder , from : Principal, amount : Nat , paymentOption : { #icp; #ckbtc }) : async  Result.Result<(Types.Order , ICRC.Result), Types.OrderError> {
-    //     if (Principal.isAnonymous(msg.caller)) {
-    //         return #err(#UserNotAuthenticated); // We require the user to be authenticated,
-    //     };
-    //     switch (paymentOption){
-    //         case (#icp) {
-    //             let response : ICRC.Result_2 = await icrc2_transferFrom(icpLedger, from, payment_address, amount);
-    //             switch (response) {
-    //                 case (#Err(index)) {
-    //                     throw Error.reject(debug_show (index));
-    //                 };
-    //                 case (#Ok(res)) {
-    //                     let order : Types.NewOrder = {
-    //                         userid = msg.caller;
-    //                         shippingAddress = neworder.shippingAddress;
-    //                         products = neworder.products;
-    //                         totalAmount = neworder.totalAmount;
-    //                         subTotalAmount = neworder.subTotalAmount;
-    //                         orderStatus = neworder.orderStatus;
-    //                         paymentStatus = neworder.paymentStatus;
-    //                         paymentAddress = neworder.paymentAddress;
-    //                         paymentMethod = neworder.paymentMethod;
-    //                         shippingAmount = neworder.shippingAmount;
-    //                         awb = neworder.awb;
-    //                     };
+    public shared (msg) func place_order(neworder : Types.NewOrder , from : Principal, amount : Nat , paymentOption : { #icp; #ckbtc }) : async  Result.Result<(Types.Order , ICRC.Result), Types.OrderError> {
+        if (Principal.isAnonymous(msg.caller)) {
+            return #err(#UserNotAuthenticated); // We require the user to be authenticated,
+        };
+        switch (paymentOption){
+            case (#icp) {
+                let response : ICRC.Result_2 = await icrc2_transferFrom(icpLedger, from, payment_address, amount);
+                switch (response) {
+                    case (#Err(index)) {
+                        throw Error.reject(debug_show (index));
+                    };
+                    case (#Ok(res)) {
+                        let order : Types.NewOrder = {
+                            userid = msg.caller;
+                            shippingAddress = neworder.shippingAddress;
+                            products = neworder.products;
+                            totalAmount = neworder.totalAmount;
+                            subTotalAmount = neworder.subTotalAmount;
+                            orderStatus = neworder.orderStatus;
+                            paymentStatus = neworder.paymentStatus;
+                            paymentAddress = neworder.paymentAddress;
+                            paymentMethod = neworder.paymentMethod;
+                            shippingAmount = neworder.shippingAmount;
+                            awb = neworder.awb;
+                        };
 
-    //                     let order_status = await createOrder(order);
-    //                     switch (order_status) {
-    //                         case (#err(index)) {
-    //                             return #err(index);
-    //                         };
-    //                         case (#ok(response)) {
-    //                             return #ok(response,#Ok(res));
-    //                         };
-    //                     };
-    //                 };
-    //             }; 
-    //         };
-    //         case (#ckbtc) {
-    //             let response : ICRC.Result_2 = await icrc2_transferFrom(ckbtcLedger, from, payment_address, amount);
-    //             switch (response) {
-    //                 case (#Err(index)) {
-    //                     throw Error.reject(debug_show (index));
-    //                 };
-    //                 case (#Ok(res)) {
-    //                     let order : Types.NewOrder = {
-    //                         userid = msg.caller;
-    //                         shippingAddress = neworder.shippingAddress;
-    //                         products = neworder.products;
-    //                         totalAmount = neworder.totalAmount;
-    //                         subTotalAmount = neworder.subTotalAmount;
-    //                         orderStatus = neworder.orderStatus;
-    //                         paymentStatus = neworder.paymentStatus;
-    //                         paymentAddress = neworder.paymentAddress;
-    //                         paymentMethod = neworder.paymentMethod;
-    //                         shippingAmount = neworder.shippingAmount;
-    //                         awb = neworder.awb;
-    //                     };
-    //                     let order_status = await createOrder(order);
-    //                     switch (order_status) {
-    //                         case (#err(index)) {
-    //                             return #err(#UnableToCreate);
-    //                         };
-    //                         case (#ok(response)) {
-    //                             return #ok(response,#Ok(res));
-    //                         };
-    //                     };
-    //                 };
-    //             };
-    //     };
+                        let order_status = await createOrder(order);
+                        switch (order_status) {
+                            case (#err(index)) {
+                                return #err(index);
+                            };
+                            case (#ok(response)) {
+                                return #ok(response,#Ok(res));
+                            };
+                        };
+                    };
+                }; 
+            };
+            case (#ckbtc) {
+                let response : ICRC.Result_2 = await icrc2_transferFrom(ckbtcLedger, from, payment_address, amount);
+                switch (response) {
+                    case (#Err(index)) {
+                        throw Error.reject(debug_show (index));
+                    };
+                    case (#Ok(res)) {
+                        let order : Types.NewOrder = {
+                            userid = msg.caller;
+                            shippingAddress = neworder.shippingAddress;
+                            products = neworder.products;
+                            totalAmount = neworder.totalAmount;
+                            subTotalAmount = neworder.subTotalAmount;
+                            orderStatus = neworder.orderStatus;
+                            paymentStatus = neworder.paymentStatus;
+                            paymentAddress = neworder.paymentAddress;
+                            paymentMethod = neworder.paymentMethod;
+                            shippingAmount = neworder.shippingAmount;
+                            awb = neworder.awb;
+                        };
+                        let order_status = await createOrder(order);
+                        switch (order_status) {
+                            case (#err(index)) {
+                                return #err(#UnableToCreate);
+                            };
+                            case (#ok(response)) {
+                                return #ok(response,#Ok(res));
+                            };
+                        };
+                    };
+                };
+        };
 
-    //     };
-    // };
+        };
+    };
 
 
     func icrc2_transferFrom(ledgerId : Text, transferfrom : Principal, transferto : Principal, amount : Nat) : async (ICRC.Result_2) {
 
+                Debug.print("transferFrom" # debug_show(transferfrom));
+                Debug.print("transferTo" # debug_show(transferto));
+                
+
         let ledger = actor (ledgerId) : ICRC.Token;
         await ledger.icrc2_transfer_from({
-            spender_subaccount = null;
+            spender_subaccount = null;    
             from = { owner = transferfrom; subaccount = null };
             to = { owner = transferto; subaccount = null };
             amount;
@@ -1841,35 +1849,35 @@ actor {
                 return #err(#OrderNotFound);
             };
             case (?v) {
-                let order_blob = await stable_get(v, order_state);
-                let order : ?Types.Order = from_candid(order_blob);
-                switch (order) {
-                    case null {
-                        throw Error.reject("no blob found in stable memory for the caller");
-                    };
-                    case (?val) {
+                // let order_blob = await stable_get(v, order_state);
+                // let order : ?Types.Order = from_candid(order_blob);
+                // switch (order) {
+                    // case null {
+                        // throw Error.reject("no blob found in stable memory for the caller");
+                    // };
+                    // case (?val) {
                     let order : Types.Order = {
-                        id = val.id;
-                        shippingAddress = val.shippingAddress;
-                        products = val.products;
-                        userid = val.userid;
-                        totalAmount = val.totalAmount;
-                        subTotalAmount = val.subTotalAmount;
+                        id = v.id;
+                        shippingAddress = v.shippingAddress;
+                        products = v.products;
+                        userid = v.userid;
+                        totalAmount = v.totalAmount;
+                        subTotalAmount = v.subTotalAmount;
                         shippingAmount = shippingamount;
-                        orderStatus = val.orderStatus;
-                        paymentStatus = val.paymentStatus;
-                        paymentAddress = val.paymentAddress;
-                        paymentMethod = val.paymentMethod;
+                        orderStatus = v.orderStatus;
+                        paymentStatus = v.paymentStatus;
+                        paymentAddress = v.paymentAddress;
+                        paymentMethod = v.paymentMethod;
                         awb = awb;
-                        timeCreated = val.timeCreated;
+                        timeCreated = v.timeCreated;
                         timeUpdated = Time.now();
                     };
-                    let order_blob = to_candid(order);
-                    let index = await update_stable(v, order_blob, order_state);
-                    orders.put(id, index);
+                    // let order_blob = to_candid(order);
+                    // let index = await update_stable(v, order_blob, order_state);
+                    orders.put(id, order);
                 return #ok(order);
-            };
-            };
+            // };
+            // };
             };
         };
     };
@@ -1888,35 +1896,35 @@ actor {
                 return #err(#OrderNotFound);
             };
             case (?v) {
-                let order_blob = await stable_get(v, order_state);
-                let order : ?Types.Order = from_candid(order_blob);
-                switch (order) {
-                    case null {
-                        throw Error.reject("no blob found in stable memory for the caller");
-                    };
-                    case (?val) {
+                // let order_blob = await stable_get(v, order_state);
+                // let order : ?Types.Order = from_candid(order_blob);
+                // switch (order) {
+                    // case null {
+                        // throw Error.reject("no blob found in stable memory for the caller");
+                    // };
+                    // case (?val) {
                 let order : Types.Order = {
-                    id = val.id;
-                    shippingAddress = val.shippingAddress;
-                    products = val.products;
-                    userid = val.userid;
-                    totalAmount = val.totalAmount;
-                    subTotalAmount = val.subTotalAmount;
+                    id = v.id;
+                    shippingAddress = v.shippingAddress;
+                    products = v.products;
+                    userid = v.userid;
+                    totalAmount = v.totalAmount;
+                    subTotalAmount = v.subTotalAmount;
                     shippingAmount = shippingamount;
                     orderStatus = orderStatus;
-                    paymentStatus = val.paymentStatus;
-                    paymentAddress = val.paymentAddress;
-                    paymentMethod = val.paymentMethod;
-                    awb = val.awb;
-                    timeCreated = val.timeCreated;
+                    paymentStatus = v.paymentStatus;
+                    paymentAddress = v.paymentAddress;
+                    paymentMethod = v.paymentMethod;
+                    awb = v.awb;
+                    timeCreated = v.timeCreated;
                     timeUpdated = Time.now();
                 };
-                let order_blob = to_candid(order);
-                let index = await update_stable(v, order_blob, order_state);
-                orders.put(id, index);
+                // let order_blob = to_candid(order);
+                // let index = await update_stable(v, order_blob, order_state);
+                orders.put(id, order);
                 return #ok(order);
-                    };
-                };
+                    // };
+                // };
             };
         };
     };
@@ -1928,7 +1936,7 @@ actor {
         //     throw Error.reject("You are not an admin !") // We require the user to be admin
         // };
 
-        let pages = Utils.paginate<(Types.OrderId, Index)>(Iter.toArray(orders.entries()),chunkSize);
+        let pages = Utils.paginate<(Types.OrderId, Types.Order)>(Iter.toArray(orders.entries()),chunkSize);
         if (pages.size() < pageNo) {
             throw Error.reject("Page not found");
         };
@@ -1938,16 +1946,16 @@ actor {
         let pages_data = pages[pageNo];
         var order_list = List.nil<Types.Order>();
         for ((k,v) in pages_data.vals()){
-            let order_blob = await stable_get(v, order_state);
-            let order : ?Types.Order = from_candid(order_blob);
-            switch(order){
-                case null {
-                    throw Error.reject("no blob found in stable memory for the caller");
-                };
-                case(?val){
-                    order_list := List.push(val, order_list);
-                };
-            };
+            // let order_blob = await stable_get(v, order_state);
+            // let order : ?Types.Order = from_candid(order_blob);
+            // switch(order){
+                // case null {
+                    // throw Error.reject("no blob found in stable memory for the caller");
+                // };
+                // case(?val){
+                    order_list := List.push(v, order_list);
+                // };
+            // };
         };
         return { data = List.toArray(order_list); current_page = pageNo + 1; total_pages = pages.size() };
     };
@@ -1976,20 +1984,20 @@ actor {
         
         for ((k,v) in orders.entries()) {
         // Retrieve the order from stable memory
-        let order_blob = await stable_get(v, order_state);
-        let order : ?Types.Order = from_candid(order_blob);
+        // let order_blob = await stable_get(v, order_state);
+        // let order : ?Types.Order = from_candid(order_blob);
 
-        switch (order) {
-            case null {
-                throw Error.reject("No blob found in stable memory for the caller");
-            };
-            case (?val) {
-                if (val.userid == caller) {
+        // switch (order) {
+        //     case null {
+        //         throw Error.reject("No blob found in stable memory for the caller");
+        //     };
+        //     case (?val) {
+        //         if (val.userid == caller) {
                     // Add to the list of user orders
-                    userOrderList := List.push(val, userOrderList);
-                };
-            };
-        };
+                    userOrderList := List.push(v, userOrderList);
+                // };
+            // };
+        // };
     };
 
         // Filter orders to include only those belonging to `caller`
@@ -2014,16 +2022,16 @@ actor {
                 return #err(#OrderNotFound);
             };
             case (?v) {
-        let order_blob = await stable_get(v, order_state);
-        let order : ?Types.Order = from_candid(order_blob);
-        switch (order) {
-            case null {
-                return #err(#OrderNotFound);
-            };
-            case (?val) {
-                return #ok(val);
-            };
-        };
+                // let order_blob = await stable_get(v, order_state);
+                // let order : ?Types.Order = from_candid(order_blob);
+                // switch (order) {
+                //     case null {
+                //         return #err(#OrderNotFound);
+                //     };
+                    // case (?val) {
+                        return #ok(v);
+                    // };
+                // };
             };
         };
     };
@@ -2052,16 +2060,16 @@ actor {
                 return #err(#OrderNotFound);
             };
             case (?v) {
-                let order_blob = await stable_get(v, order_state);
-                let order : ?Types.Order = from_candid(order_blob);
-                switch (order) {
-                    case null {
-                        throw Error.reject("no blob found in stable memory for the caller");
-                    };
-                    case (?val) {
-                        return #ok(val.paymentStatus);
-                    };
-                };
+                // let order_blob = await stable_get(v, order_state);
+                // let order : ?Types.Order = from_candid(order_blob);
+                // switch (order) {
+                //     case null {
+                //         throw Error.reject("no blob found in stable memory for the caller");
+                //     };
+                //     case (?val) {
+                        return #ok(v.paymentStatus);
+                    // };
+                // };
             
             };
         };
@@ -2082,35 +2090,35 @@ actor {
                 return #err(#OrderNotFound);
             };
             case (?v) {
-                let order_blob = await stable_get(v, order_state);
-                let order : ?Types.Order = from_candid(order_blob);
-                switch (order) {
-                    case null {
-                        throw Error.reject("no blob found in stable memory for the caller");
-                    };
-                    case (?val) {
+                // let order_blob = await stable_get(v, order_state);
+                // let order : ?Types.Order = from_candid(order_blob);
+                // switch (order) {
+                //     case null {
+                //         throw Error.reject("no blob found in stable memory for the caller");
+                //     };
+                //     case (?val) {
                 let order : Types.Order = {
-                    id = val.id;
-                    shippingAddress = val.shippingAddress;
-                    products = val.products;
-                    userid = val.userid;
-                    totalAmount = val.totalAmount;
-                    subTotalAmount = val.subTotalAmount;
+                    id = v.id;
+                    shippingAddress = v.shippingAddress;
+                    products = v.products;
+                    userid = v.userid;
+                    totalAmount = v.totalAmount;
+                    subTotalAmount = v.subTotalAmount;
                     shippingAmount = shippingamount;
-                    orderStatus = val.orderStatus;
+                    orderStatus = v.orderStatus;
                     paymentStatus = paymentStatus;
-                    paymentAddress = val.paymentAddress;
-                    paymentMethod = val.paymentMethod;
-                    awb = val.awb;
-                    timeCreated = val.timeCreated;
+                    paymentAddress = v.paymentAddress;
+                    paymentMethod = v.paymentMethod;
+                    awb = v.awb;
+                    timeCreated = v.timeCreated;
                     timeUpdated = Time.now();
                 };
-                let order_blob = to_candid(order);
-                let index = await update_stable(v, order_blob, order_state);
-                orders.put(id, index);
+                // let order_blob = to_candid(order);
+                // let index = await update_stable(v, order_blob, order_state);
+                orders.put(id, order);
                 return #ok(order);
-            };
-                };
+            // };
+                // };
             };
         };
     };
@@ -2134,11 +2142,11 @@ actor {
             time_created = Time.now();
             time_updated = Time.now();
         };
-        let contact_blob = to_candid(contact);
+        // let contact_blob = to_candid(contact);
         switch (contacts.get(contactId)) {
             case null {
-                let contact_index = await stable_add(contact_blob, contact_state);
-                contacts.put(contactId, contact_index);
+                // let contact_index = await stable_add(contact_blob, contact_state);
+                contacts.put(contactId, contact);
                 return #ok(contact);
             };
             case (?v) {
@@ -2166,27 +2174,27 @@ actor {
                 return #err(#ContactNotFound);
             };
             case (?v) {
-                let contactblob = await stable_get(v, contact_state);
-                let contact : ?Types.Contact = from_candid(contactblob);
-                switch (contact) {
-                    case null {
-                        throw Error.reject("no blob found in stable memory for the caller");
-                    };
-                    case (?val) {
+                // let contactblob = await stable_get(v, contact_state);
+                // let contact : ?Types.Contact = from_candid(contactblob);
+                // switch (contact) {
+                //     case null {
+                //         throw Error.reject("no blob found in stable memory for the caller");
+                //     };
+                //     case (?val) {
                 let contact : Types.Contact = {
                     id = id;
-                    email = val.email;
-                    name = val.name;
-                    contact_number = val.contact_number;
-                    message = val.message;
+                    email = v.email;
+                    name = v.name;
+                    contact_number = v.contact_number;
+                    message = v.message;
                     read = read;
-                    time_created = val.time_created;
+                    time_created = v.time_created;
                     // only update time_updated
                     time_updated = Time.now();
                 };
                 return #ok(contact);
-            };
-        };
+            // };
+        // };
             };
         };
     };
@@ -2195,16 +2203,16 @@ actor {
         let contact = contacts.get(id);
         switch (contact) {
             case (?v) {
-                let contact_blob = await stable_get(v, contact_state);
-                let contact : ?Types.Contact = from_candid(contact_blob);
-                switch (contact) {
-                    case null {
-                        throw Error.reject("no blob found in stable memory for the caller");
-                    };
-                    case (?val) {
-                        return #ok(val);
-                    };
-                };
+                // let contact_blob = await stable_get(v, contact_state);
+                // let contact : ?Types.Contact = from_candid(contact_blob);
+                // switch (contact) {
+                //     case null {
+                //         throw Error.reject("no blob found in stable memory for the caller");
+                //     };
+                    // case (?val) {
+                        return #ok(v);
+                    // };
+                // };
             };
             case null {
                 return #err(#ContactNotFound);
@@ -2229,7 +2237,7 @@ actor {
         // if (adminstatus == false) {
         //     throw Error.reject("You are not an admin !") 
         // };
-        let pages = Utils.paginate<(Types.ContactId, Index)>(Iter.toArray(contacts.entries()),chunkSize);
+        let pages = Utils.paginate<(Types.ContactId, Types.Contact)>(Iter.toArray(contacts.entries()),chunkSize);
         if (pages.size() < pageNo) {
             throw Error.reject("Page not found");
         };
@@ -2239,16 +2247,16 @@ actor {
         let pages_data = pages[pageNo];
         var contact_list = List.nil<Types.Contact>();
         for ((k,v) in pages_data.vals()){
-            let contact_blob = await stable_get(v, contact_state);
-            let contact : ?Types.Contact = from_candid(contact_blob);
-            switch(contact){
-                case null {
-                    throw Error.reject("no blob found in stable memory for the caller");
-                };
-                case(?val){
-                    contact_list := List.push(val, contact_list);
-                };
-            };
+            // let contact_blob = await stable_get(v, contact_state);
+            // let contact : ?Types.Contact = from_candid(contact_blob);
+            // switch(contact){
+            //     case null {
+            //         throw Error.reject("no blob found in stable memory for the caller");
+            //     };
+                // case(?val){
+                    contact_list := List.push(v, contact_list);
+                // };
+            // };
         };
         return { data = List.toArray(contact_list); current_page = pageNo + 1; total_pages = pages.size() };
     };
@@ -2335,7 +2343,7 @@ actor {
         "http://127.0.0.1:4943/?canisterId=bd3sg-teaaa-aaaaa-qaaba-cai", 
         "http://127.0.0.1:4943/?canisterId=bkyz2-fmaaa-aaaaa-qaaaq-cai", 
         "https://nfid.one",
-        "https://dev.nfid.one"];
+        "https://dev.nfid.one","https://j7hwu-eyaaa-aaaak-aoyja-cai.icp0.io"];
 
         return {
             trusted_origins = trusted_origins;

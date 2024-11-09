@@ -24,12 +24,12 @@ import { useAuth } from "../auth/useClient";
 /* ----------------------------------------------------------------------------------------------------- */
 const MyOrderPage = () => {
   return (
-    <AnimationView>
-      <ScrollToTop />
-      <Header title={"Orders"}></Header>
-      <MyOrderPageContainerMain />
-      <Footer></Footer>
-    </AnimationView>
+    // <AnimationView>
+    //   <ScrollToTop />
+    //   <Header title={"Orders"}></Header>
+    <MyOrderPageContainerMain />
+    //   <Footer></Footer>
+    // </AnimationView>
   );
 };
 
@@ -64,14 +64,12 @@ const MyOrders = () => {
   const [myOrderList, setMyOrderList] = useState(null);
   const [finalIsLoading, setFinalIsLoading] = useState(true);
   // const {backend} = useBackend()
-  const { backend } = useAuth();
+  const { backend, principal } = useAuth();
   const { OrderListLoader } = LoadingScreen();
 
   useEffect(() => {
     getOrderList();
-  }, [backend]);
-
-  console.log(orderList, "Hello form the myorderpage");
+  }, [principal]);
 
   useEffect(() => {
     const updatedMyOrderList = orderList?.map(
@@ -93,7 +91,7 @@ const MyOrders = () => {
       setFinalIsLoading(false);
     }, 3000);
     return () => clearTimeout(timeoutLoad);
-  }, [orderList, backend]);
+  }, [orderList]);
 
   return (
     <div className="flex flex-col w-full border border-gray-300 rounded-2xl tracking-normal">

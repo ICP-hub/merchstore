@@ -79,13 +79,13 @@ const shirtList = [
 
 const ProductDetailPage = () => {
   return (
-    <AnimationView>
-      <ScrollToTop />
-      <Header title={"DETAILS"} />
-      <ProductDetail />
+    // <AnimationView>
+    //   <ScrollToTop />
+    //   <Header title={"DETAILS"} />
+    <ProductDetail />
 
-      <Footer />
-    </AnimationView>
+    //   <Footer />
+    // </AnimationView>
   );
 };
 const ProductDetail = () => {
@@ -152,13 +152,13 @@ const ProductDetail = () => {
       setLoading(true);
     }
   };
-  useEffect(() => {
-    const timeoutId = setTimeout(() => {
-      getProduct();
-    }, 2000);
+  // useEffect(() => {
+  //   const timeoutId = setTimeout(() => {
+  //     getProduct();
+  //   }, 2000);
 
-    return () => clearTimeout(timeoutId);
-  }, [backend]);
+  //   return () => clearTimeout(timeoutId);
+  // }, [backend]);
 
   useEffect(() => {
     const listCarts = async () => {
@@ -176,7 +176,7 @@ const ProductDetail = () => {
     };
 
     listCarts();
-  }, [backend]);
+  }, []);
   useEffect(() => {
     // Check if the product is in the local cart
     const isProductInCart = carts.some(
@@ -222,7 +222,7 @@ const ProductDetail = () => {
 
   useEffect(() => {
     listWishlists();
-  }, [backend]);
+  }, []);
 
   const listWishlists = async () => {
     try {

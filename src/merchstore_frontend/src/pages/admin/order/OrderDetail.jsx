@@ -383,7 +383,7 @@ const OrderDetail = () => {
                           <span className="flex items-center gap-1">
                             {/* <IcpLogo size={24} /> */}{" "}
                             <img src={IcpLogo} alt="icp logo" className="w-4 h-4" />
-                            {order?.subTotalAmount.toFixed(2)}
+                            {order?.subTotalAmount.toFixed(4)}
                           </span>
                         )}
                       </h6>
@@ -417,7 +417,7 @@ const OrderDetail = () => {
                           <span className="flex items-center gap-1">
                             {/* <IcpLogo size={24} /> */}{" "}
                             <img src={IcpLogo} alt="icp logo" className="w-4 h-4" />
-                            {order?.totalAmount.toFixed(2)}
+                            {order?.totalAmount.toFixed(4)}
                           </span>
                         )}
                       </h6>

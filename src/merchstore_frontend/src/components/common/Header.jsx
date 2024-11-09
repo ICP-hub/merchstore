@@ -18,33 +18,26 @@ import {
   RiContactsLine,
   RiDashboardFill,
   RiDashboardLine,
-  RiDeleteBack2Line,
   RiHeart3Fill,
   RiHeart3Line,
   RiHome2Fill,
   RiHome2Line,
   RiLogoutBoxRLine,
-  RiMailLine,
   RiNftFill,
   RiNftLine,
-  RiShoppingBag2Line,
   RiShoppingBagFill,
   RiShoppingBagLine,
   RiStickyNote2Fill,
   RiStickyNote2Line,
   RiUser3Fill,
   RiUser3Line,
-  RiUser4Line,
-  RiVideoAddLine,
 } from "react-icons/ri";
 import { PiUsersFourFill, PiUsersFour } from "react-icons/pi";
 import CartItemsSmall from "../cart/CartItemsSmall";
 import Avatar from "boring-avatars";
 import NoDataFound from "./NoDataFound";
 import TrendingProducts from "./TrendingProducts";
-import CartItemsSmallLoader from "../cart/CartItemsSmallLoader";
-import { Principal } from "@dfinity/principal";
-import { useAuth, useBackend } from "../../auth/useClient";
+import { useAuth } from "../../auth/useClient";
 
 const getRandomColor = () => {
   const minDarkness = 20; // Minimum darkness level (0-255)
@@ -64,9 +57,8 @@ const getRandomColor = () => {
   return `#${red}${green}${blue}`;
 };
 
-const Header = ({ title }) => {
-  const { scrollYProgress } = useScroll();
-  const x = useTransform(scrollYProgress, [0, 1], [0, -800]);
+// const Header = ({ title }) => {
+const Header = () => {
   const location = useLocation(); // Get the current location
   const isHomePage = location.pathname === "/"; // Check if it's the homepage
   const navigate = useNavigate();
@@ -82,6 +74,9 @@ const Header = ({ title }) => {
   const maxInitialDisplay = 3;
   // const { open } = useDialog();
   const [isAdmin, setIsAdmin] = useState(false); // Add isAdmin state
+  const title = titleMapping[location.pathname] || "Merch Store";
+  const { scrollYProgress } = useScroll();
+  const x = useTransform(scrollYProgress, [0, 1], [0, -800]);
 
   useEffect(() => {
     const checkIsAdmin = async () => {
@@ -91,13 +86,12 @@ const Header = ({ title }) => {
           setIsAdmin(res);
         }
       } catch (error) {
-        console.error("Error checking isAdmin:", error);
+        // console.error("Error checking isAdmin:", error);
         setIsAdmin(false); // Set isAdmin to false in case of an error
       }
     };
-
     checkIsAdmin();
-  }, [isConnected, backend, principal, navigate]);
+  }, [principal]);
 
   useEffect(() => {
     const listCarts = async () => {
@@ -111,11 +105,8 @@ const Header = ({ title }) => {
         setLoading(false);
       }
     };
-
-    if (backend && isConnected) {
-      listCarts();
-    }
-  }, [backend, isCartUpdated]);
+    listCarts();
+  }, [principal]);
 
   useEffect(() => {
     let intervalId;
@@ -150,6 +141,15 @@ const Header = ({ title }) => {
     };
   }, [vantaEffect]);
 
+  // Set title on page url
+  const titleMap = {
+    "/": "Home",
+    "/login": "Login",
+    "/register": "Register",
+    "/cart": "Cart",
+    "/checkout": "Checkout",
+    // Add other routes as needed
+  };
   // console.log(carts.length, "carts2");
 
   return (
@@ -157,7 +157,7 @@ const Header = ({ title }) => {
       ref={myRef}
       className={`w-full ${
         isHomePage ? `h-[650px] md:h-[650px]` : `h-[250px] md:h-[350px]`
-      } relative z-10 bg-gray-200 bg-cover bg-center bg-no-repeat overflow-hidden`}
+      } relative z-[100] bg-gray-200 bg-cover bg-center bg-no-repeat overflow-hidden`}
     >
       <nav className="w-full z-20 bg-transparent fixed top-0">
         <div className="md:container md:mx-auto">
@@ -607,14 +607,14 @@ const Header = ({ title }) => {
                   <button
                     onClick={() => {
                       toast.error("Please connect your wallet first");
-                      open();
+                      //open();
                     }}
                     className="border-[1px] border-gray-700 rounded-full w-12 h-12 rounded-full relative  flex justify-center items-center"
                   >
                     <HiOutlineShoppingCart className="w-7 h-7 text-gray-700" />
-                    <span className="bg-red-500 absolute top-2 right-2 rounded-full text-[9px] w-3 h-3 flex justify-center items-center text-white p-1/2">
+                    {/* <span className="bg-red-500 absolute top-2 right-2 rounded-full text-[9px] w-3 h-3 flex justify-center items-center text-white p-1/2">
                       0
-                    </span>
+                    </span> */}
                   </button>
                 )}
               </div>
@@ -622,6 +622,7 @@ const Header = ({ title }) => {
           </div>
         </div>
       </nav>
+      {/* <HeaderTitleAndTrends isHomePage={isHomePage} /> */}
       {isHomePage && <TrendingProducts />}
       <motion.div
         style={{ x: x }}
@@ -634,6 +635,41 @@ const Header = ({ title }) => {
         {title}
       </motion.div>
     </div>
+  );
+};
+
+// Header title set
+const titleMapping = {
+  "/": "Merch Store",
+  "/about": "About Us",
+  "/services": "Our Services",
+  "/contact": "Contact Us",
+  "/products": "Products",
+  "/my-profile": "AccountInfo",
+  "/my-order": "Orders",
+  "/my-wishlist": "Wishlist",
+};
+
+const HeaderTitleAndTrends = ({ isHomePage }) => {
+  const location = useLocation();
+  const title = titleMapping[location.pathname] || "Merch Store";
+  const { scrollYProgress } = useScroll();
+  const x = useTransform(scrollYProgress, [0, 1], [0, -800]);
+
+  return (
+    <>
+      {isHomePage ? <TrendingProducts /> : null}
+      <motion.div
+        style={{ x: x }}
+        className={`text-[30px] md:text-[50px] ${
+          isHomePage ? `md:text-[200px]` : `md:text-[100px]`
+        } font-black tracking-widest text-white absolute -bottom-[12px] ${
+          isHomePage ? `md:-bottom-[20px]` : `-bottom-2.5 md:-bottom-5`
+        } flex justify-center w-full`}
+      >
+        {title}
+      </motion.div>
+    </>
   );
 };
 

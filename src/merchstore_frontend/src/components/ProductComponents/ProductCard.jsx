@@ -53,7 +53,7 @@ const ProductCard = ({ product }) => {
 
   useEffect(() => {
     listCarts();
-  }, [backend, product]);
+  }, []);
 
   const AddToCart = async () => {
     if (loadCart) {
@@ -151,7 +151,7 @@ const ProductCard = ({ product }) => {
   };
   useEffect(() => {
     listWishlists();
-  }, [backend]);
+  }, []);
 
   const listWishlists = async () => {
     try {
@@ -172,7 +172,7 @@ const ProductCard = ({ product }) => {
       (item) => item.product_slug === product.slug
     );
     setProductInLocalWishlist(isProductInWishlist);
-  }, [wishlist, product, principal]);
+  }, [wishlist]);
 
   const AddToWishlist = async () => {
     if (isConnected) {

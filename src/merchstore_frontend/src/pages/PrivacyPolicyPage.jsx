@@ -87,9 +87,10 @@ const privacyList = [
 
 const PrivacyPolicyPage = () => {
   return (
-    <AnimationView>
-      <ScrollToTop />
-      <Header title={"PRIVACY POLICY"} />
+    // <AnimationView>
+    //   <ScrollToTop />
+    //   <Header title={"PRIVACY POLICY"} />
+    <>
       <div className="container mx-auto px-6 mt-4">
         <h1 className="  font-bold mb-4">Last updated: March 15, 2024</h1>
         <p className="mb-4">
@@ -152,8 +153,7 @@ const PrivacyPolicyPage = () => {
 
         <p className="font-bold mt-4">Merch store Team</p>
       </div>
-      <Footer></Footer>
-    </AnimationView>
+    </>
   );
 };
 

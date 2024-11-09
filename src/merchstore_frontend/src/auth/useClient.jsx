@@ -130,24 +130,13 @@ import {
 const AuthContext = createContext();
 
 const canisterID = process.env.CANISTER_ID_MERCHSTORE_BACKEND;
-const whitelist = [process.env.CANISTER_ID_MERCHSTORE_BACKEND];
+// const whitelist = [process.env.CANISTER_ID_MERCHSTORE_BACKEND];
 
 export const useAuthClient = () => {
   const [isConnected, setIsConnected] = useState(false);
   const [principal, setPrincipal] = useState(null);
   const [backendActor, setBackendActor] = useState(createActor(canisterID));
   const [orderPlacementLoad, setOrderPlacementLoad] = useState(false);
-  const [delegation, setDelegation] = useState(null);
-  // const [principal, setPrincipal] = useState(null);
-  // const [backend, setBackend] = useState(null);
-  // const [identity, setIdentity] = useState(null);
-  // const [authClient, setAuthClient] = useState(null);
-  // const [orderPlacementLoad, setOrderPlacementLoad] = useState(false);
-  // const [isCartUpdated, setIsCartUpdated] = useState(false);
-  // const [authTargetAgent, setAuthTargetAgent] = useState(null);
-  // const [authenticatedNonTargetAgent, setAuthenticatedNonTargetAgent] =
-  //   useState(undefined);
-  // const [nfid, setNfid] = useState(null);
 
   const {
     agent,
@@ -164,10 +153,10 @@ export const useAuthClient = () => {
     fetchIcpBalance,
   } = useIdentityKit();
 
+  // Check if user connected
   useEffect(() => {
     setIsConnected(!!user);
     if (user) {
-      // Assuming user.principal is a promise
       (async () => {
         const userPrincipal = await user.principal;
         setPrincipal(userPrincipal);
@@ -177,20 +166,18 @@ export const useAuthClient = () => {
     }
   }, [user]);
 
+  // console.log("icp bal", icpBalance);
+
+  // Link canisters
   useEffect(() => {
     const genCanister = async () => {
-      const backend = Actor.createActor(idlFactory, {
-        agent: agent,
-        canisterId: canisterID,
+      const backend = createActor(canisterID, {
+        agentOptions: { identity, verifyQuerySignatures: false },
       });
       setBackendActor(backend);
     };
     genCanister();
-    setDelegation(identity);
-    console.log("delegation is ", delegation);
-  }, [agent]);
-
-  console.log("agent is", agent);
+  }, [identity]);
 
   return {
     isConnected,
@@ -206,7 +193,7 @@ export const useAuthClient = () => {
 
 export const AuthProvider = ({ children }) => {
   const auth = useAuthClient();
-  console.log("Auth is ", auth);
+  // console.log("Auth is ", auth);
   return <AuthContext.Provider value={auth}>{children}</AuthContext.Provider>;
 };
 

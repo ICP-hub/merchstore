@@ -55,108 +55,49 @@ import UserDetails from "./pages/admin/UserDetails";
 import Shipping from "./pages/admin/Shipping";
 import "intl-tel-input/build/css/intlTelInput.css";
 import "./components/common/Styles/itelinput.css";
-import { DialogContent, DialogTitle } from "@radix-ui/react-dialog";
-import { useIdentityKit } from "@nfid/identitykit/react";
+import UserBaseLayout from "./pages/userLayout/UserBaseLayout";
+// import { DialogContent, DialogTitle } from "@radix-ui/react-dialog";
+// import { useIdentityKit } from "@nfid/identitykit/react";
 // import { useAuth } from "./auth/useClient";
 
 const router = createBrowserRouter([
   {
     path: "/",
-    element: <HomePage></HomePage>,
+    element: <UserBaseLayout />,
+    children: [
+      { path: "", element: <HomePage /> },
+      { path: "cart", element: <CartPage /> },
+      { path: "checkout", element: <CheckoutPage /> },
+      { path: "contact", element: <ContactPage /> },
+      { path: "faq", element: <FaqPage /> },
+      { path: "my-address", element: <MyAddressPage /> },
+      { path: "my-order-detail/:id", element: <MyOrderDetailPage /> },
+      { path: "my-order-invoice", element: <MyOrderInvoicePage /> },
+      { path: "my-order", element: <MyOrderPage /> },
+      {
+        path: "my-profile",
+        element: (
+          <Protected>
+            <MyProfilePage />
+          </Protected>
+        ),
+      },
+      { path: "my-wishlist", element: <MyWishlistPage /> },
+      { path: "order-confirm", element: <OrderConfirmationPage /> },
+      { path: "privacy-policy", element: <PrivacyPolicyPage /> },
+      { path: "return-policy", element: <ReturnPolicyPage /> },
+      { path: "shipping-policy", element: <ShippingPolicyPage /> },
+      { path: "shipping-address", element: <ShippingAddressPage /> },
+      { path: "about", element: <TeamPage /> },
+      { path: "term-of-service", element: <TermOfServicePage /> },
+      { path: "product/:slug", element: <ProductDetailPage /> },
+      { path: "products", element: <ProductPage /> },
+    ],
   },
-  {
-    path: "/login",
-    element: <LoginPage></LoginPage>,
-  },
-  {
-    path: "/register",
-    element: <RegisterPage></RegisterPage>,
-  },
-  {
-    path: "/cart",
-    element: <CartPage></CartPage>,
-  },
-  {
-    path: "/checkout",
-    element: <CheckoutPage></CheckoutPage>,
-  },
-  {
-    path: "/contact",
-    element: <ContactPage></ContactPage>,
-  },
-  {
-    path: "/faq",
-    element: <FaqPage></FaqPage>,
-  },
-  {
-    path: "/my-address",
-    element: <MyAddressPage></MyAddressPage>,
-  },
-
-  {
-    path: "/my-order-detail/:id",
-    element: <MyOrderDetailPage></MyOrderDetailPage>,
-  },
-
-  {
-    path: "/my-order-invoice",
-    element: <MyOrderInvoicePage></MyOrderInvoicePage>,
-  },
-  {
-    path: "/my-order",
-    element: <MyOrderPage></MyOrderPage>,
-  },
-  {
-    path: "/my-profile",
-    element: (
-      <Protected>
-        <MyProfilePage></MyProfilePage>
-      </Protected>
-    ),
-  },
-  {
-    path: "/my-wishlist",
-    element: <MyWishlistPage></MyWishlistPage>,
-  },
-  {
-    path: "/order-confirm",
-    element: <OrderConfirmationPage></OrderConfirmationPage>,
-  },
-  {
-    path: "/privacy-policy",
-    element: <PrivacyPolicyPage></PrivacyPolicyPage>,
-  },
-  {
-    path: "/return-policy",
-    element: <ReturnPolicyPage></ReturnPolicyPage>,
-  },
-  {
-    path: "/shipping-policy",
-    element: <ShippingPolicyPage></ShippingPolicyPage>,
-  },
-  {
-    path: "/shipping-address",
-    element: <ShippingAddressPage></ShippingAddressPage>,
-  },
-  {
-    path: "/about",
-    element: <TeamPage></TeamPage>,
-  },
-  {
-    path: "/term-of-service",
-    element: <TermOfServicePage></TermOfServicePage>,
-  },
-  {
-    path: "/product/:slug",
-    element: <ProductDetailPage></ProductDetailPage>,
-  },
-  {
-    path: "/products",
-    element: <ProductPage></ProductPage>,
-  },
+  { path: "/login", element: <LoginPage /> },
+  { path: "/register", element: <RegisterPage /> },
   {
     path: "/admin",
-
     element: (
       <ProtectedAdmin>
         <AdminHome></AdminHome>,
@@ -288,29 +229,29 @@ const App = () => {
   //   document.getElementById("ik-identity-kit-modal").classList.add("ik-hidden");
   //   console.log("reponse login success", res);
   // };
-  const {
-    agent,
-    isInitializing,
-    user,
-    isUserConnecting,
-    icpBalance,
-    identity,
-    signer,
-    delegationType,
-    accounts,
-    connect,
-    disconnect,
-    fetchIcpBalance,
-  } = useIdentityKit();
+  // const {
+  //   agent,
+  //   isInitializing,
+  //   user,
+  //   isUserConnecting,
+  //   icpBalance,
+  //   identity,
+  //   signer,
+  //   delegationType,
+  //   accounts,
+  //   connect,
+  //   disconnect,
+  //   fetchIcpBalance,
+  // } = useIdentityKit();
 
-  useEffect(() => {
-    console.log("agent", agent);
-    console.log("user", user);
+  // useEffect(() => {
+  //   console.log("agent", agent);
+  //   console.log("user", user);
 
-    console.log("icp balance", icpBalance);
+  //   console.log("icp balance", icpBalance);
 
-    console.log("identity is ", identity);
-  }, [user]);
+  //   console.log("identity is ", identity);
+  // }, [user]);
 
   return (
     <div className="App">

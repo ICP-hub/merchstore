@@ -13,13 +13,13 @@ import Header from "../components/common/Header";
 /* ----------------------------------------------------------------------------------------------------- */
 const HomePage = () => {
   return (
-    <AnimationView>
-      <ScrollToTop />
-      <Header title={"MerchStore"}></Header>
-      <HomePageContainerMain />
-      <Contact></Contact>
-      <Footer></Footer>
-    </AnimationView>
+    // <AnimationView>
+    //   <ScrollToTop />
+    //   <Header title={"MerchStore"}></Header>
+    <HomePageContainerMain />
+    //   <Contact></Contact>
+    //   <Footer></Footer>
+    // </AnimationView>
   );
 };
 

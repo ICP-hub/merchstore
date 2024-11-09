@@ -28,12 +28,12 @@ import { useAuth } from "../auth/useClient.jsx";
 /* ----------------------------------------------------------------------------------------------------- */
 const ShippingAddressPage = () => {
   return (
-    <AnimationView>
-      <ScrollToTop />
-      <Header title={"ADDRESS"} />
-      <AddressDetail />
-      <Footer></Footer>
-    </AnimationView>
+    // <AnimationView>
+    //   <ScrollToTop />
+    //   <Header title={"ADDRESS"} />
+    <AddressDetail />
+    //   <Footer></Footer>
+    // </AnimationView>
   );
 };
 
@@ -51,12 +51,12 @@ const AddressDetail = () => {
   const [successfulSubmit, setSuccessfulSubmit] = useState(false);
   const [finalIsLoading, setFinalIsLoading] = useState(true);
   // const {backend} = useBackend();
-  const { backend } = useAuth();
+  const { backend, principal } = useAuth();
   const { ShippingAddressPageLoader } = LoadingScreen();
+  const [cartLoader, setCartLoader] = useState(true);
 
   // Get cart item details
   const cartItemDetails = getCartItemDetails(cartItems, productList);
-  console.log(cartItemDetails, "cart items details");
   // console.log("Cart Item Details", cartItemDetails);
   const totalPrice = totalCartSellPrice(cartItemDetails);
   // console.log(cartItemDetails);
@@ -64,26 +64,25 @@ const AddressDetail = () => {
 
   // Fetch data parallelly when the component mounts
   useEffect(() => {
-    const fetchData = async () => {
-      await Promise.all([
-        getAddressList(),
-        getProductList(),
-        getCallerCartItems(),
-        getShippingAmount(),
-      ]);
-      // Hide the form on successful submit
-      if (successfulSubmit) {
-        setShowForm(false);
-      }
+    const fetchData = () => {
+      getAddressList();
+      getProductList();
+      getCallerCartItems();
+      getShippingAmount();
     };
     fetchData();
-
     // Set time out for data load complete from backend
-    const timeoutLoad = setTimeout(() => {
-      setFinalIsLoading(false);
-    }, 3000);
-    return () => clearTimeout(timeoutLoad);
-  }, [successfulSubmit, backend]);
+    //const timeoutLoad = setTimeout(() => {
+    // setFinalIsLoading(false);
+    //}, 3000);
+    //return () => clearTimeout(timeoutLoad);
+  }, [successfulSubmit, principal]);
+
+  useEffect(() => {
+    if (cartItemDetails && productList) {
+      setCartLoader(false);
+    }
+  }, [cartItemDetails]);
 
   const handleAddressSelect = (address) => {
     setSelectedAddress(address);
@@ -109,7 +108,7 @@ const AddressDetail = () => {
   return (
     <div className="container mx-auto p-6 max-md:px-2">
       <TabChanges paths={pathsForTabChanges} />
-      {isLoading ? (
+      {cartLoader ? (
         <ShippingAddressPageLoader />
       ) : (
         <div className="flex w-full max-md:flex-col gap-4">
@@ -193,9 +192,10 @@ export const AddressCard = ({ address, onSelect, isSelected }) => {
               {firstname} {lastname}
             </p>
             <span className="px-2 py-1 rounded-md bg-gray-300 text-gray-500 uppercase text-xs flex items-center max-w-max font-semibold">
-              {address_type}
+              {/* {address_type} */}
+              {phone_number}
             </span>
-            <p className="font-semibold">{phone_number}</p>
+            {/* <p className="font-semibold">{phone_number}</p> */}
           </div>
         </div>
         <div className="flex gap-2 items-center">
@@ -290,7 +290,7 @@ const BillSection = ({
           </p>
           <span className="font-bold flex items-center gap-1">
             <IcpLogo />
-            {totalPrice?.toFixed(2)}
+            {totalPrice?.toFixed(4)}
           </span>
         </div>
         <div className="flex justify-between px-6 gap-2 font-medium">
@@ -302,7 +302,7 @@ const BillSection = ({
               ) : (
                 <span className="flex items-center gap-1">
                   <IcpLogo />
-                  {shippingAmount?.toFixed(2)}
+                  {shippingAmount?.toFixed(4)}
                 </span>
               )}
             </p>
@@ -314,7 +314,7 @@ const BillSection = ({
           <p className="capitalize">Total Payable</p>
           <span className="flex items-center gap-1">
             <IcpLogo />
-            {priceWithShippingAmount?.toFixed(2)}
+            {priceWithShippingAmount?.toFixed(4)}
           </span>
         </div>
       </div>
@@ -323,7 +323,7 @@ const BillSection = ({
           Your total saving on this order is{" "}
           <span className="flex items-center gap-1">
             <IcpLogo size={16} />
-            {totalDiscount?.toFixed(2)}
+            {totalDiscount?.toFixed(4)}
           </span>
         </div>
       </div>

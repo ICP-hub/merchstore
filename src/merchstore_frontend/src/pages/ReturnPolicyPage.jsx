@@ -103,9 +103,10 @@ const returnList = [
 
 const ReturnPolicyPage = () => {
   return (
-    <AnimationView>
-      <ScrollToTop />
-      <Header title={"RETURN POLICY"} />
+    // <AnimationView>
+    //   <ScrollToTop />
+    //   <Header title={"RETURN POLICY"} />
+    <>
       <div className="container mx-auto  px-6 mt-4 ">
         <p className="font-bold mb-4">Last updated: March 15, 2024</p>
         <p>Thank you for shopping at Merch store.</p>
@@ -223,8 +224,9 @@ const ReturnPolicyPage = () => {
         </div>
       </div>
 
-      <Footer></Footer>
-    </AnimationView>
+      {/* <Footer></Footer>
+    </AnimationView> */}
+    </>
   );
 };
 

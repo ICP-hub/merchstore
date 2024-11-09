@@ -37,9 +37,13 @@ const HomePageBottom = ({ productList, isLoading }) => {
     }
   });
 
-  console.log(productList, "productlist");
+  // console.log(productList, "productlist");
   // Get the lastest product based on time updated
   const newArrivalProd = newArrivalList[0];
+
+  // useEffect(() => {
+  //   console.log(productList);
+  // }, [productList]);
 
   return (
     <div className="flex flex-col py-8  rounded-2xl gap-8 tracking-wider">
@@ -182,12 +186,12 @@ const NewArrival = ({ newArrivalProd, isLoading }) => {
 
 //category new
 const ExpCategories = () => {
-  const { backend } = useAuth();
+  // const { backend } = useAuth();
   const { categoryList, getCategoryList } = ProductApiHandler(0);
   // Call CategoryList
   useEffect(() => {
     getCategoryList();
-  }, [backend]);
+  }, []);
 
   // Filter featured categories : Display only featured categories
   const featuredCategories = categoryList?.filter(({ featured }) => featured);

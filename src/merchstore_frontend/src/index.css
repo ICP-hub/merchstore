@@ -427,3 +427,7 @@ body {
 .remove-arrow {
   -moz-appearance: textfield;
 }
+
+.vanta-canvas {
+  z-index: -10 !important;
+}

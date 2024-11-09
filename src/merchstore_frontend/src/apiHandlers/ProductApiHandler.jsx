@@ -21,7 +21,7 @@ const ProductApiHandler = ({ currentPage = 0, category = 0 }) => {
     try {
       setIsLoading(true);
       const response = await backend.listallProducts(8, currentPage, true);
-      console.log(response);
+      // console.log(response);
       setProductList(response.data);
       setInitialProductList(response.data);
     } catch (err) {

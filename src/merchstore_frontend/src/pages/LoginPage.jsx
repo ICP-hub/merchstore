@@ -95,7 +95,7 @@ export default function LoginPage() {
     <>
       {/* {isLoggedIn && <WalletModal onModalClose={handleWalletModalClose} />} */}
       {isConnected ? (
-        <Navigate to="/my-profile" replace={true}></Navigate>
+        <Navigate to="/" replace={true}></Navigate>
       ) : null}
       <AnimationView>
         <div

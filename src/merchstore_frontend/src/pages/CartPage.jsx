@@ -37,12 +37,12 @@ import { LuTrash } from "react-icons/lu";
 const CartPage = () => {
   return (
     <>
-      <AnimationView>
+      {/* <AnimationView>
         <ScrollToTop />
-        <Header title={"Cart"} />
-        <Cart />
-        <Footer></Footer>
-      </AnimationView>
+        <Header title={"Cart"} /> */}
+      <Cart />
+      {/* <Footer></Footer>
+      </AnimationView> */}
     </>
   );
 };
@@ -89,10 +89,10 @@ const Cart = () => {
   const [totalPriceNQty, setTotalPriceNQty] = useState(null);
   const [updatedPriceNQty, setUpdatedPriceNQty] = useState(null);
   const [successDelete, setSuccessDelete] = useState(true);
-  const [exchange, setExchange] = useState(1);
-  const [currencyLoad, setCurrencyLoad] = useState(true);
+  // const [exchange, setExchange] = useState(1);
+  // const [currencyLoad, setCurrencyLoad] = useState(true);
   // const { backend } = useBackend();
-  const { backend } = useAuth();
+  const { backend, principal } = useAuth();
   const { CheckoutPageLoader } = LoadingScreen();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [successClearAll, setSuccessClearAll] = useState(true);
@@ -107,8 +107,6 @@ const Cart = () => {
     setIsModalOpen(false);
   };
 
-  const cartItemDetails = getCartItemDetails(cartItems, productList);
-  console.log("cartItemDetails", cartItemDetails);
   // console.log("finalCart", finalCart);
   const pathsForTabChanges = ["Home", "cart"];
 
@@ -136,7 +134,7 @@ const Cart = () => {
       setIsChecked(index);
     }
   };
-  console.log(finalCart, "final cart");
+  // console.log(finalCart, "final cart");
   const clearAll = async () => {
     try {
       setIsFinalCartLoading(true);
@@ -175,32 +173,32 @@ const Cart = () => {
       size: product.size,
       title: product.product.title,
       color: product.color,
-      sale_price: Number(product.variantSellPrice.toFixed(2)),
+      sale_price: Number(product.variantSellPrice.toFixed(4)),
       quantity: product.quantity,
     }));
   };
 
-  const getExchangeRate = async () => {
-    const paymentOpt = { Cryptocurrency: null };
-    // const paymentOpt1 = { Cryptocurrency: null };
-    try {
-      setCurrencyLoad(true);
-      const res = await backend.get_exchange_rates(
-        { class: paymentOpt, symbol: "icp" },
-        { class: paymentOpt, symbol: paymentMethod.currency }
-      );
-      // console.log("Exchange rate first Response ", res);
-      const exchangeRate =
-        parseInt(res?.Ok?.rate) / Math.pow(10, res?.Ok?.metadata?.decimals);
-      // console.log("Exchange rate ", exchangeRate);
-      setExchange(exchangeRate);
-    } catch (error) {
-      console.log(error);
-    } finally {
-      // Loading
-      setCurrencyLoad(false);
-    }
-  };
+  // const getExchangeRate = async () => {
+  //   const paymentOpt = { Cryptocurrency: null };
+  //   // const paymentOpt1 = { Cryptocurrency: null };
+  //   try {
+  //     setCurrencyLoad(true);
+  //     const res = await backend.get_exchange_rates(
+  //       { class: paymentOpt, symbol: "icp" },
+  //       { class: paymentOpt, symbol: paymentMethod.currency }
+  //     );
+  //     // console.log("Exchange rate first Response ", res);
+  //     const exchangeRate =
+  //       parseInt(res?.Ok?.rate) / Math.pow(10, res?.Ok?.metadata?.decimals);
+  //     // console.log("Exchange rate ", exchangeRate);
+  //     setExchange(exchangeRate);
+  //   } catch (error) {
+  //     console.log(error);
+  //   } finally {
+  //     // Loading
+  //     setCurrencyLoad(false);
+  //   }
+  // };
 
   // console.log("exchange state ", exchange);
   // console.log("total Price will be ", priceWithShippingAmount / exchange);
@@ -214,9 +212,9 @@ const Cart = () => {
     const { totalPrice } = totalPriceNQty;
     const products = updateProductsForPlacement(finalCart);
     const shippingAddress = userAddress;
-    const totalAmount = (totalPrice + shippingAmount) / exchange;
-    const shippingCost = shippingAmount / exchange;
-    const subTotal = totalPrice / exchange;
+    const totalAmount = totalPrice + shippingAmount;
+    const shippingCost = shippingAmount;
+    const subTotal = totalPrice;
     const payment = paymentMethod.value;
     orderPlacement(
       products,
@@ -229,19 +227,33 @@ const Cart = () => {
   };
 
   // Effect on get exchange
-  useEffect(() => {
-    getExchangeRate();
-  }, [paymentMethod]);
+  // useEffect(() => {
+  //   getExchangeRate();
+  // }, [paymentMethod]);
 
   // Effect on initial Load : productlist , cart items
   useEffect(() => {
     getProductList();
     getCallerCartItems();
     getShippingAmount();
-  }, [successDelete, backend]);
+  }, [successDelete, principal]);
+
+  // useEffect(() => {
+  //   console.log("fc", finalCart);
+  // }, [finalCart]);
+
+  useEffect(() => {
+    if (cartItems && productList) {
+      // console.log("ci", cartItems);
+      const cartItemDetails = getCartItemDetails(cartItems, productList);
+      // setFinalCartDetails(cartItemDetails);
+      // console.log("cid", cartItemDetails);
+      setFinalCart(cartItemDetails);
+    }
+  }, [cartItems, productList]);
 
   // Set Initial Prices
-  useEffect(() => {
+  /*  useEffect(() => {
     if (cartItemDetails !== undefined) {
       setFinalCart(cartItemDetails);
       const { totalPrice, totalQuantity } = cartItemDetails.reduce(
@@ -260,7 +272,25 @@ const Cart = () => {
       }, 3000);
       return () => clearTimeout(timeoutLoad);
     }
-  }, [cartItems, productList, backend]);
+  }, [cartItems, productList, backend]); */
+  // Set Initial Prices
+  useEffect(() => {
+    if (finalCart) {
+      const { totalPrice, totalQuantity } = finalCart.reduce(
+        (totals, cartItem) => {
+          totals.totalPrice += cartItem.variantSellPriceBasedOnQty;
+          totals.totalQuantity += cartItem.quantity;
+          return totals;
+        },
+        { totalPrice: 0, totalQuantity: 0 }
+      );
+
+      setUpdatedPriceNQty({ totalPrice, totalQuantity });
+
+      // Directly set loading to false after data processing
+      setIsFinalCartLoading(false);
+    }
+  }, [finalCart]);
 
   // Effect on price and quantity
   useEffect(() => {
@@ -284,158 +314,7 @@ const Cart = () => {
     <div className="container mx-auto p-6 max-md:px-2">
       <TabChanges paths={pathsForTabChanges} />
       {isFinalCartLoading ? (
-        <div className="flex gap-4 tracking-wider max-md:flex-col">
-          <div className="flex flex-col gap-4 flex-1">
-            <div className="flex items-end justify-end border-2 border-gray-300 mt-2   rounded-xl   p-5 w-[100%]">
-              <Button className="bg-black rounded-full text-sm text-white px-3 py-2">
-                Clear All
-              </Button>
-            </div>
-            <div className="border-2 rounded-2xl p-6 flex max-lg:flex-col">
-              <div className="flex gap-4 flex-1">
-                <div className="flex p-1 border border-gray-300 rounded-xl">
-                  <img
-                    src={NoImage}
-                    alt="_blank"
-                    className="max-w-24 max-h-24 object-contain rounded-xl"
-                  />
-                </div>
-                <div className="flex flex-col gap-2 w-full">
-                  <span className="border-2 px-2 py-1 text-xs uppercase font-semibold w-3/12 bg-gray-300 h-5 rounded-md animate-pulse"></span>
-                  <p className="text-lg font-semibold capitalize flex gap-1 w-full">
-                    <span className="w-4/12 bg-gray-300 h-5 rounded-md animate-pulse"></span>
-                    <span className="w-6/12 bg-gray-300 h-5 rounded-md animate-pulse"></span>
-                    <span className="w-2/12 bg-gray-300 h-5 rounded-md animate-pulse"></span>
-                    <span className="w-5/12 bg-gray-300 h-5 rounded-md animate-pulse"></span>
-                  </p>
-                  <span className="flex gap-4">
-                    <p className="capitalize text-xs flex gap-1 items-center">
-                      <span className="w-6 bg-gray-300 h-3 rounded-md animate-pulse"></span>
-                      <span className="w-2 bg-gray-300 h-3 rounded-md animate-pulse"></span>
-                    </p>
-                    <p className="capitalize text-xs flex gap-1 items-center">
-                      <span className="w-6 bg-gray-300 h-3 rounded-md animate-pulse"></span>
-                      <span className="w-6 bg-gray-300 h-3 rounded-md animate-pulse"></span>
-                    </p>
-                  </span>
-                </div>
-              </div>
-              <div className="flex justify-end flex-col gap-2 items-end">
-                <div className="flex gap-4 items-center">
-                  <p className="font-semibold text-2xl flex items-center gap-1 w-10 bg-gray-300 h-6 rounded-md animate-pulse"></p>
-                  <p className="line-through text-gray-500 w-6 bg-gray-300 h-4 rounded-md animate-pulse"></p>
-                </div>
-                <div className="flex gap-4 items-center w-4/12 h-6 bg-gray-300 rounded-md animate-pulse"></div>
-              </div>
-            </div>
-            <div className="border-2 rounded-2xl p-6 flex max-lg:flex-col">
-              <div className="flex gap-4 flex-1">
-                <div className="flex p-1 border border-gray-300 rounded-xl">
-                  <img
-                    src={NoImage}
-                    alt="_blank"
-                    className="max-w-24 max-h-24 object-contain rounded-xl"
-                  />
-                </div>
-                <div className="flex flex-col gap-2 w-full">
-                  <span className="border-2 px-2 py-1 text-xs uppercase font-semibold w-3/12 bg-gray-300 h-5 rounded-md animate-pulse"></span>
-                  <p className="text-lg font-semibold capitalize flex gap-1 w-full">
-                    <span className="w-4/12 bg-gray-300 h-5 rounded-md animate-pulse"></span>
-                    <span className="w-6/12 bg-gray-300 h-5 rounded-md animate-pulse"></span>
-                    <span className="w-2/12 bg-gray-300 h-5 rounded-md animate-pulse"></span>
-                    <span className="w-5/12 bg-gray-300 h-5 rounded-md animate-pulse"></span>
-                  </p>
-                  <span className="flex gap-4">
-                    <p className="capitalize text-xs flex gap-1 items-center">
-                      <span className="w-6 bg-gray-300 h-3 rounded-md animate-pulse"></span>
-                      <span className="w-2 bg-gray-300 h-3 rounded-md animate-pulse"></span>
-                    </p>
-                    <p className="capitalize text-xs flex gap-1 items-center">
-                      <span className="w-6 bg-gray-300 h-3 rounded-md animate-pulse"></span>
-                      <span className="w-6 bg-gray-300 h-3 rounded-md animate-pulse"></span>
-                    </p>
-                  </span>
-                </div>
-              </div>
-              <div className="flex justify-end flex-col gap-2 items-end">
-                <div className="flex gap-4 items-center">
-                  <p className="font-semibold text-2xl flex items-center gap-1 w-10 bg-gray-300 h-6 rounded-md animate-pulse"></p>
-                  <p className="line-through text-gray-500 w-6 bg-gray-300 h-4 rounded-md animate-pulse"></p>
-                </div>
-                <div className="flex gap-4 items-center w-4/12 h-6 bg-gray-300 rounded-md animate-pulse"></div>
-              </div>
-            </div>
-            <div className="border-2 rounded-2xl p-6 flex max-lg:flex-col">
-              <div className="flex gap-4 flex-1">
-                <div className="flex p-1 border border-gray-300 rounded-xl">
-                  <img
-                    src={NoImage}
-                    alt="_blank"
-                    className="max-w-24 max-h-24 object-contain rounded-xl"
-                  />
-                </div>
-                <div className="flex flex-col gap-2 w-full">
-                  <span className="border-2 px-2 py-1 text-xs uppercase font-semibold w-3/12 bg-gray-300 h-5 rounded-md animate-pulse"></span>
-                  <p className="text-lg font-semibold capitalize flex gap-1 w-full">
-                    <span className="w-4/12 bg-gray-300 h-5 rounded-md animate-pulse"></span>
-                    <span className="w-6/12 bg-gray-300 h-5 rounded-md animate-pulse"></span>
-                    <span className="w-2/12 bg-gray-300 h-5 rounded-md animate-pulse"></span>
-                    <span className="w-5/12 bg-gray-300 h-5 rounded-md animate-pulse"></span>
-                  </p>
-                  <span className="flex gap-4">
-                    <p className="capitalize text-xs flex gap-1 items-center">
-                      <span className="w-6 bg-gray-300 h-3 rounded-md animate-pulse"></span>
-                      <span className="w-2 bg-gray-300 h-3 rounded-md animate-pulse"></span>
-                    </p>
-                    <p className="capitalize text-xs flex gap-1 items-center">
-                      <span className="w-6 bg-gray-300 h-3 rounded-md animate-pulse"></span>
-                      <span className="w-6 bg-gray-300 h-3 rounded-md animate-pulse"></span>
-                    </p>
-                  </span>
-                </div>
-              </div>
-              <div className="flex justify-end flex-col gap-2 items-end">
-                <div className="flex gap-4 items-center">
-                  <p className="font-semibold text-2xl flex items-center gap-1 w-10 bg-gray-300 h-6 rounded-md animate-pulse"></p>
-                  <p className="line-through text-gray-500 w-6 bg-gray-300 h-4 rounded-md animate-pulse"></p>
-                </div>
-                <div className="flex gap-4 items-center w-4/12 h-6 bg-gray-300 rounded-md animate-pulse"></div>
-              </div>
-            </div>
-          </div>
-          <div className="border-2 rounded-2xl max-h-96">
-            <div className="flex flex-col">
-              <div className="border-b-2 py-6">
-                <span className="uppercase font-semibold px-6 text-xl text-slate-500">
-                  Price details
-                </span>
-              </div>
-              <div className="border-b-2 py-2 flex flex-col gap-4 border-dashed">
-                <div className="flex justify-between px-6 gap-2 font-medium">
-                  <p className="bg-gray-300 h-6 w-28 animate-pulse rounded-md"></p>
-                  <span className="bg-gray-300 h-6 w-12 animate-pulse rounded-md"></span>
-                </div>
-                <div className="flex justify-between px-6 gap-2 font-medium">
-                  <p className="bg-gray-300 h-6 w-36 animate-pulse rounded-md"></p>
-                  <span className="flex gap-2">
-                    <p className="bg-gray-300 h-6 w-12 animate-pulse rounded-md"></p>
-                  </span>
-                </div>
-              </div>
-              <div className="border-b-2 py-4 flex flex-col gap-4 border-dashed">
-                <div className="flex justify-between px-6 gap-2 font-bold">
-                  <p className="bg-gray-300 h-6 w-28 animate-pulse rounded-md"></p>
-                  <span className="bg-gray-300 h-6 w-12 animate-pulse rounded-md"></span>
-                </div>
-              </div>
-              <div className="border-b-2 py-4 flex flex-col gap-4 border-dashed">
-                <div className="px-6 flex items-center justify-center">
-                  <div className="bg-gray-300 h-6 w-8/12 animate-pulse rounded-md"></div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
+        <FinalCartLoader />
       ) : (
         <>
           {finalCart && finalCart.length > 0 ? (
@@ -474,7 +353,7 @@ const Cart = () => {
                     setSuccessDelete={setSuccessDelete}
                     length={finalCart.length}
                     clearAll={clearAll}
-                    getCallerCartItems={getCallerCartItems}
+                    // getCallerCartItems={getCallerCartItems}
                   />
                 ))}
               </div>
@@ -484,8 +363,8 @@ const Cart = () => {
                   proceed={proceed}
                   shippingAmount={shippingAmount}
                   paymentMethod={paymentMethod}
-                  exchange={exchange}
-                  currencyLoad={currencyLoad}
+                  // exchange={exchange}
+                  // currencyLoad={currencyLoad}
                 />
               </div>
             </div>
@@ -639,12 +518,17 @@ const CheckoutCard = ({
             />
           ) : (
             isChecked && (
-              <HiCheckBadge
-                color="green"
-                size={24}
-                className="cursor-pointer"
+              <button
                 onClick={toggleUpdate}
-              />
+                className="flex justify-center items-center gap-1 bg-gray-200 rounded-md py-1 px-2"
+              >
+                <HiCheckBadge
+                  color="green"
+                  size={24}
+                  className="cursor-pointer"
+                />{" "}
+                Update
+              </button>
             )
           )}
         </div>
@@ -661,8 +545,8 @@ const BillSection = ({
   proceed,
   shippingAmount,
   paymentMethod,
-  exchange,
-  currencyLoad,
+  // exchange,
+  // currencyLoad,
 }) => {
   const { orderPlacementLoad } = CartApiHandler();
   const navigate = useNavigate();
@@ -720,13 +604,7 @@ const BillSection = ({
           <span className="font-bold flex items-center gap-2">
             {/* <IcpLogo /> */}
             <span>{paymentMethod.name}</span>
-            {currencyLoad ? (
-              <span className="animate-pulse bg-gray-300 text-gray-300 rounded-md">
-                00.0000
-              </span>
-            ) : (
-              (updatedPriceNQty.totalPrice / exchange).toFixed(4)
-            )}
+            {updatedPriceNQty.totalPrice.toFixed(4)}
           </span>
         </div>
         <div className="flex justify-between px-6 gap-2 font-medium">
@@ -739,13 +617,7 @@ const BillSection = ({
                 <span className="flex items-center gap-2">
                   {/* <IcpLogo /> */}
                   <span>{paymentMethod.name}</span>
-                  {currencyLoad ? (
-                    <span className="animate-pulse bg-gray-300 text-gray-300 rounded-md">
-                      00.0000
-                    </span>
-                  ) : (
-                    (shippingAmount / exchange)?.toFixed(4)
-                  )}
+                  {shippingAmount?.toFixed(4)}
                 </span>
               )}
             </p>
@@ -758,13 +630,7 @@ const BillSection = ({
           <span className="flex items-center gap-2">
             {/* <IcpLogo /> */}
             <span>{paymentMethod.name}</span>
-            {currencyLoad ? (
-              <span className="animate-pulse bg-gray-300 text-gray-300 rounded-md">
-                00.0000
-              </span>
-            ) : (
-              (priceWithShippingAmount / exchange)?.toFixed(4)
-            )}
+            {priceWithShippingAmount?.toFixed(4)}
           </span>
         </div>
       </div>
@@ -791,6 +657,164 @@ const BillSection = ({
             "Proceed"
           )}
         </Button>
+      </div>
+    </div>
+  );
+};
+
+// Loader
+const FinalCartLoader = () => {
+  return (
+    <div className="flex gap-4 tracking-wider max-md:flex-col">
+      <div className="flex flex-col gap-4 flex-1">
+        <div className="flex items-end justify-end border-2 border-gray-300 mt-2   rounded-xl   p-5 w-[100%]">
+          <Button className="bg-black rounded-full text-sm text-white px-3 py-2">
+            Clear All
+          </Button>
+        </div>
+        <div className="border-2 rounded-2xl p-6 flex max-lg:flex-col">
+          <div className="flex gap-4 flex-1">
+            <div className="flex p-1 border border-gray-300 rounded-xl">
+              <img
+                src={NoImage}
+                alt="_blank"
+                className="max-w-24 max-h-24 object-contain rounded-xl"
+              />
+            </div>
+            <div className="flex flex-col gap-2 w-full">
+              <span className="border-2 px-2 py-1 text-xs uppercase font-semibold w-3/12 bg-gray-300 h-5 rounded-md animate-pulse"></span>
+              <p className="text-lg font-semibold capitalize flex gap-1 w-full">
+                <span className="w-4/12 bg-gray-300 h-5 rounded-md animate-pulse"></span>
+                <span className="w-6/12 bg-gray-300 h-5 rounded-md animate-pulse"></span>
+                <span className="w-2/12 bg-gray-300 h-5 rounded-md animate-pulse"></span>
+                <span className="w-5/12 bg-gray-300 h-5 rounded-md animate-pulse"></span>
+              </p>
+              <span className="flex gap-4">
+                <p className="capitalize text-xs flex gap-1 items-center">
+                  <span className="w-6 bg-gray-300 h-3 rounded-md animate-pulse"></span>
+                  <span className="w-2 bg-gray-300 h-3 rounded-md animate-pulse"></span>
+                </p>
+                <p className="capitalize text-xs flex gap-1 items-center">
+                  <span className="w-6 bg-gray-300 h-3 rounded-md animate-pulse"></span>
+                  <span className="w-6 bg-gray-300 h-3 rounded-md animate-pulse"></span>
+                </p>
+              </span>
+            </div>
+          </div>
+          <div className="flex justify-end flex-col gap-2 items-end">
+            <div className="flex gap-4 items-center">
+              <p className="font-semibold text-2xl flex items-center gap-1 w-10 bg-gray-300 h-6 rounded-md animate-pulse"></p>
+              <p className="line-through text-gray-500 w-6 bg-gray-300 h-4 rounded-md animate-pulse"></p>
+            </div>
+            <div className="flex gap-4 items-center w-4/12 h-6 bg-gray-300 rounded-md animate-pulse"></div>
+          </div>
+        </div>
+        <div className="border-2 rounded-2xl p-6 flex max-lg:flex-col">
+          <div className="flex gap-4 flex-1">
+            <div className="flex p-1 border border-gray-300 rounded-xl">
+              <img
+                src={NoImage}
+                alt="_blank"
+                className="max-w-24 max-h-24 object-contain rounded-xl"
+              />
+            </div>
+            <div className="flex flex-col gap-2 w-full">
+              <span className="border-2 px-2 py-1 text-xs uppercase font-semibold w-3/12 bg-gray-300 h-5 rounded-md animate-pulse"></span>
+              <p className="text-lg font-semibold capitalize flex gap-1 w-full">
+                <span className="w-4/12 bg-gray-300 h-5 rounded-md animate-pulse"></span>
+                <span className="w-6/12 bg-gray-300 h-5 rounded-md animate-pulse"></span>
+                <span className="w-2/12 bg-gray-300 h-5 rounded-md animate-pulse"></span>
+                <span className="w-5/12 bg-gray-300 h-5 rounded-md animate-pulse"></span>
+              </p>
+              <span className="flex gap-4">
+                <p className="capitalize text-xs flex gap-1 items-center">
+                  <span className="w-6 bg-gray-300 h-3 rounded-md animate-pulse"></span>
+                  <span className="w-2 bg-gray-300 h-3 rounded-md animate-pulse"></span>
+                </p>
+                <p className="capitalize text-xs flex gap-1 items-center">
+                  <span className="w-6 bg-gray-300 h-3 rounded-md animate-pulse"></span>
+                  <span className="w-6 bg-gray-300 h-3 rounded-md animate-pulse"></span>
+                </p>
+              </span>
+            </div>
+          </div>
+          <div className="flex justify-end flex-col gap-2 items-end">
+            <div className="flex gap-4 items-center">
+              <p className="font-semibold text-2xl flex items-center gap-1 w-10 bg-gray-300 h-6 rounded-md animate-pulse"></p>
+              <p className="line-through text-gray-500 w-6 bg-gray-300 h-4 rounded-md animate-pulse"></p>
+            </div>
+            <div className="flex gap-4 items-center w-4/12 h-6 bg-gray-300 rounded-md animate-pulse"></div>
+          </div>
+        </div>
+        <div className="border-2 rounded-2xl p-6 flex max-lg:flex-col">
+          <div className="flex gap-4 flex-1">
+            <div className="flex p-1 border border-gray-300 rounded-xl">
+              <img
+                src={NoImage}
+                alt="_blank"
+                className="max-w-24 max-h-24 object-contain rounded-xl"
+              />
+            </div>
+            <div className="flex flex-col gap-2 w-full">
+              <span className="border-2 px-2 py-1 text-xs uppercase font-semibold w-3/12 bg-gray-300 h-5 rounded-md animate-pulse"></span>
+              <p className="text-lg font-semibold capitalize flex gap-1 w-full">
+                <span className="w-4/12 bg-gray-300 h-5 rounded-md animate-pulse"></span>
+                <span className="w-6/12 bg-gray-300 h-5 rounded-md animate-pulse"></span>
+                <span className="w-2/12 bg-gray-300 h-5 rounded-md animate-pulse"></span>
+                <span className="w-5/12 bg-gray-300 h-5 rounded-md animate-pulse"></span>
+              </p>
+              <span className="flex gap-4">
+                <p className="capitalize text-xs flex gap-1 items-center">
+                  <span className="w-6 bg-gray-300 h-3 rounded-md animate-pulse"></span>
+                  <span className="w-2 bg-gray-300 h-3 rounded-md animate-pulse"></span>
+                </p>
+                <p className="capitalize text-xs flex gap-1 items-center">
+                  <span className="w-6 bg-gray-300 h-3 rounded-md animate-pulse"></span>
+                  <span className="w-6 bg-gray-300 h-3 rounded-md animate-pulse"></span>
+                </p>
+              </span>
+            </div>
+          </div>
+          <div className="flex justify-end flex-col gap-2 items-end">
+            <div className="flex gap-4 items-center">
+              <p className="font-semibold text-2xl flex items-center gap-1 w-10 bg-gray-300 h-6 rounded-md animate-pulse"></p>
+              <p className="line-through text-gray-500 w-6 bg-gray-300 h-4 rounded-md animate-pulse"></p>
+            </div>
+            <div className="flex gap-4 items-center w-4/12 h-6 bg-gray-300 rounded-md animate-pulse"></div>
+          </div>
+        </div>
+      </div>
+      <div className="border-2 rounded-2xl max-h-96">
+        <div className="flex flex-col">
+          <div className="border-b-2 py-6">
+            <span className="uppercase font-semibold px-6 text-xl text-slate-500">
+              Price details
+            </span>
+          </div>
+          <div className="border-b-2 py-2 flex flex-col gap-4 border-dashed">
+            <div className="flex justify-between px-6 gap-2 font-medium">
+              <p className="bg-gray-300 h-6 w-28 animate-pulse rounded-md"></p>
+              <span className="bg-gray-300 h-6 w-12 animate-pulse rounded-md"></span>
+            </div>
+            <div className="flex justify-between px-6 gap-2 font-medium">
+              <p className="bg-gray-300 h-6 w-36 animate-pulse rounded-md"></p>
+              <span className="flex gap-2">
+                <p className="bg-gray-300 h-6 w-12 animate-pulse rounded-md"></p>
+              </span>
+            </div>
+          </div>
+          <div className="border-b-2 py-4 flex flex-col gap-4 border-dashed">
+            <div className="flex justify-between px-6 gap-2 font-bold">
+              <p className="bg-gray-300 h-6 w-28 animate-pulse rounded-md"></p>
+              <span className="bg-gray-300 h-6 w-12 animate-pulse rounded-md"></span>
+            </div>
+          </div>
+          <div className="border-b-2 py-4 flex flex-col gap-4 border-dashed">
+            <div className="px-6 flex items-center justify-center">
+              <div className="bg-gray-300 h-6 w-8/12 animate-pulse rounded-md"></div>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   );

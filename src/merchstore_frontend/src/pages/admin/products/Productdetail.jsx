@@ -522,7 +522,7 @@ const ProductDetail = () => {
                       value={
                         loading2
                           ? "loading..."
-                          : parseInt(variant.variant_price)
+                          : variant.variant_price
                       }
                       onChange={(e) => handleVariantChange(index, e)}
                       id={`variant_price`}

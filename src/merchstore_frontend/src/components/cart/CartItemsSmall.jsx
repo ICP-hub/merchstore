@@ -185,7 +185,7 @@ const CartItemsSmall = () => {
                         ? (
                             selectedVariant.variant_price *
                             quantity[index]?.quantity
-                          ).toFixed(2)
+                          ).toFixed(4)
                         : null;
                     })()}
                   </h4>
@@ -199,7 +199,7 @@ const CartItemsSmall = () => {
                         ? (
                             selectedVariant.variant_sale_price *
                             quantity[index]?.quantity
-                          ).toFixed(2)
+                          ).toFixed(4)
                         : null;
                     })()}
                   </h4>

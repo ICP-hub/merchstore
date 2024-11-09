@@ -27,13 +27,13 @@ import { useAuth, useBackend } from "../auth/useClient.jsx";
 
 const ProductDetailPage = () => {
   return (
-    <AnimationView>
-      <ScrollToTop />
-      <Header title={"DETAILS"} />
-      <ProductDetail />
+    // <AnimationView>
+    //   <ScrollToTop />
+    //   <Header title={"DETAILS"} />
+    <ProductDetail />
 
-      <Footer />
-    </AnimationView>
+    //   <Footer />
+    // </AnimationView>
   );
 };
 const ProductDetail = () => {
@@ -85,7 +85,7 @@ const ProductDetail = () => {
     if (unit === "cm") {
       return size;
     } else {
-      return (size * 0.393701).toFixed(2);
+      return (size * 0.393701).toFixed(4);
     }
   };
 
@@ -178,7 +178,7 @@ const ProductDetail = () => {
 
   useEffect(() => {
     listCarts();
-  }, [backend]);
+  }, []);
 
   useEffect(() => {
     // Check if the product is in the local cart

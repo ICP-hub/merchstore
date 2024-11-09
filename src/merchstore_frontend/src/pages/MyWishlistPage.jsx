@@ -28,12 +28,12 @@ import EmptyWishlist from "../components/common/EmptyWishlist";
 /* ----------------------------------------------------------------------------------------------------- */
 const MyWishlistPage = () => {
   return (
-    <AnimationView>
-      <ScrollToTop />
-      <Header title={"Wishlist"}></Header>
-      <MyWishListContainerMain />
-      <Footer></Footer>
-    </AnimationView>
+    // <AnimationView>
+    //   <ScrollToTop />
+    //   <Header title={"Wishlist"}></Header>
+    <MyWishListContainerMain />
+    //   <Footer></Footer>
+    // </AnimationView>
   );
 };
 
@@ -82,36 +82,38 @@ const MyWishList = () => {
   const getWishlist = async () => {
     try {
       const item = await backend.listWishlistItems(10, 0);
-      console.log(item, "wishlist");
+      // console.log(item, "wishlist");
       // const ids = item
       //   .filter((innerArray) => innerArray[1].principal.toText() === principal)
       //   .map((innerArray) => innerArray[1].id);
       // setId(ids);
-      console.log(item.data);
+      // console.log(item.data);
 
-      const productSlugs = item.data.map(
-        (innerArray) => innerArray.product_slug
-      );
+      // const productSlugs = item.data.map(
+      //   (innerArray) => innerArray.product_slug
+      // );
       // .filter((innerArray) => innerArray[1].principal.toText() === principal)
 
       // Set the state with all product_slugs as an array
-      setWishlists(productSlugs);
-      console.log(productSlugs, "hello");
+      setWishlists(item.data);
+      // console.log(productSlugs, "hello");
 
-      if (item.ok) {
-        console.log(item);
-      }
+      // if (item.ok) {
+      //   console.log(item);
+      // }
     } catch (error) {
-      setLoading(false);
+      // setLoading(false);
       setEmpty(false);
       console.error("Error listing user:", error);
     } finally {
+      setLoading(false);
     }
   };
 
   useEffect(() => {
     getWishlist();
-  }, [backend]);
+  }, [principal]);
+
   const deleteWishlist = async (id, size, color) => {
     try {
       const remove = await backend.deleteWishlistItems(id, size, color);
@@ -130,37 +132,44 @@ const MyWishList = () => {
   };
 
   const getProductWishlist = async () => {
+    console.log(wishlists);
+    wishlists.map(({ product_slug }) => console.log(product_slug));
     try {
-      {
-        const productPromises = wishlists.map(async (productId) => {
-          const productResponse = await backend.getProduct(productId);
-          return productResponse.ok; // Assuming `ok` property contains the product details
-        });
-
-        // Wait for all promises to resolve
-        const products = await Promise.all(productPromises);
-
-        getProduct(products);
-        getWishlist();
-
-        // Access and log the title property for each product
-      }
-    } catch (error) {
-      console.error("Error while getting wishlist ", error);
+    } catch (err) {
+      console.error("Error fetching wishlist product", err);
     } finally {
       setLoading(false);
     }
+    // try {
+    //   {
+    //     const productPromises = wishlists.map(async (productId) => {
+    //       const productResponse = await backend.getProduct(productId);
+    //       return productResponse.ok; // Assuming `ok` property contains the product details
+    //     });
+
+    //     // Wait for all promises to resolve
+    //     const products = await Promise.all(productPromises);
+
+    //     getProduct(products);
+    //     getWishlist();
+
+    //     // Access and log the title property for each product
+    //   }
+    // } catch (error) {
+    //   console.error("Error while getting wishlist ", error);
+    // } finally {
+    //   setLoading(false);
+    // }
   };
 
   useEffect(() => {
     // Call getProductWishlist only when wishlists have been updated
-    if (wishlists !== "") {
-      getProductWishlist();
-
-      // Cleanup the timeout on component unmount
-    }
-  }, [backend, wishlists]);
-  console.log(product);
+    // if (wishlists !== "") {
+    getProductWishlist();
+    // Cleanup the timeout on component unmount
+    // }
+  }, [wishlists]);
+  // console.log(product);
 
   return (
     <div className="flex flex-col w-full border border-gray-300 rounded-2xl tracking-normal">
